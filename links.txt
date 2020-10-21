@@ -1,0 +1,3 @@
+https://simpleisbetterthancomplex.com/tutorial/2019/01/02/how-to-implement-grouped-model-choice-field.html
+https://django-model-utils.readthedocs.io/en/latest/fields.html
+

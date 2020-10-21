@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog.apps.PayrollConfig',
+    'payroll.apps.PayrollConfig',
     'users.apps.UsersConfig',
 ]
 
