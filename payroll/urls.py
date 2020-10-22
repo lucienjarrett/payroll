@@ -1,7 +1,11 @@
-from mypayroll.payroll.views import EmployeeCreateView
-from django_project.blog.views import PostCreateView
 from django.urls import path
-from .views import (EmployeeCreateView)
+from .views import (BankCreateView, BankUpdateView, DutyTypeCreateView,
+                    DutyTypeUpdateView, EmployeeCreateView, EmployeeDeleteView,
+                    EmployeeListView, EmployeeUpdateView, DepartmentCreateView,
+                    DepartmentUpdateView, JobTitleCreateView,
+                    JobTitleUpdateView, PayPeriodCreateView,
+                    PayPeriodUpdateView, PaymentMethodCreateView,
+                    PaymentMethodUpdateView)
 from . import views
 
 urlpatterns = [
@@ -11,4 +15,43 @@ urlpatterns = [
     path('payroll/contact/', views.help, name="payroll-contact"),
     path('employee/new/', EmployeeCreateView.as_view(),
          name="employee-create"),
+    path('employee/', EmployeeListView.as_view(), name="employee-list"),
+    path('employee/<int:pk>/update/',
+         EmployeeUpdateView.as_view(),
+         name="employee-update"),
+    path('department/new/',
+         DepartmentCreateView.as_view(),
+         name="department-create"),
+    path('employee-delete/<int:pk>/delete/',
+         EmployeeDeleteView.as_view(),
+         name="employee-delete"),
+    path('department/<int:pk>/update/',
+         DepartmentUpdateView.as_view(),
+         name="department-update"),
+    path('jobtitle/new/', JobTitleCreateView.as_view(),
+         name="jobtitle-create"),
+    path('jobtitle/<int:pk>/update/',
+         JobTitleUpdateView.as_view(),
+         name="jobtitle-update"),
+    path('bank/new/', BankCreateView.as_view(), name="bank-create"),
+    path('bank/<int:pk>/update/', BankUpdateView.as_view(),
+         name="bank-update"),
+    path('payment-method/new/',
+         PaymentMethodCreateView.as_view(),
+         name="paymentmethod-create"),
+    path('payment-method/<int:pk>/update/',
+         PaymentMethodUpdateView.as_view(),
+         name="dutytype-update"),
+    path('duty-type/new/',
+         DutyTypeCreateView.as_view(),
+         name="dutytype-create"),
+    path('duty-type/<int:pk>/update/',
+         DutyTypeUpdateView.as_view(),
+         name="dutytype-update"),
+    path('pay-period/new/',
+         PayPeriodCreateView.as_view(),
+         name="payperiod-create"),
+    path('pay-period/<int:pk>/update/',
+         PayPeriodUpdateView.as_view(),
+         name="payperiod-update"),
 ]

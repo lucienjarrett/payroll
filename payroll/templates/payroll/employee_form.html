@@ -1,16 +1,88 @@
-<form action="" method="POST">
-    {{ form }}
-    <button type="submit"> Submit</button>
-</form>
+{% extends 'payroll/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
 
-<!-- <form action="" method="POST">
+
+<script>
+    let payment = document.querySelector("#id_payment");
+    console.log(payment.innerHTML);
+</script>
+
+
+
+<form action="" method="POST" id="container">
     {% csrf_token %}
     <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Blog Post</legend>
+        <legend class="border-bottom mb-4">Employee</legend>
+        <div class="row">
+            <div class="col-md-2">
+                {{ form.title |as_crispy_field }}
+            </div>
+            <div class="col-md-5">
+                {{ form.first_name |as_crispy_field }}
+            </div>
+            <div class="col-md-5">
+                {{ form.last_name |as_crispy_field }}
+            </div>
 
-        {{ form|crispy}}
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.employee_number|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.nis|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.trn|as_crispy_field }}
+            </div>
+
+        </div>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.department |as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.job_title |as_crispy_field }}
+            </div>
+        </div>
+
+        <hr>
+        <div class="row">
+            <div class="col-md-3">
+                {{ form.payment|as_crispy_field }}
+            </div>
+            <div class="col-md-5">
+                {{ form.bank|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.bank_account|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.rate|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.payment_schedule|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <!-- {{ form.bank_account|as_crispy_field }} -->
+            </div>
+        </div>
+        <hr>
+
+
     </fieldset>
     <div class="form-group">
-        <button class="btn btn-outline-info" type="submit">Post</button>
+        <button class="btn btn-outline-info" type="reset">Cancel</button>
+        <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button>
     </div>
-</form> -->
+</form>
+
+
+
+{% endblock content %}

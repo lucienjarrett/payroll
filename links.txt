@@ -1,3 +1,4 @@
 https://simpleisbetterthancomplex.com/tutorial/2019/01/02/how-to-implement-grouped-model-choice-field.html
 https://django-model-utils.readthedocs.io/en/latest/fields.html
+https://simpleisbetterthancomplex.com/tutorial/2018/08/13/how-to-use-bootstrap-4-forms-with-django.html
 
