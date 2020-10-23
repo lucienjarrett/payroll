@@ -1,0 +1,83 @@
+{% extends "payroll/base.html" %}
+{% load crispy_forms_tags %}
+{{ form|as_crispy_errors:"bootstrap" }}
+{% block content %}
+
+<script>
+    const PAYE = .25;
+    const NIS = .025;
+    const NHT = 0.02;
+    const EDTAX = 0.0225;
+    const THRESHOLD = 557232;
+    const NIS_LIMIT = 37500
+    const MONTHS_IN_YEAR = 12;
+    const WEEKS_IN_YEAR = 52
+
+
+
+
+    calcSalary = (hours, entry = 286.6, holiday) => {
+        total = hours * entry;
+        document.getElementById("id_salary").value = total.toFixed(2);
+        document.getElementById("id_total_salary").value = total + Number(holiday);
+
+    }
+
+
+    function calculate() {
+        let salary = document.getElementById("id_hours_worked").value;
+        let holiday = document.getElementById("id_holiday_pay").value;
+
+        calcSalary(salary, 286.6, holiday)
+
+    }
+</script>
+
+<form action="" method="POST" id="container">
+    {% csrf_token %}
+    {{ object.initial }}
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Salary</legend>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.employee|as_crispy_field }}
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.hours_worked|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.salary|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.holiday_pay|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                <!-- {{ form.total_salary|as_crispy_field }} -->
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.total_salary|as_crispy_field }}
+            </div>
+
+
+        </div>
+
+    </fieldset>
+    <div class="form-group">
+
+        <!-- <button class="btn btn-outline-info" type="reset">Cancel</button> -->
+        <!-- <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button> -->
+    </div>
+</form>
+
+{% endblock content %}

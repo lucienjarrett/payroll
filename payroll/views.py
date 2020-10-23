@@ -1,10 +1,32 @@
 from django.http import request
 from django.http.response import HttpResponse
 from django.shortcuts import render
-from django.views.generic import CreateView, ListView, UpdateView
+from django.views.generic import CreateView, ListView, UpdateView, FormView
 from django.views.generic.edit import DeleteView
-from .models import Employee, Department, JobTitle, Bank, PaymentMethod, DutyType, PayPeriod
+from .models import Employee, Department, JobTitle, Bank, Payment, PaymentMethod, DutyType, PayPeriod, Salary
 from django.shortcuts import render, get_object_or_404
+from .forms import SalaryCreateForm
+
+
+class SalaryCreateView(CreateView):
+    model = Salary
+    form_class = SalaryCreateForm
+
+    def get_initial(self, *args, **kwargs):
+        initial = super(SalaryCreateView, self).get_initial(**kwargs)
+        initial['title'] = 'Post Salary'
+        initial['rate'] = 286.60
+        return initial
+
+
+class PaymentCreateView(CreateView):
+    model = Payment
+    fields = '__all__'
+
+
+class PaymentUpdateView(UpdateView):
+    model = Payment
+    fields = '__all__'
 
 
 class PayPeriodCreateView(CreateView):
@@ -69,11 +91,7 @@ class DepartmentUpdateView(UpdateView):
 
 class EmployeeCreateView(CreateView):
     model = Employee
-    fields = [
-        'first_name', 'last_name', 'title', 'nis', 'trn', 'employee_number',
-        'department', 'job_title', 'rate', 'bank', 'payment', 'bank_account',
-        'payment_schedule'
-    ]
+    fields = '__all__'
 
 
 class EmployeeUpdateView(UpdateView):

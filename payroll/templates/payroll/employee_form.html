@@ -1,17 +1,16 @@
 {% extends 'payroll/base.html' %}
 {% load crispy_forms_tags %}
+
 {% block content %}
 
 
 <script>
-    let payment = document.querySelector("#id_payment");
-    console.log(payment.innerHTML);
+
 </script>
-
-
 
 <form action="" method="POST" id="container">
     {% csrf_token %}
+    {{ form|as_crispy_errors:"bootstrap" }}
     <fieldset class="form-group">
         <legend class="border-bottom mb-4">Employee</legend>
         <div class="row">
@@ -19,7 +18,7 @@
                 {{ form.title |as_crispy_field }}
             </div>
             <div class="col-md-5">
-                {{ form.first_name |as_crispy_field }}
+                {{ form.first_name|as_crispy_field }}
             </div>
             <div class="col-md-5">
                 {{ form.last_name |as_crispy_field }}
@@ -70,10 +69,21 @@
                 {{ form.payment_schedule|as_crispy_field }}
             </div>
             <div class="col-md-4">
-                <!-- {{ form.bank_account|as_crispy_field }} -->
+                {{ form.basic_pay|as_crispy_field }}
             </div>
         </div>
         <hr>
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.employment_date|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.classification|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.departure_date|as_crispy_field }}
+            </div>
+        </div>
 
 
     </fieldset>
@@ -82,7 +92,5 @@
         <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button>
     </div>
 </form>
-
-
 
 {% endblock content %}

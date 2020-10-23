@@ -4,8 +4,9 @@ from .views import (BankCreateView, BankUpdateView, DutyTypeCreateView,
                     EmployeeListView, EmployeeUpdateView, DepartmentCreateView,
                     DepartmentUpdateView, JobTitleCreateView,
                     JobTitleUpdateView, PayPeriodCreateView,
-                    PayPeriodUpdateView, PaymentMethodCreateView,
-                    PaymentMethodUpdateView)
+                    PayPeriodUpdateView, PaymentCreateView,
+                    PaymentMethodCreateView, PaymentMethodUpdateView,
+                    PaymentUpdateView, SalaryCreateView)
 from . import views
 
 urlpatterns = [
@@ -54,4 +55,12 @@ urlpatterns = [
     path('pay-period/<int:pk>/update/',
          PayPeriodUpdateView.as_view(),
          name="payperiod-update"),
+    path('pay-period/new/',
+         PayPeriodCreateView.as_view(),
+         name="payperiod-create"),
+    path('salary/new/', SalaryCreateView.as_view(), name="salary-create"),
+    path('payment/new/', PaymentCreateView.as_view(), name="payment-create"),
+    path('payment/<int:pk>/update/',
+         PaymentUpdateView.as_view(),
+         name="payment-update"),
 ]

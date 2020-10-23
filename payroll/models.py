@@ -1,11 +1,34 @@
 from django import VERSION
 from django.db.models.fields import CharField
+from django.db.models.fields.related import ForeignKey
+from django.db.models.manager import ManagerDescriptor
 from django.urls import reverse
 from django.utils import timezone
 from django.db import models
 from model_utils.fields import StatusField
 from model_utils import Choices
 from django.core.validators import MaxValueValidator, MinValueValidator
+
+
+class Payment(models.Model):
+    name = models.CharField(max_length=30, verbose_name='Taxable Payments')
+    taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
+
+    class Meta:
+        db_table = "payments"
+        managed = True
+
+    def get_absolute_url(self):
+        return reverse('employee-list')
+
+
+class OtherDeduction(models.Model):
+    class Meta:
+        db_table = "other_deduction"
+        managed = True
+
+    def get_absolute_url(self):
+        return reverse('employee-list')
 
 
 class PayPeriod(models.Model):
@@ -95,6 +118,7 @@ class JobTitle(models.Model):
 
 
 class Employee(models.Model):
+    # image = models.ImageField(upload_to='images/')
     first_name = models.CharField(max_length=60, verbose_name="First Name")
     last_name = models.CharField(max_length=60, verbose_name="Last Name")
     GENDER = Choices('----', 'Mr.', 'Ms.')
@@ -142,6 +166,31 @@ class Employee(models.Model):
                                          blank=True,
                                          null=True,
                                          verbose_name="Pay Cycle")
+    basic_pay = models.FloatField(
+        verbose_name="Basic Pay",
+        default=0,
+        null=True,
+        blank=True,
+    )
+    employment_date = models.DateField(verbose_name="Employment Date",
+                                       null=True,
+                                       blank=True,
+                                       default=None)
+    departure_date = models.DateField(verbose_name="Departure Date",
+                                      null=True,
+                                      blank=True,
+                                      default=None)
+    CLASSIFICATION = [
+        ("", '-------'),
+        (1, 'Salaried'),
+        (2, 'Hourly'),
+        (3, 'Commissioned'),
+    ]
+    classification = models.CharField(max_length=1,
+                                      choices=CLASSIFICATION,
+                                      default=2,
+                                      blank=0,
+                                      null=True)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -152,3 +201,34 @@ class Employee(models.Model):
     class Meta:
         db_table = 'employees'
         managed = True
+
+
+class Salary(models.Model):
+    employee = models.ForeignKey(Employee,
+                                 verbose_name="Employee",
+                                 on_delete=models.CASCADE)
+    hours_worked = models.FloatField()
+    date_posted = models.DateTimeField(default=timezone.now)
+    salary = models.FloatField(default=0)
+    holiday_pay = models.FloatField(default=0)
+    total_salary = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.employee
+
+    class Meta:
+        db_table = 'salaries'
+        managed = True
+
+    def get_absolute_url(self):
+        return reverse('employee-list')
+
+
+class EmployeePayment(models.Model):
+    employee = models.ForeignKey(Employee,
+                                 on_delete=models.CASCADE,
+                                 verbose_name="Employee")
+    payment = models.ForeignKey(Payment,
+                                on_delete=models.CASCADE,
+                                verbose_name='Other Payments')
+    amount = models.FloatField(verbose_name="Payment Amount", default=0)
