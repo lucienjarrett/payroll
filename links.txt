@@ -17,5 +17,6 @@ https://bootstrapious.com/p/bootstrap-sidebar
 https://github.com/bitlabstudio/django-payslip/blob/master/payslip/views.py
 https://fontawesome.com/icons/user-minus?style=regular
 https://stackoverflow.com/questions/31412377/non-primary-foreign-keys-in-django
-
+https://skillset365.com/article/jamaican-payroll-guide#:~:text=Employee's%20NIS%20Contribution%3A%20(Effective%20April,at%202%25%20of%20taxable%20emoluments.
+https://www.youtube.com/watch?v=G-Rct7Na0UQ
 

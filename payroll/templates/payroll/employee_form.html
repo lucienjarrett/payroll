@@ -5,6 +5,7 @@
 <form action="" method="POST" id="container">
     {% csrf_token %}
     {{ form|as_crispy_errors:"bootstrap" }}
+
     <fieldset class="form-group">
         <!-- <legend class="border-bottom mb-4">Employee</legend> -->
         <div class="row">

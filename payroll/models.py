@@ -9,17 +9,30 @@ from django.db import models
 from model_utils.fields import StatusField
 from model_utils import Choices
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-
+from collections import namedtuple
 # def validate_even(value):
 #     if value % 2 != 0:
 #         raise ValidationError(
 #             _('%(value)s is not an even number'),
 #             params={'value': value},
 #         )
+
+Period = namedtuple('Period', 'Monthly Weekly Fortnightly')
+PAY_PERIOD = Period(12, 48, 26)
+
+PAY_THRESHOLD = 1500096 / PAY_PERIOD.Fortnightly
+MAX_NIS = 45000 / PAY_PERIOD.Fortnightly
+NHT_RATE = 0.02
+ED_TAX_RATE = 0.0225
+PAYE_RATE = 0.25
+NIS_RATE = 0.03
+SIX_MIL_PAYE = 0.30
+
+
 class Company(models.Model):
     name = models.CharField(max_length=80, verbose_name="Company Name")
     trn = models.PositiveIntegerField(verbose_name="Tax Registration #")
+    status = models.BooleanField(default=True, verbose_name="Status")
 
     class Meta:
         db_table = 'companies'
@@ -153,7 +166,9 @@ class Employee(models.Model):
                                       null=True,
                                       blank=True)
     employee_number = models.PositiveIntegerField(verbose_name="Employee #")
-    date_posted = models.DateTimeField(default=timezone.now)
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
     rate = models.FloatField(verbose_name="Rate Of Pay",
                              validators=[MinValueValidator(0.0)],
                              null=True,
@@ -234,7 +249,7 @@ class Salary(models.Model):
     employee = models.ForeignKey(Employee,
                                  verbose_name="Employee",
                                  on_delete=models.CASCADE)
-    hours_worked = models.FloatField()
+    hours_worked = models.FloatField(default=0)
     rate = models.FloatField(default=0)
     date_posted = models.DateTimeField(default=timezone.now)
 
@@ -244,17 +259,52 @@ class Salary(models.Model):
     class Meta:
         db_table = 'salaries'
         managed = True
+        ordering = ['employee']
 
     def get_absolute_url(self):
         return reverse('employee-list')
 
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    # def save(self, *args, **kwargs):
-    #     if self.name == "Yoko Ono's blog":
-    #         return # Yoko shall never have her own blog!
-    #     else:
-    #         super().save(*args, **kwargs)  # Call the "real" save() method.
+    def calculate_base_salary(self):
+        return self.rate * self.hours_worked
+
+    def calculate_nht(self):
+        return self.calculate_base_salary() * NHT_RATE
+
+    def calculate_ed_tax(self):
+        #(GrossSalary – MaximumNIS) * EDTAXRate
+        return (self.calculate_base_salary() -
+                self.calculate_nis()) * ED_TAX_RATE
+
+    def calculate_nis(self):
+        if ((self.calculate_base_salary() * NIS_RATE) < MAX_NIS):
+            return self.calculate_base_salary() * NIS_RATE
+        else:
+            return MAX_NIS
+
+    def calculate_income_tax(self):
+        if (self.calculate_base_salary() * 12) >= 6000000:
+            print('passed')
+            income_tax = (self.calculate_base_salary() - self.calculate_nis() -
+                          PAY_THRESHOLD)
+            return income_tax
+        if ((self.calculate_base_salary() - self.calculate_nis() -
+             PAY_THRESHOLD) * PAYE_RATE) > 0:
+            income_tax = (self.calculate_base_salary() - self.calculate_nis())
+            return income_tax
+        else:
+            return 0
+
+    def calculate_other_deductions(self):
+        return 0
+
+    def calculate_net_pay(self):
+        print(
+            f'{self.calculate_nht()} - {self.calculate_ed_tax()} - {self.calculate_income_tax()}'
+        )
+        net_pay = self.calculate_base_salary() - (
+            self.calculate_nht() + self.calculate_ed_tax() +
+            self.calculate_nis() + self.calculate_income_tax())
+        return net_pay
 
 
 class EmployeePayment(models.Model):

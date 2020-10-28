@@ -7,7 +7,7 @@ from .views import (BankCreateView, BankListView, BankUpdateView,
                     JobTitleUpdateView, PayPeriodCreateView,
                     PayPeriodUpdateView, PaymentCreateView,
                     PaymentMethodCreateView, PaymentMethodUpdateView,
-                    PaymentUpdateView, SalaryCreateView)
+                    PaymentUpdateView, SalaryCreateView, SalaryListView)
 from . import views
 
 urlpatterns = [
@@ -35,6 +35,9 @@ urlpatterns = [
          name="employee-pay-upload"),
 
     #End Employee Routes
+    #Salary
+    path('salary/', SalaryListView.as_view(), name="salary-list"),
+    #End Salary
     path('department/new/',
          DepartmentCreateView.as_view(),
          name="department-create"),

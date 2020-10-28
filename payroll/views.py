@@ -1,5 +1,6 @@
 from django import template
 from django.core.validators import ip_address_validator_map
+from django.db.models.query_utils import Q
 # from django.http import request
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -7,7 +8,8 @@ from django.views.generic import CreateView, ListView, UpdateView, FormView
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView
-from .models import Contact, Employee, Department, JobTitle, Bank, Payment, PaymentMethod, DutyType, PayPeriod, Salary
+from .models import (Contact, Employee, Department, JobTitle, Bank, Payment,
+                     PaymentMethod, DutyType, PayPeriod, Salary)
 from django.shortcuts import render, get_object_or_404
 from .forms import SalaryCreateForm
 import csv, io
@@ -126,6 +128,11 @@ def employee_pay_upload(request):
         return HttpResponseRedirect(reverse("employee-pay-upload"))
 
 
+class SalaryListView(ListView):
+    model = Salary
+    paginate_by = 15
+
+
 class SalaryCreateView(CreateView):
     model = Salary
     form_class = SalaryCreateForm
@@ -227,6 +234,12 @@ class EmployeeUpdateView(UpdateView):
 class EmployeeListView(ListView):
     model = Employee
     paginate_by = 10
+
+    # def get_queryset(self):
+    #     query = self.request.GET.get('q')
+    #     object_list = Employee.objects.filter(
+    #         Q(first_name__icontains=query) | Q(last_name__icontains=query))
+    #     return object_list
 
 
 class EmployeeDeleteView(DeleteView):

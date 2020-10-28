@@ -3,9 +3,8 @@
 
 {% block content %}
 
-
-
 <div class="container">
+
     <div class="row pt-1">
 
         <div class="card mr-2" style="width: 40%;">
@@ -13,9 +12,8 @@
 
                 <img style="width:150px; height:150px" class="rounded-circle" src="{{ employee.image.url }}" alt="">
             </div>
+            <a href="{% url 'employee-update' object.id %}" class="btn btn-info">Update</a>
         </div>
-
-
 
         <div class="card" style="width: 55%;">
             <div class="card-body">
