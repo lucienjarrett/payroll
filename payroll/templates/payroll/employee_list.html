@@ -1,45 +1,88 @@
-{% extends 'payroll/base.html' %}
+{% extends 'payroll/base_.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
+
+
 <div class="table-responsive-sm">
+
     <div class="row">
         <div class="col-md-8">
+            <h2>Employees</h2>
+        </div>
+        <div class="btn-toolbar col-md-4" role="group">
+            <div class="btn-group mr-2 " role="group" aria-label="First group">
+
+                <a href=" {% url 'employee-upload'  %}" role="button"
+                    class="btn btn-outline-secondary btn-sm mr-3 pb-0"><i class="fas fa-upload"></i></a>
+
+                <a href=" {% url 'employee-create'  %}" role="button"
+                    class="btn btn-outline-info btn-sm mr-2 pb-0 mb-0"><i class="fas fa-plus"></i></a>
+
+            </div>
+
+
 
         </div>
-        <div class="col-md-4">
-            <a href="{% url 'employee-create'  %}" role="button" class="btn btn-outline-primary">Add New Employee</a>
-        </div>
     </div>
-    <table class="table table-hover table-sm">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First Name</th>
-                <th scope="col">Last Name</th>
-                <th scope="col">Rate</th>
-                <th scope="col">Department</th>
-                <th scope="col">Job Title</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for employee in object_list %}
-            <tr>
-                <th scope="row">{{ employee.employee_number }}</th>
-                <td>{{ employee.first_name }}</td>
-                <td>{{ employee.last_name }}</td>
-                <td>{{ employee.rate }}</td>
-                <td>{{ employee.department.name }}</td>
-                <td>{{ employee.job_title.name }}</td>
-                <td><a role="button" href="{% url 'employee-update' employee.id %}"
-                        class="btn btn-success btn-sm mt-1 mb-1"> Edit
-                    </a>
-                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'employee-delete' employee.id  %}">Delete
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
+<table class="table table-hover table-sm">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Rate</th>
+            <th scope="col">Department</th>
+            <th scope="col">Job Title</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in object_list %}
+        <tr>
+            <th scope="row">{{ employee.employee_number }}</th>
+            <td class="list" style="text-decoration:underline; color: blue"><a
+                    href="{% url 'employee-detail' employee.id %}">{{ employee.full_name }}</a> </td>
+            <td>{{ employee.rate }}</td>
+            <td>{{ employee.department.name }}</td>
+            <td>{{ employee.job_title.name }}</td>
+            <td><a tooltip="Delete" role="button" href="{% url 'employee-update' employee.id %}"
+                    class="btn btn-outline-secondary btn-sm"> <i class="fas fa-user-edit"></i>
+                </a>
+                <a class="btn btn-outline-danger btn-sm" href="{% url 'employee-delete' employee.id  %}"><i
+                        class="fas fa-user-minus"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col-md-2">
+
+    </div>
+    <div class="col-md-8">
+        {% if is_paginated %}
+        {% if page_obj.has_previous  %}
+        <a class="btn btn-outline-info mb-4 btn-sm" href="?page=1">First</a>
+        <a class="btn btn-outline-info mb-4 btn-sm" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <a class="btn btn-info mb-4 btn-sm" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'%}
+        <a class="btn btn-outline-info mb-4 btn-sm" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <a class="btn btn-outline-info mb-4 btn-sm" href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a class="btn btn-outline-info mb-4 btn-sm" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="col-md-2">
+
+    </div>
+</div>
+
 {% endblock content %}

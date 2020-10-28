@@ -1,5 +1,14 @@
+{% extends "payroll/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
 <form action="" method="POST">
     {% csrf_token %}
-    {{ form }}
-    <button type="submit"> Submit</button>
+    {{ form|crispy }}
+    <button class="btn btn-outline-info" type="submit"> Submit</button>
 </form>
+
+
+
+
+{% endblock content %}

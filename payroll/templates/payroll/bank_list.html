@@ -1,0 +1,38 @@
+{% extends 'payroll/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="table-responsive-sm">
+    <div class="row">
+        <div class="col-md-8">
+
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'bank-create'  %}" role="button" class="btn btn-outline-primary">Add New Bank</a>
+        </div>
+    </div>
+    <table class="table table-hover table-sm">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Bank Name</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bank in object_list %}
+            <tr>
+                <th scope="row">{{ bank.id }}</th>
+                <td>{{ bank.name }}</td>
+
+                <td><a role="button" href="{% url 'bank-update' bank.id %}" class="btn btn-success btn-sm mt-1 mb-1">
+                        Edit
+                    </a>
+
+ 
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

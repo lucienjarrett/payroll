@@ -87,3 +87,13 @@ a.article-title:hover {
 .account-heading {
     font-size: 2.5rem;
 }
+
+#sidebar.active {
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}

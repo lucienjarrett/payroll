@@ -55,7 +55,9 @@ ROOT_URLCONF = 'mypayroll.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR,
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,6 +128,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
-# SESSION_COOKIE_SECURE = True
-
-# CSRF_COOKIE_SECURE = True
+LOGIN_REDIRECT_URL = 'payroll-dashboard'
+LOGIN_URL = 'login'

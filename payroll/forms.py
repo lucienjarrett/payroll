@@ -25,3 +25,4 @@ class SalaryCreateForm(forms.ModelForm):
         model = Salary
         # fields = ['employee', 'hours_worked', 'salary']
         fields = '__all__'
+

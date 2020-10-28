@@ -1,24 +1,18 @@
-{% extends 'payroll/base.html' %}
+{% extends 'payroll/base_.html' %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-
-
-<script>
-
-</script>
-
 <form action="" method="POST" id="container">
     {% csrf_token %}
     {{ form|as_crispy_errors:"bootstrap" }}
     <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Employee</legend>
+        <!-- <legend class="border-bottom mb-4">Employee</legend> -->
         <div class="row">
             <div class="col-md-2">
                 {{ form.title |as_crispy_field }}
             </div>
             <div class="col-md-5">
-                {{ form.first_name|as_crispy_field }}
+                {{ form.first_name |as_crispy_field }}
             </div>
             <div class="col-md-5">
                 {{ form.last_name |as_crispy_field }}
@@ -78,7 +72,7 @@
                 {{ form.employment_date|as_crispy_field }}
             </div>
             <div class="col-md-4">
-                {{ form.classification|as_crispy_field }}
+
             </div>
             <div class="col-md-4">
                 {{ form.departure_date|as_crispy_field }}
@@ -88,9 +82,10 @@
 
     </fieldset>
     <div class="form-group">
-        <button class="btn btn-outline-info" type="reset">Cancel</button>
+        <button class="btn btn-outline-info" type="reset"><i class="fas fa-user-edit"></i>Cancel</button>
         <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button>
     </div>
 </form>
+
 
 {% endblock content %}

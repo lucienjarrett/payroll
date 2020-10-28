@@ -1,0 +1,102 @@
+{% extends 'payroll/base.html' %}
+
+
+{% block content %}
+
+
+<script>
+
+</script>
+
+
+
+<form action="" method="POST" id="container">
+    {% csrf_token %}
+
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Employee</legend>
+        <div class="row">
+            <div class="col-md-2">
+                {{ form.title  }}
+            </div>
+            <div class="col-md-5">
+                {{ form.first_name  }}
+            </div>
+            <div class="col-md-5">
+                {{ form.last_name  }}
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.employee_number }}
+            </div>
+            <div class="col-md-4">
+                {{ form.nis }}
+            </div>
+            <div class="col-md-4">
+                {{ form.trn }}
+            </div>
+
+        </div>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.department  }}
+            </div>
+            <div class="col-md-6">
+                {{ form.job_title  }}
+            </div>
+        </div>
+
+        <hr>
+        <div class="row">
+            <div class="col-md-3">
+                {{ form.payment }}
+            </div>
+            <div class="col-md-5">
+                {{ form.bank }}
+            </div>
+            <div class="col-md-4">
+                {{ form.bank_account }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.rate }}
+            </div>
+            <div class="col-md-4">
+                {{ form.payment_schedule }}
+            </div>
+            <div class="col-md-4">
+                {{ form.basic_pay }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.employment_date }}
+            </div>
+            <div class="col-md-4">
+                <!-- {{ form.classification }} -->
+            </div>
+            <div class="col-md-4">
+                {{ form.departure_date }}
+            </div>
+        </div>
+
+
+
+
+    </fieldset>
+    <div class="form-group">
+        <button class="btn btn-outline-info" type="reset">Cancel</button>
+        <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button>
+    </div>
+</form>
+
+
+
+{% endblock content %}

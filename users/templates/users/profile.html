@@ -1,0 +1,26 @@
+{% extends "payroll/base_.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="media">
+    <img src="{{ user.profile.image.url }}" alt="profile picture" class="rounded-circle">
+</div>
+<div class="media-body">
+
+    <p class="text-secondary">{{ user.email }}</p>
+    <p class="text-secondary">{{ user.first_name }} {{ user.last_name }}</p>
+
+</div>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ u_form.name.errors }}
+    {{ p_form.name.errors }}
+    {{ u_form|crispy }}
+    {{ p_form|crispy }}
+
+    <div class="form-group">
+        <button value="submit" class="btn btn-outline-info" type="submit">Update</button>
+    </div>
+</form>
+
+
+{% endblock content %}

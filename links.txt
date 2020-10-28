@@ -7,7 +7,15 @@ https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
 https://www.codementor.io/@lakshminp/handling-multiple-forms-on-the-same-page-in-django-fv89t2s3j
 https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Generic_views
 https://help.pythonanywhere.com/pages/DeployExistingDjangoProject
-
-
+https://help.pythonanywhere.com/pages/DeployExistingDjangoProject
+https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html
+https://www.geeksforgeeks.org/django-form-field-custom-widgets/?ref=lbp
+https://www.youtube.com/watch?v=JIvJL1HizP4 - Formsets
+https://www.youtube.com/watch?v=MRWFg30FmZQ
+https://help.pythonanywhere.com/pages/DeployExistingDjangoProject
+https://bootstrapious.com/p/bootstrap-sidebar
+https://github.com/bitlabstudio/django-payslip/blob/master/payslip/views.py
+https://fontawesome.com/icons/user-minus?style=regular
+https://stackoverflow.com/questions/31412377/non-primary-foreign-keys-in-django
 
 
