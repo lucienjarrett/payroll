@@ -27,5 +27,36 @@ class SalaryCreateForm(forms.ModelForm):
         fields = '__all__'
 
 
-class EmployeeForm(forms.ModelForm):
-    pass
+class EmployeeCreateForm(forms.ModelForm):
+    title = forms.Select()
+    first_name = forms.CharField(label="First Name",
+                                 widget=forms.TextInput(),
+                                 required=True)
+    last_name = forms.CharField(label="Last Name",
+                                widget=forms.TextInput(),
+                                required=True)
+    employee_number = forms.CharField(label="Employee #",
+                                      required=True,
+                                      widget=forms.TextInput())
+    nis = forms.CharField(label="National Insurance #",
+                          required=True,
+                          widget=forms.TextInput())
+    trn = forms.CharField(label="Tax Registration #",
+                          required=True,
+                          widget=forms.TextInput())
+
+    job_title = forms.Select()
+    department = forms.Select()
+
+    class Meta:
+        model = Employee
+        fields = (
+            'title',
+            'first_name',
+            'last_name',
+            'trn',
+            'nis',
+            'employee_number',
+            'job_title',
+            'department',
+        )

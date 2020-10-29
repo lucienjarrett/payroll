@@ -165,7 +165,8 @@ class Employee(models.Model):
                                       verbose_name="Tax Registration #",
                                       null=True,
                                       blank=True)
-    employee_number = models.PositiveIntegerField(verbose_name="Employee #")
+    employee_number = models.PositiveIntegerField(verbose_name="Employee #",
+                                                  unique=True)
     date_posted = models.DateTimeField(default=timezone.now,
                                        blank=True,
                                        null=True)

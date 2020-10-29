@@ -4,14 +4,14 @@ from django.db.models.query_utils import Q
 # from django.http import request
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import CreateView, ListView, UpdateView, FormView
+from django.views.generic import (CreateView, ListView, UpdateView, FormView)
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView
 from .models import (Contact, Employee, Department, JobTitle, Bank, Payment,
                      PaymentMethod, DutyType, PayPeriod, Salary)
 from django.shortcuts import render, get_object_or_404
-from .forms import SalaryCreateForm
+from .forms import SalaryCreateForm, EmployeeCreateForm
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -58,11 +58,9 @@ def employee_upload(request):
     }
 
     if request.method == "GET":
-
-        return render(request, template, prompt)
+        return render(request, template, context=prompt)
     try:
         csv_file = request.FILES['file']
-
         if not csv_file.name.endswith('.csv'):
             messages.error(
                 request,
@@ -74,13 +72,19 @@ def employee_upload(request):
         # for column in csv.reader(io_string, delimiter=',', quotechar="|"):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):
             print(
-                f'{column[0]} {column[1]} {column[2]} {column[3]} {column[4]}')
-            _, created = Employee.objects.update_or_create(
+                f'{column[0]} {column[1]} {column[2]} {column[3]} {column[4]} {column[5]}'
+            )
+
+            obj, created = Employee.objects.update_or_create(
                 first_name=column[0],
                 last_name=column[1],
-                employee_number=column[2],
-                nis=column[3],
-                trn=column[4])
+                # employee_number=column[2],
+                # nis=column[3],
+                # trn=column[4],
+                rate=column[5],
+                defaults={
+                    'employee_number': '12345',
+                })
 
         context = {}
         messages.success(request, "Success")
@@ -220,8 +224,9 @@ class DepartmentUpdateView(UpdateView):
 
 class EmployeeCreateView(CreateView):
     model = Employee
-    fields = '__all__'
-    # form_class = EmployeeForm
+    form_class = EmployeeCreateForm
+    # fields = '__all__'
+    # # form_class = EmployeeForm
     exclude = ['employment_date', 'departure_date', 'classification']
 
 

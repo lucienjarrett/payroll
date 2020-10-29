@@ -8,9 +8,11 @@
 <div>
     <strong>{{ message|safe }}</strong>
 </div>
+
 {% endfor %}
-{{ order }}
+
 {% else %}
+<p class="ml-0">{{ order }}</p>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <label class="form-label" for=""> Upload a file </label>
@@ -20,5 +22,7 @@
 </form>
 <a href="{% url 'employee-list'  %}">&larr; Go back</a>
 {% endif %}
+
+
 
 {% endblock content %}
