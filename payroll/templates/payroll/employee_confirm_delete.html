@@ -1,17 +1,20 @@
-{% extends "payroll/base.html" %}
+{% extends "payroll/base_.html" %}
 {% block content %}
 
-
-<form action="" method="POST">
-    {% csrf_token %}
-    <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Delete Post</legend>
-        <h2>Are you sure you want to delete the post? {{ object.first_name }}</h2>
-    </fieldset>
-    <div class="form-group">
-        <button class="btn btn-outline-danger" type="submit">Delete</button>
-        <a class="btn btn-outline-secondary" href="{% url 'employee-delete' object.id %}">Cancel</a>
+<div class="card mt-0">
+    <div class="card-header">
+        Delete Employee
     </div>
-</form>
+    <div class="card-body">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <h5>Are you sure you want to delete this employee? {{ object.full_name }}</h5>
 
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Delete</button>
+                <a class="btn btn-outline-secondary" href="{% url 'employee-list' %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock content %}

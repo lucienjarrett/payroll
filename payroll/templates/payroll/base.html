@@ -5,15 +5,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js"
+        integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+</head>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'payroll/main.css' %}">
-    {% if title %}
-    <title> Payroll - {{ title }}</title>
-    {% else %}
-    <title> Payroll - {{ title }}</title>
-    {% endif %}
+<body>
+
+    <input id="datepicker">
+
+    <script>
+        $(function () {
+            $("#datepicker").datepicker();
+        });
+    </script>
+
+</body>
+
+</html>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'payroll/main.css' %}">
+{% if title %}
+<title> Payroll - {{ title }}</title>
+{% else %}
+<title> Payroll - {{ title }}</title>
+{% endif %}
 
 </head>
 
@@ -119,6 +136,8 @@
             </div>
         </div>
     </main>
+
+
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

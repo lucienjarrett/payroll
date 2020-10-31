@@ -1,0 +1,52 @@
+{% extends 'payroll/base_.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        {{ title }}
+
+        <div class="row">
+            <div class="col-md-8">
+
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'deduction-create'  %}" role="button" class="btn btn-outline-primary">Add New Bank</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive-sm">
+
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in object_list %}
+                    <tr>
+                        <th scope="row">{{ i.id }}</th>
+                        <td>{{ i.name }}</td>
+
+                        <td><a role="button" href="{% url 'deduction-update' i.id %}"
+                                class="btn btn-success btn-sm mt-1 mb-1">
+                                Edit
+                            </a>
+
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        <p>Footer</p>
+    </div>
+</div>
+{% endblock content %}

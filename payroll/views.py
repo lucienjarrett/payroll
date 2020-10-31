@@ -1,21 +1,24 @@
 from django import template
 from django.core.validators import ip_address_validator_map
 from django.db.models.query_utils import Q
-# from django.http import request
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import (CreateView, ListView, UpdateView, FormView)
+
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView
-from .models import (Contact, Employee, Department, JobTitle, Bank, Payment,
-                     PaymentMethod, DutyType, PayPeriod, Salary)
+from .models import (Company, Contact, Deduction, Employee, Department,
+                     JobTitle, Bank, Earning, PaymentMethod, DutyType,
+                     PayPeriod, Salary)
 from django.shortcuts import render, get_object_or_404
 from .forms import SalaryCreateForm, EmployeeCreateForm
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.urls import reverse
+from .filters import EmployeeFilter
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @permission_required('admin.can_add_log_entry')
@@ -48,6 +51,7 @@ def contact_upload(request):
         return render(request, template, context)
 
 
+@permission_required('admin.can_add_log_entry')
 def employee_upload(request):
     template = "payroll/employee_upload.html"
     # data = Employee.objects.all()
@@ -95,6 +99,7 @@ def employee_upload(request):
         return HttpResponseRedirect(reverse("employee-upload"))
 
 
+@permission_required('admin.can_add_log_entry')
 def employee_pay_upload(request):
     template = "payroll/employee_pay_upload.html"
     prompt = {'order': 'Please provide employee_number, hours_worked, rate'}
@@ -132,12 +137,12 @@ def employee_pay_upload(request):
         return HttpResponseRedirect(reverse("employee-pay-upload"))
 
 
-class SalaryListView(ListView):
+class SalaryListView(LoginRequiredMixin, ListView):
     model = Salary
     paginate_by = 15
 
 
-class SalaryCreateView(CreateView):
+class SalaryCreateView(LoginRequiredMixin, CreateView):
     model = Salary
     form_class = SalaryCreateForm
 
@@ -148,111 +153,270 @@ class SalaryCreateView(CreateView):
         return initial
 
 
-class PaymentCreateView(CreateView):
-    model = Payment
+class CompanyCreateView(LoginRequiredMixin, CreateView):
+    model = Company
     fields = '__all__'
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(CompanyCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Create'
+        return context
 
-class PaymentUpdateView(UpdateView):
-    model = Payment
+
+class CompanyListView(LoginRequiredMixin, ListView):
+    model = Company
+
+
+class CompanyUpdateView(LoginRequiredMixin, UpdateView):
+    model = Company
     fields = '__all__'
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(CompanyUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
 
-class PayPeriodCreateView(CreateView):
+
+class EarningCreateView(CreateView):
+    model = Earning
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(EarningCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Create'
+        return context
+
+
+class EarningUpdateView(LoginRequiredMixin, UpdateView):
+    model = Earning
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(EarningUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
+
+
+class EarningListView(LoginRequiredMixin, ListView):
+    model = Earning
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(EarningListView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['title'] = 'Earnings'
+        return context
+
+
+class DeductionCreateView(LoginRequiredMixin, CreateView):
+    model = Deduction
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(DeductionCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Create'
+        context['title'] = 'Deductions'
+        return context
+
+
+class DeductionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Deduction
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(DeductionUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        context['title'] = 'Deductions'
+        return context
+
+
+class DeductionListView(LoginRequiredMixin, ListView):
+    model = Deduction
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(DeductionListView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['title'] = 'Deductions'
+
+        return context
+
+
+class DepartmentListView(LoginRequiredMixin, ListView):
+    model = Department
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(DepartmentListView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['title'] = 'Departments'
+
+        return context
+
+
+class PayPeriodCreateView(LoginRequiredMixin, CreateView):
     model = PayPeriod
     fields = ['name']
 
 
-class PayPeriodUpdateView(UpdateView):
+class PayPeriodUpdateView(LoginRequiredMixin, UpdateView):
     model = PayPeriod
     fields = ['name']
 
 
-class PaymentMethodCreateView(CreateView):
+class PaymentMethodCreateView(LoginRequiredMixin, CreateView):
     model = PaymentMethod
     fields = ['name']
 
 
-class PaymentMethodUpdateView(UpdateView):
+class PaymentMethodUpdateView(LoginRequiredMixin, UpdateView):
     model = PaymentMethod
     fields = ['name']
 
 
-class DutyTypeCreateView(CreateView):
+class DutyTypeCreateView(LoginRequiredMixin, CreateView):
     model = DutyType
     fields = ['name']
 
 
-class DutyTypeUpdateView(UpdateView):
+class DutyTypeUpdateView(LoginRequiredMixin, UpdateView):
     model = DutyType
     fields = ['name']
 
 
-class BankCreateView(CreateView):
+class BankCreateView(LoginRequiredMixin, CreateView):
     model = Bank
     fields = ['name', 'short_code']
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(BankCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
 
-class BankUpdateView(UpdateView):
+
+class BankUpdateView(LoginRequiredMixin, UpdateView):
     model = Bank
     fields = ['name', 'short_code']
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(BankUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
 
-class BankListView(ListView):
+
+class BankListView(LoginRequiredMixin, ListView):
     model = Bank
 
 
-class JobTitleCreateView(CreateView):
+class JobTitleCreateView(LoginRequiredMixin, CreateView):
     model = JobTitle
     fields = ['name']
 
 
-class DepartmentCreateView(CreateView):
+class DepartmentCreateView(LoginRequiredMixin, CreateView):
     model = Department
-    fields = ['name', 'code']
+    fields = ['name', 'code', 'state']
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(DepartmentCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Create'
+        return context
 
 
-class JobTitleUpdateView(UpdateView):
+class JobTitleUpdateView(LoginRequiredMixin, UpdateView):
     model = JobTitle
     fields = ['name']
 
 
 class DepartmentUpdateView(UpdateView):
     model = Department
-    fields = ['name']
+    fields = ['name', 'code', 'state']
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(DepartmentUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
 
 
-class EmployeeCreateView(CreateView):
+class EmployeeCreateView(LoginRequiredMixin, CreateView):
     model = Employee
     form_class = EmployeeCreateForm
     # fields = '__all__'
     # # form_class = EmployeeForm
-    exclude = ['employment_date', 'departure_date', 'classification']
+    exclude = ['departure_date']
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(EmployeeCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Create'
+        return context
 
 
-class EmployeeUpdateView(UpdateView):
+class EmployeeUpdateView(LoginRequiredMixin, UpdateView):
     model = Employee
-    fields = '__all__'
-    exclude = ['employment_date', 'departure_date', 'classification']
+    form_class = EmployeeCreateForm
+    # fields = '__all__'
+    exclude = ['employment_date', 'departure_date']
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(EmployeeUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
 
 
-class EmployeeListView(ListView):
+class EmployeeListView(LoginRequiredMixin, ListView):
     model = Employee
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(EmployeeListView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        employee_list = Employee.objects.all()
+        context['emp_filter'] = EmployeeFilter(self.request.GET,
+                                               queryset=employee_list)
+        return context
 
     # def get_queryset(self):
     #     query = self.request.GET.get('q')
     #     object_list = Employee.objects.filter(
     #         Q(first_name__icontains=query) | Q(last_name__icontains=query))
     #     return object_list
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        filtered_list = EmployeeFilter(self.request.GET, queryset=qs)
+        return filtered_list.qs
 
 
-class EmployeeDeleteView(DeleteView):
+class EmployeeDeleteView(LoginRequiredMixin, DeleteView):
     model = Employee
     success_url = '/employee'
 
 
-class EmployeeDetailView(DetailView):
+class EmployeeDetailView(LoginRequiredMixin, DetailView):
     model = Employee
 
 
@@ -265,13 +429,14 @@ def contact(request):
     return HttpResponse("</h1> Contacts page </h1>")
 
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'payroll/dashboard.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(DashboardView, self).get_context_data(**kwargs)
         # here's the difference:
         context['employees'] = Employee.objects.all().count()
+        context['departments'] = Department.objects.all().count()
 
         return context
 

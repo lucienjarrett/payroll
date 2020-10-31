@@ -6,8 +6,6 @@ https://www.youtube.com/watch?v=rAGjVuKesW0&ab_channel=SuperCoders
 https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication
 https://www.codementor.io/@lakshminp/handling-multiple-forms-on-the-same-page-in-django-fv89t2s3j
 https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Generic_views
-https://help.pythonanywhere.com/pages/DeployExistingDjangoProject
-https://help.pythonanywhere.com/pages/DeployExistingDjangoProject
 https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html
 https://www.geeksforgeeks.org/django-form-field-custom-widgets/?ref=lbp
 https://www.youtube.com/watch?v=JIvJL1HizP4 - Formsets
@@ -19,4 +17,14 @@ https://fontawesome.com/icons/user-minus?style=regular
 https://stackoverflow.com/questions/31412377/non-primary-foreign-keys-in-django
 https://skillset365.com/article/jamaican-payroll-guide#:~:text=Employee's%20NIS%20Contribution%3A%20(Effective%20April,at%202%25%20of%20taxable%20emoluments.
 https://www.youtube.com/watch?v=G-Rct7Na0UQ
+https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html#tempus-dominus-bootstrap-4
+https://simpleisbetterthancomplex.com/tutorial/2016/11/28/how-to-filter-querysets-dynamically.html
+https://medium.com/@royce236/django-and-ms-sql-server-2012-connection-2018-120c54dfc037
+https://django-mssql.readthedocs.io/en/latest/datatypes.html
+http://www.joshuakehn.com/2013/6/23/django-m2m-modelform.html
+https://medium.com/swlh/django-forms-for-many-to-many-fields-d977dec4b024
+
+
+
+
 

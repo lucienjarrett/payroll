@@ -1,20 +1,31 @@
 from django.urls import path
-from .views import (BankCreateView, BankListView, BankUpdateView,
-                    DashboardView, DutyTypeCreateView, DutyTypeUpdateView,
-                    EmployeeCreateView, EmployeeDeleteView, EmployeeDetailView,
-                    EmployeeListView, EmployeeUpdateView, DepartmentCreateView,
-                    DepartmentUpdateView, HelpView, JobTitleCreateView,
-                    JobTitleUpdateView, PayPeriodCreateView,
-                    PayPeriodUpdateView, PaymentCreateView,
-                    PaymentMethodCreateView, PaymentMethodUpdateView,
-                    PaymentUpdateView, SalaryCreateView, SalaryListView)
+from .views import (
+    BankCreateView, BankListView, BankUpdateView, CompanyListView,
+    CompanyUpdateView, DashboardView, DeductionCreateView, DeductionListView,
+    DeductionUpdateView, DepartmentListView, DutyTypeCreateView,
+    DutyTypeUpdateView, EarningListView, EmployeeCreateView,
+    EmployeeDeleteView, EmployeeDetailView, EmployeeListView,
+    EmployeeUpdateView, DepartmentCreateView, DepartmentUpdateView, HelpView,
+    JobTitleCreateView, JobTitleUpdateView, PayPeriodCreateView,
+    PayPeriodUpdateView, EarningCreateView, PaymentMethodCreateView,
+    PaymentMethodUpdateView, EarningUpdateView, SalaryCreateView,
+    SalaryListView, CompanyCreateView)
 from . import views
+# from django_filters.views import FilterView
 
 urlpatterns = [
     path('payroll/', DashboardView.as_view(), name="payroll-dashboard"),
     path('payroll/about/', views.about, name="payroll-about"),
     path('payroll/help/', HelpView.as_view(), name="payroll-help"),
     path('payroll/contact/', views.contact, name="payroll-contact"),
+
+    #Company
+    path('company/new', CompanyCreateView.as_view(), name='company-create'),
+    path('company/<int:pk>/update',
+         CompanyUpdateView.as_view(),
+         name='company-update'),
+    path('company', CompanyListView.as_view(), name="company-list"),
+    #End Company
 
     #Start Employee Routes
     path('employee/new/', EmployeeCreateView.as_view(),
@@ -44,15 +55,28 @@ urlpatterns = [
     path('department/<int:pk>/update/',
          DepartmentUpdateView.as_view(),
          name="department-update"),
+    path('department/', DepartmentListView.as_view(), name='department-list'),
     path('jobtitle/new/', JobTitleCreateView.as_view(),
          name="jobtitle-create"),
     path('jobtitle/<int:pk>/update/',
          JobTitleUpdateView.as_view(),
          name="jobtitle-update"),
+    #Start Banks
     path('bank/new/', BankCreateView.as_view(), name="bank-create"),
     path('bank/<int:pk>/update/', BankUpdateView.as_view(),
          name="bank-update"),
     path('bank/', BankListView.as_view(), name="bank-list"),
+    #End Banks
+
+    #Start Deductions
+    path('dedcution/new/',
+         DeductionCreateView.as_view(),
+         name="deduction-create"),
+    path('deduction/<int:pk>/update/',
+         DeductionUpdateView.as_view(),
+         name="deduction-update"),
+    path('deduction/', DeductionListView.as_view(), name="deduction-list"),
+    #End Deductions
     path('payment-method/new/',
          PaymentMethodCreateView.as_view(),
          name="paymentmethod-create"),
@@ -75,9 +99,13 @@ urlpatterns = [
          PayPeriodCreateView.as_view(),
          name="payperiod-create"),
     path('salary/new/', SalaryCreateView.as_view(), name="salary-create"),
-    path('payment/new/', PaymentCreateView.as_view(), name="payment-create"),
-    path('payment/<int:pk>/update/',
-         PaymentUpdateView.as_view(),
-         name="payment-update"),
+
+    #Earnings Start
+    path('earning/new/', EarningCreateView.as_view(), name="earning-create"),
+    path('earning/<int:pk>/update/',
+         EarningUpdateView.as_view(),
+         name="earning-update"),
+    path('earning/', EarningListView.as_view(), name="earning-list"),
+    #Earnings End
     path('contact_upload/', views.contact_upload, name='upload-contacts'),
 ]

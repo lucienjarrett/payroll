@@ -29,35 +29,46 @@ NIS_RATE = 0.03
 SIX_MIL_PAYE = 0.30
 
 
-class Company(models.Model):
+class CommonInfo(models.Model):
+    name = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    
+    class Meta:
+        abstract = True
+
+
+class Company(CommonInfo):
     name = models.CharField(max_length=80, verbose_name="Company Name")
-    trn = models.PositiveIntegerField(verbose_name="Tax Registration #")
     status = models.BooleanField(default=True, verbose_name="Status")
 
     class Meta:
         db_table = 'companies'
         managed = True
 
+    def get_absolute_url(self):
+        return reverse("company-list")
 
-class Payment(models.Model):
-    name = models.CharField(max_length=30, verbose_name='Taxable Payments')
-    taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
+
+class Deduction(models.Model):
+    name = models.CharField(max_length=100)
+    status = models.BooleanField(default=False, verbose_name="Active?")
+
+    # taxable = models.BooleanField(default=False)
+    # comment = models.CharField(max_length=160)
 
     class Meta:
-        db_table = "payments"
+        db_table = "deductions"
         managed = True
 
     def get_absolute_url(self):
-        return reverse('employee-list')
+        return reverse('deduction-list')
 
 
-class OtherDeduction(models.Model):
-    class Meta:
-        db_table = "other_deduction"
-        managed = True
+class StatutoryDeduction(models.Model):
+    name = models.CharField(max_length=100)
+    rate = models.FloatField()
+    max_threshold = models.FloatField()
 
-    def get_absolute_url(self):
-        return reverse('employee-list')
+    pass
 
 
 class PayPeriod(models.Model):
@@ -119,7 +130,8 @@ class Bank(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=30, verbose_name="Department Name")
-    code = CharField(max_length=5, verbose_name="Department Code")
+    code = models.CharField(max_length=5, verbose_name="Department Code")
+    state = models.BooleanField(default=True, verbose_name="Is Active?")
 
     def __str__(self):
         return self.name
@@ -201,8 +213,11 @@ class Employee(models.Model):
                              default=None,
                              blank=True,
                              null=True)
-    bank_account = models.PositiveIntegerField(
-        verbose_name="Bank Account Number", blank=True, null=True)
+    bank_account = models.CharField(verbose_name="Bank Account Number",
+                                    default=None,
+                                    blank=True,
+                                    null=True,
+                                    max_length=10)
 
     payment_schedule = models.ForeignKey(PayPeriod,
                                          on_delete=models.CASCADE,
@@ -225,6 +240,13 @@ class Employee(models.Model):
                                       blank=True,
                                       default=None)
     is_active = models.BooleanField(default=True, verbose_name='Status')
+    company = models.ForeignKey(Company,
+                                on_delete=models.CASCADE,
+                                blank=True,
+                                null=True)
+
+    # earnings = models.ManyToManyField(Earning)
+    # deductions = models.ManyToManyField(Deduction)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -234,11 +256,6 @@ class Employee(models.Model):
 
     def full_name(self):
         return f'{self.first_name} { self.last_name}'
-
-    @staticmethod
-    def get_employee_id(employee_number):
-        if employee_number == Employee.employee_number:
-            return Employee.id
 
     class Meta:
         db_table = 'employees'
@@ -308,14 +325,14 @@ class Salary(models.Model):
         return net_pay
 
 
-class EmployeePayment(models.Model):
-    employee = models.ForeignKey(Employee,
-                                 on_delete=models.CASCADE,
-                                 verbose_name="Employee")
-    payment = models.ForeignKey(Payment,
-                                on_delete=models.CASCADE,
-                                verbose_name='Other Payments')
-    amount = models.FloatField(verbose_name="Payment Amount", default=0)
+# class EmployeePayment(models.Model):
+#     employee = models.ForeignKey(Employee,
+#                                  on_delete=models.CASCADE,
+#                                  verbose_name="Employee")
+#     payment = models.ForeignKey(Earning,
+#                                 on_delete=models.CASCADE,
+#                                 verbose_name='Other Payments')
+#     amount = models.FloatField(verbose_name="Payment Amount", default=0)
 
 
 class Contact(models.Model):
@@ -334,3 +351,34 @@ class Contact(models.Model):
         class Meta:
             db_table = contacts
             managed = True
+
+
+class Earning(models.Model):
+    name = models.CharField(max_length=30,
+                            verbose_name='Earnings',
+                            unique=True)
+    taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
+
+    # employees = models.ManyToManyField(Employee,
+    #                                    through='EmployeeEarning',
+    #                                    through_fields=("earning", "employee"))
+
+    class Meta:
+        db_table = "earning"
+        managed = True
+
+    def get_absolute_url(self):
+        return reverse('earning-list')
+
+
+class EmployeeEarning(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    earning = models.ForeignKey(Earning, on_delete=models.CASCADE)
+
+    # pay_period = models.DateField(verbose_name="Pay Period",
+    #                               null=True,
+    #                               blank=True,
+    #                               default=None)
+    # recurring = models.BooleanField(default=False)
+    def __str__(self):
+        return f'{self.employee.first_name} {self.earning.name}'

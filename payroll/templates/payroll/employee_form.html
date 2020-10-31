@@ -1,12 +1,12 @@
 {% extends 'payroll/base_.html' %}
-{% load crispy_forms_tags %}
+<!-- {% load crispy_forms_tags %} -->
 
 {% block content %}
 <form action="" method="POST" id="container">
     {% csrf_token %}
 
-    <fieldset class="form-group">
 
+    <fieldset class="form-group">
         <div class="row">
             <div class="col-md-2">
                 {{ form.title |as_crispy_field }}
@@ -42,16 +42,55 @@
             </div>
         </div>
 
-
-
+        <hr>
+        <div class="row">
+            <div class="col-md-3">
+                {{ form.payment|as_crispy_field }}
+            </div>
+            <div class="col-md-5">
+                {{ form.bank|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.bank_account|as_crispy_field }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.rate|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.payment_schedule|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.basic_pay|as_crispy_field }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.employment_date|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.is_active|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.departure_date|as_crispy_field }}
+            </div>
+        </div>
 
 
     </fieldset>
     <div class="form-group">
-        <button class="btn btn-outline-info" type="reset"><i class="fas fa-user-edit"></i>Cancel</button>
-        <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button>
+        <!-- <button class="btn btn-outline-info" type="reset"><i class="fas fa-user-edit"></i>Cancel</button> -->
+        <button class="btn btn-outline-info justify-content-right" type="submit">{{ button }}</button>
     </div>
 </form>
 
+<script>
+    $(function () {
+        $(".datetimepicker").datetimepicker();
+    });
+</script>
 
 {% endblock content %}

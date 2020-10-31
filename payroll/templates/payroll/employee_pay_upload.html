@@ -10,14 +10,20 @@
 {% endfor %}
 {{ prompt }}
 {% else %}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label class="form-label" for=""> Upload a file </label>
-    <input class="form-control" type="file" name="file" id="file">
-    <small>Only accepts csv files. </small>
-    <button class="btn btn-outline-info" type="submit">Upload</button>
-</form>
-<!-- <a href="{% url 'employee-list'  %}">&larr; Go back</a> -->
-{% endif %}
-
+<div class="card mt-0">
+    <div class="card-header">
+        <h5>Upload Hours Worked</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label class="form-label" for=""> Upload a file </label>
+            <input class="form-control" type="file" name="file" id="file">
+            <small>Only accepts csv files. </small>
+            <button class="btn btn-outline-info" type="submit">Upload</button>
+        </form>
+        <!-- <a href="{% url 'employee-list'  %}">&larr; Go back</a> -->
+        {% endif %}
+    </div>
+</div>
 {% endblock content %}

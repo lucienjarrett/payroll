@@ -1,14 +1,15 @@
 {% extends 'payroll/base_.html' %}
-{% load crispy_forms_tags %}
+<!-- {% load crispy_forms_tags %} -->
+{% load widget_tweaks %}
 {% block content %}
 
-
+<!-- {{ emp_filter }} -->
 <div class="card mt-0">
     <div class="card-header">
         <div>
             <h4>Employees</h4>
             <form action="{% url 'employee-list' %}" method="get">
-                <input name="q" type="text" placeholder="Search...">
+                {% render_field emp_filter.form.as_p %}
                 <button class="btn btn-outline-info btn-sm" type="submit">
                     <i class="fas fa-search">
                         </class></i>
@@ -39,6 +40,7 @@
                     <th scope="col">Rate</th>
                     <th scope="col">Department</th>
                     <th scope="col">Job Title</th>
+                    <th scope="col"> Status</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -51,6 +53,15 @@
                     <td>{{ employee.rate }}</td>
                     <td>{{ employee.department.name }}</td>
                     <td>{{ employee.job_title.name }}</td>
+                    {% if employee.is_active %}
+                    <td><span class="badge badge-pill badge-success">active</span></td>
+                    <!-- <td> {{ employee.is_active }}</td> -->
+                    {% else %}
+                    <td><span class="badge badge-pill badge-danger">inactive</span></td>
+                    <!-- <td> {{ employee.is_active }}</td> -->
+                    {% endif %}
+
+
                     <td><a tooltip="Delete" role="button" href="{% url 'employee-update' employee.id %}"
                             class="btn btn-outline-secondary btn-sm"> <i class="fas fa-user-edit"></i>
                         </a>

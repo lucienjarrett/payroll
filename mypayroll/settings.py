@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'payroll.apps.PayrollConfig',
     'users.apps.UsersConfig',
     'crispy_forms',
+    'tempus_dominus',
+    'django_filters',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +133,6 @@ MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = 'payroll-dashboard'
 LOGIN_URL = 'login'
+
+TEMPUS_DOMINUS_LOCALIZE = True
+TEMPUS_DOMINUS_INCLUDE_ASSETS = True
