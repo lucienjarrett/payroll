@@ -31,7 +31,7 @@ SIX_MIL_PAYE = 0.30
 
 class CommonInfo(models.Model):
     name = models.DateTimeField(default=timezone.now, blank=True, null=True)
-    
+
     class Meta:
         abstract = True
 
@@ -130,7 +130,9 @@ class Bank(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=30, verbose_name="Department Name")
-    code = models.CharField(max_length=5, verbose_name="Department Code")
+    code = models.CharField(max_length=5,
+                            verbose_name="Department Code",
+                            unique=True)
     state = models.BooleanField(default=True, verbose_name="Is Active?")
 
     def __str__(self):
@@ -141,7 +143,7 @@ class Department(models.Model):
         managed = True
 
     def get_absolute_url(self):
-        return reverse('employee-list')
+        return reverse('department-list')
 
 
 class JobTitle(models.Model):
@@ -362,6 +364,8 @@ class Earning(models.Model):
     # employees = models.ManyToManyField(Employee,
     #                                    through='EmployeeEarning',
     #                                    through_fields=("earning", "employee"))
+    def __str__(self):
+        return self.name
 
     class Meta:
         db_table = "earning"
@@ -375,10 +379,5 @@ class EmployeeEarning(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     earning = models.ForeignKey(Earning, on_delete=models.CASCADE)
 
-    # pay_period = models.DateField(verbose_name="Pay Period",
-    #                               null=True,
-    #                               blank=True,
-    #                               default=None)
-    # recurring = models.BooleanField(default=False)
     def __str__(self):
         return f'{self.employee.first_name} {self.earning.name}'

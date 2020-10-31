@@ -72,7 +72,8 @@
 </head>
 
 <body>
-     {{ form.media }} <!--//this is for the bootstrap calendar -->
+    {{ form.media }}
+    <!--//this is for the bootstrap calendar -->
     <div class="wrapper">
         <!-- Sidebar  -->
         <nav id="sidebar">
@@ -188,6 +189,13 @@
 
         <!-- Page Content  -->
         <div id="content">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
 
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
@@ -238,13 +246,6 @@
                 </div>
             </nav>
             <div id="main-content">
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
 
                 {% block content %}
 
