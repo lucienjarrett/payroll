@@ -1,4 +1,3 @@
-from django import VERSION
 from django.core.exceptions import ValidationError
 from django.db.models.fields import CharField
 from django.db.models.fields.related import ForeignKey
@@ -10,12 +9,6 @@ from model_utils.fields import StatusField
 from model_utils import Choices
 from django.core.validators import MaxValueValidator, MinValueValidator
 from collections import namedtuple
-# def validate_even(value):
-#     if value % 2 != 0:
-#         raise ValidationError(
-#             _('%(value)s is not an even number'),
-#             params={'value': value},
-#         )
 
 Period = namedtuple('Period', 'Monthly Weekly Fortnightly')
 PAY_PERIOD = Period(12, 48, 26)
@@ -329,16 +322,6 @@ class Salary(models.Model):
         return net_pay
 
 
-# class EmployeePayment(models.Model):
-#     employee = models.ForeignKey(Employee,
-#                                  on_delete=models.CASCADE,
-#                                  verbose_name="Employee")
-#     payment = models.ForeignKey(Earning,
-#                                 on_delete=models.CASCADE,
-#                                 verbose_name='Other Payments')
-#     amount = models.FloatField(verbose_name="Payment Amount", default=0)
-
-
 class Contact(models.Model):
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=60)
@@ -357,29 +340,29 @@ class Contact(models.Model):
             managed = True
 
 
-class Earning(models.Model):
+class Allowance(models.Model):
     name = models.CharField(max_length=30,
-                            verbose_name='Earnings',
+                            verbose_name='Allowances',
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
+    allowances = models.ManyToManyField(Employee, through='EmployeeAllowance')
 
-    # employees = models.ManyToManyField(Employee,
-    #                                    through='EmployeeEarning',
-    #                                    through_fields=("earning", "employee"))
     def __str__(self):
         return self.name
 
     class Meta:
-        db_table = "earning"
+        db_table = "allowance"
         managed = True
 
     def get_absolute_url(self):
-        return reverse('earning-list')
+        return reverse('allowance-list')
 
 
-class EmployeeEarning(models.Model):
+class EmployeeAllowance(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    earning = models.ForeignKey(Earning, on_delete=models.CASCADE)
+    allowance = models.ForeignKey(Allowance,
+                                  on_delete=models.CASCADE,
+                                  null=True)
 
     def __str__(self):
-        return f'{self.employee.first_name} {self.earning.name}'
+        return f'{self.employee.first_name} {self.allowance.name}'

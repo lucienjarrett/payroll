@@ -3,7 +3,7 @@ from django.core import validators
 from django import forms
 from django.forms import TextInput, widgets
 from django.forms.widgets import DateInput
-from .models import Earning, EmployeeEarning, Salary, Employee
+from .models import Salary, Employee
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker

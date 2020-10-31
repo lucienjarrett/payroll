@@ -1,14 +1,14 @@
 from django.urls import path
 from .views import (
+    AllowanceCreateView, AllowanceListView, AllowanceUpdateView,
     BankCreateView, BankListView, BankUpdateView, CompanyListView,
     CompanyUpdateView, DashboardView, DeductionCreateView, DeductionListView,
     DeductionUpdateView, DepartmentListView, DutyTypeCreateView,
-    DutyTypeUpdateView, EarningListView, EmployeeCreateView,
-    EmployeeDeleteView, EmployeeDetailView, EmployeeListView,
-    EmployeeUpdateView, DepartmentCreateView, DepartmentUpdateView, HelpView,
-    JobTitleCreateView, JobTitleUpdateView, PayPeriodCreateView,
-    PayPeriodUpdateView, EarningCreateView, PaymentMethodCreateView,
-    PaymentMethodUpdateView, EarningUpdateView, SalaryCreateView,
+    DutyTypeUpdateView, EmployeeCreateView, EmployeeDeleteView,
+    EmployeeDetailView, EmployeeListView, EmployeeUpdateView,
+    DepartmentCreateView, DepartmentUpdateView, HelpView, JobTitleCreateView,
+    JobTitleUpdateView, PayPeriodCreateView, PayPeriodUpdateView,
+    PaymentMethodCreateView, PaymentMethodUpdateView, SalaryCreateView,
     SalaryListView, CompanyCreateView, SalaryUpdateView)
 from . import views
 # from django_filters.views import FilterView
@@ -109,11 +109,13 @@ urlpatterns = [
     path('salary/new/', SalaryCreateView.as_view(), name="salary-create"),
 
     #Earnings Start
-    path('earning/new/', EarningCreateView.as_view(), name="earning-create"),
-    path('earning/<int:pk>/update/',
-         EarningUpdateView.as_view(),
-         name="earning-update"),
-    path('earning/', EarningListView.as_view(), name="earning-list"),
+    path('allowance/new/',
+         AllowanceCreateView.as_view(),
+         name="allowance-create"),
+    path('allowance/<int:pk>/update/',
+         AllowanceUpdateView.as_view(),
+         name="allowance-update"),
+    path('allowance/', AllowanceListView.as_view(), name="allowance-list"),
     #Earnings End
     path('contact_upload/', views.contact_upload, name='upload-contacts'),
 ]
