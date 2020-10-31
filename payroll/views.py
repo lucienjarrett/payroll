@@ -12,7 +12,7 @@ from .models import (Company, Contact, Deduction, Employee, Department,
                      EmployeeEarning, JobTitle, Bank, Earning, PaymentMethod,
                      DutyType, PayPeriod, Salary)
 from django.shortcuts import render, get_object_or_404
-from .forms import SalaryCreateForm, EmployeeCreateForm, EmployeeBenefitsForm
+from .forms import SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -20,6 +20,8 @@ from django.urls import reverse
 from .filters import EmployeeFilter
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+
+PAGINATE = 10
 
 
 @permission_required('admin.can_add_log_entry')
@@ -138,14 +140,14 @@ def employee_pay_upload(request):
         return HttpResponseRedirect(reverse("employee-pay-upload"))
 
 
-class EmployeeEarningCreateView(CreateView):
-    model = EmployeeEarning
-    form_class = EmployeeBenefitsForm
+# class EmployeeEarningCreateView(CreateView):
+#     model = EmployeeEarning
+#     form_class = EmployeeBenefitsForm
 
 
 class SalaryListView(LoginRequiredMixin, ListView):
     model = Salary
-    paginate_by = 15
+    paginate_by = PAGINATE
 
 
 class SalaryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -158,6 +160,25 @@ class SalaryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         initial['title'] = 'Post Salary'
         initial['rate'] = 286.60
         return initial
+
+
+class SalaryUpdateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Salary
+    form_class = SalaryUpdateForm
+    success_message = "Success!"
+
+    # def get_initial(self, *args, **kwargs):
+    #     initial = super(SalaryCreateView, self).get_initial(**kwargs)
+    #     initial['title'] = 'Post Salary'
+    #     initial['rate'] = 286.60
+    #     return initial
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(SalaryUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
 
 
 class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -175,6 +196,7 @@ class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class CompanyListView(LoginRequiredMixin, ListView):
     model = Company
+    paginate_by = PAGINATE
 
 
 class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -218,13 +240,14 @@ class EarningUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class EarningListView(LoginRequiredMixin, ListView):
     model = Earning
+    paginate_by = PAGINATE
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(EarningListView, self).get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['title'] = 'Earnings'
-        return context
+    # def get_context_data(self, **kwargs):
+    #     # Call the base implementation first to get a context
+    #     context = super(EarningListView, self).get_context_data(**kwargs)
+    #     # Add in a QuerySet of all the books
+    #     context['title'] = 'Earnings'
+    #     return context
 
 
 class DeductionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -269,6 +292,7 @@ class DeductionListView(LoginRequiredMixin, ListView):
 
 class DepartmentListView(LoginRequiredMixin, ListView):
     model = Department
+    paginate_by = PAGINATE
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -314,6 +338,7 @@ class DutyTypeUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 class BankCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Bank
     fields = ['name', 'short_code']
+    success_message = "Bank successfully updated."
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -326,6 +351,7 @@ class BankCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 class BankUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Bank
     fields = ['name', 'short_code']
+    success_message = "Bank successfully updated."
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -337,6 +363,7 @@ class BankUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class BankListView(LoginRequiredMixin, ListView):
     model = Bank
+    paginate_by = PAGINATE
 
 
 class JobTitleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -413,7 +440,7 @@ class EmployeeUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class EmployeeListView(LoginRequiredMixin, ListView):
     model = Employee
-    paginate_by = 10
+    paginate_by = PAGINATE
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -423,16 +450,6 @@ class EmployeeListView(LoginRequiredMixin, ListView):
         context['emp_filter'] = EmployeeFilter(self.request.GET,
                                                queryset=employee_list)
         return context
-
-    # def get_queryset(self):
-    #     query = self.request.GET.get('q')
-    #     object_list = Employee.objects.filter(
-    #         Q(first_name__icontains=query) | Q(last_name__icontains=query))
-    #     return object_list
-    def get_queryset(self):
-        qs = self.model.objects.all()
-        filtered_list = EmployeeFilter(self.request.GET, queryset=qs)
-        return filtered_list.qs
 
 
 class EmployeeDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):

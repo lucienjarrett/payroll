@@ -271,7 +271,9 @@ class Salary(models.Model):
                                  on_delete=models.CASCADE)
     hours_worked = models.FloatField(default=0)
     rate = models.FloatField(default=0)
-    date_posted = models.DateTimeField(default=timezone.now)
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
 
     def __str__(self):
         return self.employee
@@ -279,7 +281,7 @@ class Salary(models.Model):
     class Meta:
         db_table = 'salaries'
         managed = True
-        ordering = ['employee']
+        ordering = ['id']
 
     def get_absolute_url(self):
         return reverse('employee-list')

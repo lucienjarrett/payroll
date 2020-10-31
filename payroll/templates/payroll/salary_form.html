@@ -1,6 +1,6 @@
-{% extends "payroll/base.html" %}
+{% extends "payroll/base_.html" %}
 {% load crispy_forms_tags %}
-{{ form|as_crispy_errors:"bootstrap" }}
+{{ form | as_crispy_errors:"bootstrap" }}
 {% block content %}
 
 <script>
@@ -27,7 +27,6 @@
     function calculate() {
         let salary = document.getElementById("id_hours_worked").value;
         let holiday = document.getElementById("id_holiday_pay").value;
-
         calcSalary(salary, 286.6, holiday)
 
     }
@@ -35,7 +34,7 @@
 
 <form action="" method="POST" id="container">
     {% csrf_token %}
-    {{ object.initial }}
+    {{ form.errors }}
     <fieldset class="form-group">
         <legend class="border-bottom mb-4">Salary</legend>
         <div class="row">
@@ -49,34 +48,18 @@
                 {{ form.hours_worked|as_crispy_field }}
             </div>
             <div class="col-md-6">
-                {{ form.salary|as_crispy_field }}
+                {{ form.rate|as_crispy_field }}
             </div>
-
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                {{ form.holiday_pay|as_crispy_field }}
-            </div>
-            <div class="col-md-6">
-                <!-- {{ form.total_salary|as_crispy_field }} -->
-            </div>
-
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                {{ form.total_salary|as_crispy_field }}
-            </div>
 
 
-        </div>
 
     </fieldset>
     <div class="form-group">
 
         <!-- <button class="btn btn-outline-info" type="reset">Cancel</button> -->
-        <!-- <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button> -->
+        <button class="btn btn-outline-info justify-content-right" type="submit">Submit</button>
     </div>
 </form>
 

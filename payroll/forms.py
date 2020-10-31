@@ -10,11 +10,8 @@ from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 
 
 class SalaryCreateForm(forms.ModelForm):
-    hours_worked = forms.FloatField(widget=forms.TextInput(
-        attrs={'oninput': 'calculate()'}))
-    holiday_pay = forms.FloatField(widget=forms.TextInput(
-        attrs={'oninput': 'calculate()'}))
-    submit = Submit('submit', 'Save Salary')
+    # hours_worked = forms.FloatField(widget=forms.TextInput(
+    #     attrs={'oninput': 'calculate()'}))
 
     class Meta:
         def __init__(self, *args, **kwargs):
@@ -25,8 +22,18 @@ class SalaryCreateForm(forms.ModelForm):
             helper.form_method = 'post'
 
         model = Salary
-        # fields = ['employee', 'hours_worked', 'salary']
         fields = '__all__'
+        exclude = ['date_posted']
+
+
+class SalaryUpdateForm(SalaryCreateForm):
+    class Meta:
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        model = Salary
+        fields = '__all__'
+        exclude = ['date_posted']
 
 
 class EmployeeCreateForm(forms.ModelForm):
@@ -93,9 +100,3 @@ class EmployeeCreateForm(forms.ModelForm):
             'is_active',
             'rate',
         )
-
-
-class EmployeeBenefitsForm(forms.ModelForm):
-    class Meta:
-        model = EmployeeEarning
-        fields = ['employee', 'earning']

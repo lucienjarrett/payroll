@@ -4,12 +4,12 @@ from .views import (
     CompanyUpdateView, DashboardView, DeductionCreateView, DeductionListView,
     DeductionUpdateView, DepartmentListView, DutyTypeCreateView,
     DutyTypeUpdateView, EarningListView, EmployeeCreateView,
-    EmployeeDeleteView, EmployeeDetailView, EmployeeEarningCreateView,
-    EmployeeListView, EmployeeUpdateView, DepartmentCreateView,
-    DepartmentUpdateView, HelpView, JobTitleCreateView, JobTitleUpdateView,
-    PayPeriodCreateView, PayPeriodUpdateView, EarningCreateView,
-    PaymentMethodCreateView, PaymentMethodUpdateView, EarningUpdateView,
-    SalaryCreateView, SalaryListView, CompanyCreateView)
+    EmployeeDeleteView, EmployeeDetailView, EmployeeListView,
+    EmployeeUpdateView, DepartmentCreateView, DepartmentUpdateView, HelpView,
+    JobTitleCreateView, JobTitleUpdateView, PayPeriodCreateView,
+    PayPeriodUpdateView, EarningCreateView, PaymentMethodCreateView,
+    PaymentMethodUpdateView, EarningUpdateView, SalaryCreateView,
+    SalaryListView, CompanyCreateView, SalaryUpdateView)
 from . import views
 # from django_filters.views import FilterView
 
@@ -19,10 +19,10 @@ urlpatterns = [
     path('payroll/about/', views.about, name="payroll-about"),
     path('payroll/help/', HelpView.as_view(), name="payroll-help"),
     path('payroll/contact/', views.contact, name="payroll-contact"),
-    path(
-        'employee_benefit/',
-        EmployeeEarningCreateView.as_view(
-            template_name="payroll/employee_benefit.html")),
+    #     path(
+    #         'employee_benefit/',
+    #         EmployeeEarningCreateView.as_view(
+    #             template_name="payroll/employee_benefit.html")),
     #Company
     path('company/new', CompanyCreateView.as_view(), name='company-create'),
     path('company/<int:pk>/update',
@@ -52,6 +52,10 @@ urlpatterns = [
     #End Employee Routes
     #Salary
     path('salary/', SalaryListView.as_view(), name="salary-list"),
+    path('salary/new', SalaryCreateView.as_view(), name="salary-create"),
+    path('salary/<int:pk>/update',
+         SalaryUpdateView.as_view(),
+         name="salary-update"),
     #End Salary
     path('department/new/',
          DepartmentCreateView.as_view(),
