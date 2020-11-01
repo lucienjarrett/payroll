@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db.models.fields import CharField
 from django.db.models.fields.related import ForeignKey
-from django.db.models.manager import ManagerDescriptor
+# from django.db.models.manager import ManagerDescriptor
 from django.urls import reverse
 from django.utils import timezone
 from django.db import models
@@ -240,6 +240,10 @@ class Employee(models.Model):
                                 blank=True,
                                 null=True)
 
+    allowances = models.ManyToManyField('Allowance',
+                                        related_name='em',
+                                        through='EmployeeAllowance')
+
     # earnings = models.ManyToManyField(Earning)
     # deductions = models.ManyToManyField(Deduction)
 
@@ -345,7 +349,8 @@ class Allowance(models.Model):
                             verbose_name='Allowances',
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
-    allowances = models.ManyToManyField(Employee, through='EmployeeAllowance')
+
+    # allowances = models.ManyToManyField(Employee, through='EmployeeAllowance')
 
     def __str__(self):
         return self.name
@@ -359,10 +364,13 @@ class Allowance(models.Model):
 
 
 class EmployeeAllowance(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employee,
+                                 on_delete=models.CASCADE,
+                                 related_name="employee_allowances")
     allowance = models.ForeignKey(Allowance,
                                   on_delete=models.CASCADE,
-                                  null=True)
+                                  null=True,
+                                  related_name="employee_allowances")
 
     def __str__(self):
         return f'{self.employee.first_name} {self.allowance.name}'

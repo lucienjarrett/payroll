@@ -9,8 +9,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView
 from .models import (Company, Contact, Deduction, Employee, Department,
-                     EmployeeAllowance, JobTitle, Bank, Allowance,
-                     PaymentMethod, DutyType, PayPeriod, Salary)
+                     JobTitle, Bank, Allowance, PaymentMethod, DutyType,
+                     PayPeriod, Salary)
 from django.shortcuts import render, get_object_or_404
 from .forms import SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm
 import csv, io
