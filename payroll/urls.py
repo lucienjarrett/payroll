@@ -11,7 +11,8 @@ from .views import (
     PaymentMethodCreateView, PaymentMethodUpdateView, SalaryCreateView,
     SalaryListView, CompanyCreateView, SalaryUpdateView)
 from . import views
-# from django_filters.views import FilterView
+from django_filters.views import FilterView
+from .filters import EmployeeFilter
 
 urlpatterns = [
     path('', DashboardView.as_view(), name="payroll-dashboard"),

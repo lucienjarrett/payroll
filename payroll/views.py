@@ -20,6 +20,8 @@ from django.urls import reverse
 from .filters import EmployeeFilter
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+# from django.utils.text import slugify
+# from django_filters.views import FilterView
 
 PAGINATE = 10
 
@@ -82,16 +84,14 @@ def employee_upload(request):
                 f'{column[0]} {column[1]} {column[2]} {column[3]} {column[4]} {column[5]}'
             )
 
-            obj, created = Employee.objects.update_or_create(
+            _, created = Employee.objects.update_or_create(
                 first_name=column[0],
                 last_name=column[1],
-                # employee_number=column[2],
-                # nis=column[3],
-                # trn=column[4],
+                employee_number=column[2],
+                nis=column[3],
+                trn=column[4],
                 rate=column[5],
-                defaults={
-                    'employee_number': '12345',
-                })
+            )
 
         context = {}
         messages.success(request, "Success")
@@ -435,14 +435,20 @@ class EmployeeListView(LoginRequiredMixin, ListView):
     model = Employee
     paginate_by = PAGINATE
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(EmployeeListView, self).get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        employee_list = Employee.objects.all()
-        context['emp_filter'] = EmployeeFilter(self.request.GET,
-                                               queryset=employee_list)
-        return context
+    # def get_context_data(self, **kwargs):
+    #     # Call the base implementation first to get a context
+    #     context = super(EmployeeListView, self).get_context_data(**kwargs)
+    #     # Add in a QuerySet of all the books
+    #     employee_list = Employee.objects.all()
+    #     context['filter'] = EmployeeFilter(self.request.GET,
+    #                                        queryset=employee_list)
+    #     return context
+
+    # def get_queryset(self):
+    #     employee_list = self.Employee.objects.all()
+    #     employee_list_filtered = EmployeeFilter(self.request.GET,
+    #                                             queryset=employee_list)
+    #     return employee_list_filtered
 
 
 class EmployeeDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):

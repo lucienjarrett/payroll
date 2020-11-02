@@ -9,6 +9,7 @@ from model_utils.fields import StatusField
 from model_utils import Choices
 from django.core.validators import MaxValueValidator, MinValueValidator
 from collections import namedtuple
+from django.utils.text import slugify
 
 Period = namedtuple('Period', 'Monthly Weekly Fortnightly')
 PAY_PERIOD = Period(12, 48, 26)
@@ -154,12 +155,14 @@ class JobTitle(models.Model):
 
 
 class Employee(models.Model):
+    # slug = models.SlugField(max_length=100, unique=True, blank=True)
     image = models.ImageField(upload_to='images/', default='default.jpg')
     first_name = models.CharField(max_length=60, verbose_name="First Name")
     last_name = models.CharField(max_length=60, verbose_name="Last Name")
     GENDER = [
         ('Mr.', 'Mr.'),
         ('Ms.', 'Ms.'),
+        ('Mrs.', 'Mrs.'),
     ]
     title = models.CharField(choices=GENDER,
                              blank=True,
@@ -241,11 +244,8 @@ class Employee(models.Model):
                                 null=True)
 
     allowances = models.ManyToManyField('Allowance',
-                                        related_name='em',
-                                        through='EmployeeAllowance')
-
-    # earnings = models.ManyToManyField(Earning)
-    # deductions = models.ManyToManyField(Deduction)
+                                        related_name='employees',
+                                        through="EmployeeAllowance")
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -259,7 +259,7 @@ class Employee(models.Model):
     class Meta:
         db_table = 'employees'
         managed = True
-        ordering = ['employee_number']
+        # ordering = ['employee_number']
 
 
 class Salary(models.Model):
@@ -350,8 +350,6 @@ class Allowance(models.Model):
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
 
-    # allowances = models.ManyToManyField(Employee, through='EmployeeAllowance')
-
     def __str__(self):
         return self.name
 
@@ -371,6 +369,35 @@ class EmployeeAllowance(models.Model):
                                   on_delete=models.CASCADE,
                                   null=True,
                                   related_name="employee_allowances")
+    is_recurring = models.BooleanField(default=False)
+    date_from = models.DateField(null=True, blank=True)
+    date_to = models.DateField(null=True, blank=True)
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
 
     def __str__(self):
         return f'{self.employee.first_name} {self.allowance.name}'
+
+
+class TimeSheet(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    date_time_in = models.DateTimeField(blank=True, null=True, default=None)
+    date_time_out = models.DateTimeField(blank=True, null=True, default=None)
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
+    
+
+    class Meta:
+        db_table = 'time_sheets'
+        managed = True
+    @property
+    def hours_worked(self):
+        return self._hours_worked
+    
+    @hours_worked.setter
+    def hours_worked(self, in, out):
+        if out > in:
+            print ("Yay")
+        self._hours_worked = 0

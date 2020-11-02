@@ -8,6 +8,7 @@ django-model-utils==4.0.0
 django-tempus-dominus==5.1.2.13
 django-widget-tweaks==1.4.8
 lml==0.1.0
+model-bakery==1.2.0
 Pillow==8.0.0
 pyexcel==0.6.5
 pyexcel-io==0.6.3

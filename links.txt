@@ -24,6 +24,8 @@ https://django-mssql.readthedocs.io/en/latest/datatypes.html
 http://www.joshuakehn.com/2013/6/23/django-m2m-modelform.html
 https://medium.com/swlh/django-forms-for-many-to-many-fields-d977dec4b024
 https://www.revsys.com/tidbits/tips-using-djangos-manytomanyfield/
+https://gist.github.com/jacobian/827937
+https://github.com/TheDumbfounds/django-testing-tutorial/blob/master/budgetproject/budget/models.py
 
 
 
