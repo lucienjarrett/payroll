@@ -185,12 +185,16 @@ class Employee(models.Model):
                              null=True,
                              blank=True,
                              default=0)
-    department = models.ForeignKey(Department,
-                                   on_delete=models.CASCADE,
-                                   default=None,
-                                   null=True,
-                                   blank=True)
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.CASCADE,
+        default=None,
+        null=True,
+        blank=True,
+        related_name="employees",
+    )
     job_title = models.ForeignKey(JobTitle,
+                                  related_name="employees",
                                   verbose_name="Job Title",
                                   on_delete=models.CASCADE,
                                   default=None,
@@ -204,24 +208,31 @@ class Employee(models.Model):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
+        related_name="employees",
     )
-    bank = models.ForeignKey(Bank,
-                             verbose_name="Banks With",
-                             on_delete=models.CASCADE,
-                             default=None,
-                             blank=True,
-                             null=True)
+    bank = models.ForeignKey(
+        Bank,
+        verbose_name="Banks With",
+        on_delete=models.CASCADE,
+        default=None,
+        blank=True,
+        null=True,
+        related_name="employees",
+    )
     bank_account = models.CharField(verbose_name="Bank Account Number",
                                     default=None,
                                     blank=True,
                                     null=True,
                                     max_length=10)
 
-    payment_schedule = models.ForeignKey(PayPeriod,
-                                         on_delete=models.CASCADE,
-                                         blank=True,
-                                         null=True,
-                                         verbose_name="Pay Cycle")
+    payment_schedule = models.ForeignKey(
+        PayPeriod,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        verbose_name="Pay Cycle",
+        related_name="employees",
+    )
     basic_pay = models.FloatField(
         verbose_name="Basic Pay",
         default=0,
@@ -238,10 +249,13 @@ class Employee(models.Model):
                                       blank=True,
                                       default=None)
     is_active = models.BooleanField(default=True, verbose_name='Status')
-    company = models.ForeignKey(Company,
-                                on_delete=models.CASCADE,
-                                blank=True,
-                                null=True)
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="employees",
+    )
 
     allowances = models.ManyToManyField('Allowance',
                                         related_name='employees',
@@ -349,6 +363,8 @@ class Allowance(models.Model):
                             verbose_name='Allowances',
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
+    created_at = models.DateTimeField(editable=False)
+    modified_at = models.DateTimeField()
 
     def __str__(self):
         return self.name
@@ -359,6 +375,13 @@ class Allowance(models.Model):
 
     def get_absolute_url(self):
         return reverse('allowance-list')
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created_at = timezone.now()
+            self.modified_at = timezone.now()
+        return super(Allowance, self).save(*args, **kwargs)
 
 
 class EmployeeAllowance(models.Model):
@@ -387,17 +410,7 @@ class TimeSheet(models.Model):
     date_posted = models.DateTimeField(default=timezone.now,
                                        blank=True,
                                        null=True)
-    
 
     class Meta:
         db_table = 'time_sheets'
         managed = True
-    @property
-    def hours_worked(self):
-        return self._hours_worked
-    
-    @hours_worked.setter
-    def hours_worked(self, in, out):
-        if out > in:
-            print ("Yay")
-        self._hours_worked = 0

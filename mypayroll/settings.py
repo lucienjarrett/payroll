@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'tempus_dominus',
     'django_filters',
     'widget_tweaks',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,4 @@ LOGIN_URL = 'login'
 
 TEMPUS_DOMINUS_LOCALIZE = True
 TEMPUS_DOMINUS_INCLUDE_ASSETS = True
+IMPORT_EXPORT_USE_TRANSACTIONS = True

@@ -22,11 +22,61 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 # from django.utils.text import slugify
 # from django_filters.views import FilterView
+from .resources import EmployeeResource  #import export csv
+from tablib import Dataset
 
 PAGINATE = 10
 
 
+def export_csv(request):
+    employee_resource = EmployeeResource()
+    dataset = employee_resource.export()
+    response = HttpResponse(dataset.csv, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="employees.csv"'
+    return response
+
+
+def export_xls(request):
+    employee_resource = EmployeeResource()
+    dataset = employee_resource.export()
+    response = HttpResponse(dataset.xls,
+                            content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="employees.xls"'
+    return response
+
+
 @permission_required('admin.can_add_log_entry')
+def simple_upload(request):
+    template = 'payroll/simple_upload.html'
+    prompt = {
+        'order':
+        'Order of csv should be first_name, last_name, email, ip_address, message',
+    }
+    if request.method == "GET":
+        return render(request, template, prompt)
+
+    if request.method == 'POST':
+
+        employee_resource = EmployeeResource()
+        dataset = Dataset()
+        new_employees = request.FILES['myfile']
+
+        imported_data = dataset.load(new_employees.read().decode('UTF-8'),
+                                     format='csv')
+
+        result = employee_resource.import_data(
+            dataset, dry_run=True)  # Test the data import
+
+        for r in result:
+            print(result[r])
+
+        if not result.has_errors():
+            employee_resource.import_data(dataset,
+                                          dry_run=False)  # Actually import now
+
+    return render(request, template)
+
+
 def contact_upload(request):
     template = "payroll/contact_upload.html"
     contacts = Contact.objects.all()

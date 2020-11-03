@@ -49,6 +49,9 @@ urlpatterns = [
     path('employee_pay_upload/',
          views.employee_pay_upload,
          name="employee-pay-upload"),
+    path('employee_simple_upload/',
+         views.simple_upload,
+         name="employee-simple-upload"),
 
     #End Employee Routes
     #Salary
