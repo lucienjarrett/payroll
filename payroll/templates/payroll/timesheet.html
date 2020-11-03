@@ -1,0 +1,41 @@
+{% extends "payroll/base_.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+
+<script>
+    function calculate() {
+        let time_in = new Date(document.getElementById("id_date_time_from").value);
+        let time_out = new Date(document.getElementById("id_date_time_to").value);
+        const delta = Math.abs(time_out - time_out) / 1000;
+        const total_hours = Math.floor(delta / 3600)
+
+        console.log(total_hours)
+
+
+    }
+</script>
+<div class="card mt-1">
+    <div class="card-header">
+        <h5> Timesheet </h5>
+    </div>
+    <div class="card-body">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <!-- {{ form |crispy }} -->
+
+            {{ form.employee |as_crispy_field }}
+            {{ form.date_time_from |as_crispy_field }}
+            {{ form.date_time_to |as_crispy_field }}
+            <button class="btn btn-outline-info mr-auto" type="submit">Submit</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock content %}
+
+
+{

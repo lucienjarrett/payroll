@@ -12,7 +12,7 @@ from .models import (Company, Contact, Deduction, Employee, Department,
                      JobTitle, Bank, Allowance, PaymentMethod, DutyType,
                      PayPeriod, Salary)
 from django.shortcuts import render, get_object_or_404
-from .forms import SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm
+from .forms import SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm, TimeSheetForm
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -26,6 +26,11 @@ from .resources import EmployeeResource  #import export csv
 from tablib import Dataset
 
 PAGINATE = 10
+
+
+class TimeSheetView(FormView):
+    form_class = TimeSheetForm
+    template_name = 'payroll/timesheet.html'
 
 
 def export_csv(request):

@@ -9,7 +9,7 @@ from .views import (
     DepartmentCreateView, DepartmentUpdateView, HelpView, JobTitleCreateView,
     JobTitleUpdateView, PayPeriodCreateView, PayPeriodUpdateView,
     PaymentMethodCreateView, PaymentMethodUpdateView, SalaryCreateView,
-    SalaryListView, CompanyCreateView, SalaryUpdateView)
+    SalaryListView, CompanyCreateView, SalaryUpdateView, TimeSheetView)
 from . import views
 from django_filters.views import FilterView
 from .filters import EmployeeFilter
@@ -17,6 +17,7 @@ from .filters import EmployeeFilter
 urlpatterns = [
     path('', DashboardView.as_view(), name="payroll-dashboard"),
     path('payroll/', DashboardView.as_view(), name="payroll-dashboard"),
+    path('payroll/timesheet/', TimeSheetView.as_view(), name="timesheet"),
     path('payroll/about/', views.about, name="payroll-about"),
     path('payroll/help/', HelpView.as_view(), name="payroll-help"),
     path('payroll/contact/', views.contact, name="payroll-contact"),

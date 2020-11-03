@@ -363,8 +363,8 @@ class Allowance(models.Model):
                             verbose_name='Allowances',
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
-    created_at = models.DateTimeField(editable=False)
-    modified_at = models.DateTimeField()
+    created_at = models.DateTimeField(editable=False, null=True, blank=True)
+    modified_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
