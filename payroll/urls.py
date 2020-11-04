@@ -3,10 +3,11 @@ from .views import (
     AllowanceCreateView, AllowanceListView, AllowanceUpdateView,
     BankCreateView, BankListView, BankUpdateView, CompanyListView,
     CompanyUpdateView, DashboardView, DeductionCreateView, DeductionListView,
-    DeductionUpdateView, DepartmentListView, DutyTypeCreateView,
-    DutyTypeUpdateView, EmployeeCreateView, EmployeeDeleteView,
-    EmployeeDetailView, EmployeeListView, EmployeeUpdateView,
-    DepartmentCreateView, DepartmentUpdateView, HelpView, JobTitleCreateView,
+    DeductionUpdateView, DepartmentDeleteView, DepartmentListView,
+    DutyTypeCreateView, DutyTypeUpdateView, EmployeeCreateView,
+    EmployeeDeleteView, EmployeeDetailView, EmployeeListView,
+    EmployeeUpdateView, DepartmentCreateView, DepartmentUpdateView, HelpView,
+    JobTitleCreateView, JobTitleDeleteView, JobTitleListView,
     JobTitleUpdateView, PayPeriodCreateView, PayPeriodUpdateView,
     PaymentMethodCreateView, PaymentMethodUpdateView, SalaryCreateView,
     SalaryListView, CompanyCreateView, SalaryUpdateView, TimeSheetView)
@@ -62,6 +63,7 @@ urlpatterns = [
          SalaryUpdateView.as_view(),
          name="salary-update"),
     #End Salary
+    #Department
     path('department/new/',
          DepartmentCreateView.as_view(),
          name="department-create"),
@@ -69,11 +71,21 @@ urlpatterns = [
          DepartmentUpdateView.as_view(),
          name="department-update"),
     path('department/', DepartmentListView.as_view(), name='department-list'),
+    path('department-delete/<int:pk>/delete/',
+         DepartmentDeleteView.as_view(),
+         name="department-delete"),
+    #End department
+    #Jobtitle
     path('jobtitle/new/', JobTitleCreateView.as_view(),
          name="jobtitle-create"),
     path('jobtitle/<int:pk>/update/',
          JobTitleUpdateView.as_view(),
          name="jobtitle-update"),
+    path('jobtitle/', JobTitleListView.as_view(), name="jobtitle-list"),
+    path('jobtitle/<int:pk>/delete',
+         JobTitleDeleteView.as_view(),
+         name="jobtitle-delete"),
+    #end Jobtitle
     #Start Banks
     path('bank/new/', BankCreateView.as_view(), name="bank-create"),
     path('bank/<int:pk>/update/', BankUpdateView.as_view(),

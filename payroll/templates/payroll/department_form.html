@@ -12,12 +12,10 @@
             {% csrf_token %}
             {{ form |crispy }}
             <button class="btn btn-outline-info mr-auto" type="submit">{{ button }}</button>
-
-
         </form>
     </div>
     <div class="card-footer">
-        &larr; <a href="{% url 'department-list' %}"> Go to list..</a>
+        &larr; <a href="{% url 'department-list' %}"> Go back</a>
     </div>
 
 </div>

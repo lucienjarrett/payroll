@@ -103,17 +103,38 @@
                                 d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z">
                             </path>
                         </svg><!-- <i class="fas fa-copy"></i> -->
-                        Employees
+                        Setup Admin
                     </a>
                     <ul class="collapse list-unstyled" id="pageSubmenu">
                         <li>
-                            <a href="{% url 'salary-list' %}">Page 1</a>
+                            <a href="{% url 'employee-list' %}">Employees</a>
                         </li>
                         <li>
-                            <a href="#">Page 2</a>
+                            <a href="{% url 'department-list' %}">Departments</a>
                         </li>
                         <li>
-                            <a href="#">Page 3</a>
+                            <a href="{% url 'bank-list' %}">Banks</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'company-list' %}">Company</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'allowance-list' %}">Allowances</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'deduction-list' %}">Deductions</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'jobtitle-list' %}">Job Titles</a>
+                        </li>
+                        <li>
+                            <a href="#">Payment Methods</a>
+                        </li>
+                        <li>
+                            <a href="#">Payment Periods</a>
                         </li>
                     </ul>
                 </li>
@@ -138,6 +159,7 @@
                         <li>
                             <a href="{% url 'bank-list' %}">Banks</a>
                         </li>
+
                     </ul>
                 </li>
 

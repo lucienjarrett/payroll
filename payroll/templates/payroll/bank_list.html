@@ -3,15 +3,17 @@
 {% block content %}
 
 <div class="card">
-    <div class="card-header">
-        Banks
-
+    <div class="card-header container-fluid">
+        {{ title }}
         <div class="row">
-            <div class="col-md-8">
-
+            <div class="col-md-10">
+                <!-- <h3 class="w-75 p-3">{{categorie.name}}</h3> -->
             </div>
-            <div class="col-md-4">
-                <a href="{% url 'bank-create'  %}" role="button" class="btn btn-outline-primary">Add New Bank</a>
+            <div class="col-md-2 float-right">
+                <!-- <a href=" {% url 'employee-upload'  %}" role="button" class="btn btn-outline-secondary btn-sm"><i
+                        class="fas fa-upload"></i></a> -->
+
+                <a href=" {% url 'bank-create'  %}" class="btn btn-outline-info btn-sm"><i class="fas fa-plus"></i></a>
             </div>
         </div>
     </div>
@@ -31,12 +33,13 @@
                     <tr>
                         <th scope="row">{{ bank.id }}</th>
                         <td>{{ bank.name }}</td>
-
-                        <td><a role="button" href="{% url 'bank-update' bank.id %}"
-                                class="btn btn-success btn-sm mt-1 mb-1">
-                                Edit
+                        <td>
+                            <a tooltip="Delete" role="button" href="{% url 'bank-update' bank.id %}"
+                                class="btn btn-outline-secondary btn-sm"> <i class="fas fa-user-edit"></i>
                             </a>
-
+                            <a class="btn btn-outline-danger btn-sm" href="{% url 'bank-delete' bank.id  %}"><i
+                                    class="fas fa-user-minus"></i>
+                            </a>
 
                         </td>
                     </tr>

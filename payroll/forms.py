@@ -153,4 +153,5 @@ class TimeSheetForm(forms.Form):
     employee = forms.CharField()
     date_time_from = forms.DateTimeField(widget=DateTimePicker(
         attrs={'oninput': 'calculate()'}))
-    date_time_to = forms.DateTimeField(widget=DateTimePicker(attrs={'oninput': 'calculate()'}))
+    date_time_to = forms.DateTimeField(widget=DateTimePicker(
+        attrs={'oninput': 'calculate()'}))

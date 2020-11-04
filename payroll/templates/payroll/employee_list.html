@@ -67,7 +67,8 @@
                     {% endif %}
 
 
-                    <td><a tooltip="Delete" role="button" href="{% url 'employee-update' employee.id %}"
+                    <td>
+                        <a tooltip="Delete" role="button" href="{% url 'employee-update' employee.id %}"
                             class="btn btn-outline-secondary btn-sm"> <i class="fas fa-user-edit"></i>
                         </a>
                         <a class="btn btn-outline-danger btn-sm" href="{% url 'employee-delete' employee.id  %}"><i

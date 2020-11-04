@@ -27,6 +27,8 @@ https://www.revsys.com/tidbits/tips-using-djangos-manytomanyfield/
 https://gist.github.com/jacobian/827937
 https://github.com/TheDumbfounds/django-testing-tutorial/blob/master/budgetproject/budget/models.py
 https://django-import-export.readthedocs.io/en/latest/getting_started.html#exporting-data
+Master/Detail - https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6
+
 
 
 

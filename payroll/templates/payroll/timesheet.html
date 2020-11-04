@@ -7,12 +7,45 @@
 
 <script>
     function calculate() {
-        let time_in = new Date(document.getElementById("id_date_time_from").value);
-        let time_out = new Date(document.getElementById("id_date_time_to").value);
-        const delta = Math.abs(time_out - time_out) / 1000;
-        const total_hours = Math.floor(delta / 3600)
+        let date_now = new Date(document.getElementById("id_date_time_from").value);
+        let date_future = new Date(document.getElementById("id_date_time_to").value);
 
-        console.log(total_hours)
+
+        function timeDiffCalc(dateFuture, dateNow) {
+            let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
+
+            // calculate days
+            //const days = Math.floor(diffInMilliSeconds / 86400);
+            //diffInMilliSeconds -= days * 86400;
+            //console.log('calculated days', days);
+
+            // calculate hours
+            const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
+            diffInMilliSeconds -= hours * 3600;
+            console.log('calculated hours', hours);
+
+            // calculate minutes
+            //const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+            //diffInMilliSeconds -= minutes * 60;
+            //console.log('minutes', minutes);
+
+            let difference = '';
+            if (days > 0) {
+                difference += (days === 1) ? `${days} day, ` : `${days} days, `;
+            }
+
+            difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours} hours, `;
+
+            //difference += (minutes === 0 || hours === 1) ? `${minutes} minutes` : `${minutes} minutes`;
+            //document.getElementById("div_id_hours_worked").value = difference;
+            return difference;
+
+            //div_id_hours_worked
+
+        }
+        //document.getElementById("div_id_hours_worked").value = timeDiffCalc(date_future, date_now);
+        console.log(timeDiffCalc(date_future, date_now));
+
 
 
     }
@@ -29,6 +62,7 @@
             {{ form.employee |as_crispy_field }}
             {{ form.date_time_from |as_crispy_field }}
             {{ form.date_time_to |as_crispy_field }}
+
             <button class="btn btn-outline-info mr-auto" type="submit">Submit</button>
         </form>
     </div>

@@ -347,7 +347,6 @@ class DepartmentListView(LoginRequiredMixin, ListView):
         context = super(DepartmentListView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['title'] = 'Departments'
-
         return context
 
 
@@ -413,10 +412,56 @@ class BankListView(LoginRequiredMixin, ListView):
     model = Bank
     paginate_by = PAGINATE
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(BankListView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['title'] = 'Banks'
+        return context
+
 
 class JobTitleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = JobTitle
     fields = ['name']
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(JobTitleCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Create'
+        return context
+
+
+class JobTitleUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = JobTitle
+    fields = ['name']
+    success_message = "Job title updated successfully.."
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(JobTitleUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        return context
+
+
+class JobTitleListView(LoginRequiredMixin, ListView):
+    model = JobTitle
+    paginate_by = PAGINATE
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(JobTitleListView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['title'] = 'Job Titles'
+
+        return context
+
+
+class JobTitleDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = JobTitle
+    success_url = '/jobtitle'
+    success_message = "Deleted successfully.."
 
 
 class DepartmentCreateView(LoginRequiredMixin, SuccessMessageMixin,
@@ -433,10 +478,11 @@ class DepartmentCreateView(LoginRequiredMixin, SuccessMessageMixin,
         return context
 
 
-class JobTitleUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = JobTitle
-    fields = ['name']
-    success_message = "Job title updated successfully.."
+class DepartmentDeleteView(LoginRequiredMixin, SuccessMessageMixin,
+                           DeleteView):
+    model = Department
+    success_url = '/department'
+    success_message = "Deleted successfully.."
 
 
 class DepartmentUpdateView(LoginRequiredMixin, SuccessMessageMixin,

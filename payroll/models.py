@@ -62,8 +62,6 @@ class StatutoryDeduction(models.Model):
     rate = models.FloatField()
     max_threshold = models.FloatField()
 
-    pass
-
 
 class PayPeriod(models.Model):
     name = models.CharField(verbose_name="Pay Period", max_length=30)
@@ -348,14 +346,11 @@ class Contact(models.Model):
     message = models.TextField()
 
     def __str__(self):
-        """
-        docstring
-        """
         return f'{self.first_name} {self.last_name}'
 
-        class Meta:
-            db_table = contacts
-            managed = True
+    class Meta:
+        db_table = "contacts"
+        managed = True
 
 
 class Allowance(models.Model):
@@ -363,8 +358,9 @@ class Allowance(models.Model):
                             verbose_name='Allowances',
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
-    created_at = models.DateTimeField(editable=False, null=True, blank=True)
-    modified_at = models.DateTimeField(null=True, blank=True)
+
+    # created_at = models.DateTimeField(editable=False, null=True, blank=True)
+    # modified_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -376,12 +372,12 @@ class Allowance(models.Model):
     def get_absolute_url(self):
         return reverse('allowance-list')
 
-    def save(self, *args, **kwargs):
-        ''' On save, update timestamps '''
-        if not self.id:
-            self.created_at = timezone.now()
-            self.modified_at = timezone.now()
-        return super(Allowance, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     ''' On save, update timestamps '''
+    #     if not self.id:
+    #         self.created_at = timezone.now()
+    #         self.modified_at = timezone.now()
+    #     return super(Allowance, self).save(*args, **kwargs)
 
 
 class EmployeeAllowance(models.Model):
@@ -395,22 +391,44 @@ class EmployeeAllowance(models.Model):
     is_recurring = models.BooleanField(default=False)
     date_from = models.DateField(null=True, blank=True)
     date_to = models.DateField(null=True, blank=True)
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
+
+    # date_posted = models.DateTimeField(default=timezone.now,
+    #                                    blank=True,
+    #                                    null=True)
 
     def __str__(self):
         return f'{self.employee.first_name} {self.allowance.name}'
 
 
-class TimeSheet(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    date_time_in = models.DateTimeField(blank=True, null=True, default=None)
-    date_time_out = models.DateTimeField(blank=True, null=True, default=None)
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
+# class TimesheetHeader(models.Model):
+#     customer = models.CharField(verbose_name='Customer',
+#                                 blank=True,
+#                                 null=True,
+#                                 max_length=100,
+#                                 default=None)
 
-    class Meta:
-        db_table = 'time_sheets'
-        managed = True
+#     class Meta:
+#         db_table = 'time_sheet_header'
+#         managed = True
+
+# class TimeSheetDetail(models.Model):
+#     # employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+#     time_sheet_header = models.ForeignKey(TimesheetHeader,
+#                                           related_name="time_sheet_header",
+#                                           on_delete=models.CASCADE,
+#                                           default=None)
+
+#     # date_time_in = models.DateTimeField(default=timezone.now,
+#     #                                     blank=True,
+#     #                                     null=True)
+#     # date_time_out = models.DateTimeField(default=timezone.now,
+#     #                                      blank=True,
+#     #                                      null=True)
+#     # date_posted = models.DateTimeField(default=timezone.now,
+#     #                                    blank=True,
+#     #                                    null=True)
+#     name = models.CharField(max_length=100, default=None)
+
+#     class Meta:
+#         db_table = 'time_sheet_detail'
+#         managed = True
