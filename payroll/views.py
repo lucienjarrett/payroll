@@ -12,7 +12,8 @@ from .models import (Company, Contact, Deduction, Employee, Department,
                      JobTitle, Bank, Allowance, PaymentMethod, DutyType,
                      PayPeriod, Salary)
 from django.shortcuts import render, get_object_or_404
-from .forms import SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm, TimeSheetForm
+from .forms import (SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm,
+                    TimeSheetForm)
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required

@@ -152,8 +152,10 @@ class JobTitle(models.Model):
         return reverse('employee-list')
 
 
+#add choice list for weekly, forthnightly and monthly here instead
+#  of pulling from a table
 class Employee(models.Model):
-    # slug = models.SlugField(max_length=100, unique=True, blank=True)
+
     image = models.ImageField(upload_to='images/', default='default.jpg')
     first_name = models.CharField(max_length=60, verbose_name="First Name")
     last_name = models.CharField(max_length=60, verbose_name="Last Name")
@@ -275,6 +277,14 @@ class Employee(models.Model):
 
 
 class Salary(models.Model):
+    PAY_THRESHOLD = 1500096 / PAY_PERIOD.Fortnightly
+    MAX_NIS = 45000 / PAY_PERIOD.Fortnightly
+    NHT_RATE = 0.02
+    ED_TAX_RATE = 0.0225
+    PAYE_RATE = 0.25
+    NIS_RATE = 0.03
+    SIX_MIL_PAYE = 0.30
+
     employee = models.ForeignKey(Employee,
                                  verbose_name="Employee",
                                  on_delete=models.CASCADE)
@@ -284,13 +294,19 @@ class Salary(models.Model):
                                        blank=True,
                                        null=True)
 
-    def __str__(self):
-        return self.employee
-
     class Meta:
         db_table = 'salaries'
         managed = True
         ordering = ['id']
+
+    def __str__(self):
+        return self.employee
+
+    def pay_thresold(self):
+        pass
+
+    def max_nis(self):
+        pass
 
     def get_absolute_url(self):
         return reverse('employee-list')
@@ -299,16 +315,15 @@ class Salary(models.Model):
         return self.rate * self.hours_worked
 
     def calculate_nht(self):
-        return self.calculate_base_salary() * NHT_RATE
+        return self.calculate_base_salary() * self.NHT_RATE
 
     def calculate_ed_tax(self):
-        #(GrossSalary – MaximumNIS) * EDTAXRate
         return (self.calculate_base_salary() -
-                self.calculate_nis()) * ED_TAX_RATE
+                self.calculate_nis()) * self.ED_TAX_RATE
 
     def calculate_nis(self):
-        if ((self.calculate_base_salary() * NIS_RATE) < MAX_NIS):
-            return self.calculate_base_salary() * NIS_RATE
+        if ((self.calculate_base_salary() * self.NIS_RATE) < MAX_NIS):
+            return self.calculate_base_salary() * self.NIS_RATE
         else:
             return MAX_NIS
 
@@ -319,7 +334,7 @@ class Salary(models.Model):
                           PAY_THRESHOLD)
             return income_tax
         if ((self.calculate_base_salary() - self.calculate_nis() -
-             PAY_THRESHOLD) * PAYE_RATE) > 0:
+             PAY_THRESHOLD) * self.PAYE_RATE) > 0:
             income_tax = (self.calculate_base_salary() - self.calculate_nis())
             return income_tax
         else:
@@ -371,13 +386,6 @@ class Allowance(models.Model):
 
     def get_absolute_url(self):
         return reverse('allowance-list')
-
-    # def save(self, *args, **kwargs):
-    #     ''' On save, update timestamps '''
-    #     if not self.id:
-    #         self.created_at = timezone.now()
-    #         self.modified_at = timezone.now()
-    #     return super(Allowance, self).save(*args, **kwargs)
 
 
 class EmployeeAllowance(models.Model):

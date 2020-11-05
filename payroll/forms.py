@@ -102,7 +102,7 @@ class EmployeeCreateForm(forms.ModelForm):
         )
 
 
-# class EmployeeForm(forms.ModelForm):
+# class NewEmployeeForm(forms.ModelForm):
 #     class Meta:
 #         model = Employee
 #         fields = ()
@@ -129,7 +129,6 @@ class EmployeeCreateForm(forms.ModelForm):
 #     def save(self, commit=True):
 #         # Get the unsave Pizza instance
 #         instance = forms.ModelForm.save(self, False)
-
 #         # Prepare a 'save_m2m' method for the form,
 #         old_save_m2m = self.save_m2m
 
