@@ -110,6 +110,7 @@ class PaymentMethod(models.Model):
 class Bank(models.Model):
     name = models.CharField(max_length=100, verbose_name='Bank name')
     short_code = models.CharField(max_length=10, verbose_name="Short code")
+    transit_no = models.PositiveIntegerField()
 
     def __str__(self):
         return self.name
@@ -267,10 +268,6 @@ class Employee(models.Model):
         null=True,
         related_name="employees",
     )
-
-    # allowances = models.ManyToManyField('Allowance',
-    #                                     related_name='employees',
-    #                                     through="EmployeeAllowance")
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
