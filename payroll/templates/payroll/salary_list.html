@@ -35,7 +35,7 @@
                     <th scope="col">ED TAX</th>
                     <th scope="col">Income Tax</th>
                     <th scope="col">Net Pay</th>
-                    <!-- <th scope="col"> Actions</th> -->
+                    <th scope="col"> Actions</th>
 
                 </tr>
             </thead>
@@ -54,8 +54,39 @@
                     <td> {{ sal.calculate_ed_tax|floatformat }}</td>
                     <td>{{ sal.calculate_income_tax|floatformat}}</td>
                     <td>{{ sal.calculate_net_pay|floatformat}}</td>
-                    <!-- <td> <a href="#" role="button" class="btn btn-secondary">Pay</a> </td> -->
+                    <td> <a data-toggle="modal" data-target="#updateModal{{ sal.id }}" tooltip="Delete" role="button"
+                            href="{% url 'salary-update' sal.id %}" class="btn btn-outline-secondary btn-sm"> <i
+                                class="fas fa-user-edit"></i>
+                        </a>
+
+                    </td>
+
+
+
                 </tr>
+
+                <div class="modal fade" id="updateModal{{sal.id}}" tabindex="-1" role="dialog"
+                    aria-labelledby="updateModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel">
+                                    {{ sal.employee.full_name }}
+                                </h5>
+
+                                <form action="">
+                                    {{ form }}
+                                </form>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
 
             </tbody>

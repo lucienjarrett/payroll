@@ -4,18 +4,6 @@
 {% block content %}
 
 <script>
-    const PAYE = .25;
-    const NIS = .025;
-    const NHT = 0.02;
-    const EDTAX = 0.0225;
-    const THRESHOLD = 557232;
-    const NIS_LIMIT = 37500
-    const MONTHS_IN_YEAR = 12;
-    const WEEKS_IN_YEAR = 52
-
-
-
-
     calcSalary = (hours, entry = 286.6, holiday) => {
         total = hours * entry;
         document.getElementById("id_salary").value = total.toFixed(2);
@@ -35,6 +23,7 @@
 <form action="" method="POST" id="container">
     {% csrf_token %}
     {{ form.errors }}
+
     <fieldset class="form-group">
         <legend class="border-bottom mb-4">Salary</legend>
         <div class="row">

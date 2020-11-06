@@ -30,6 +30,12 @@ https://django-import-export.readthedocs.io/en/latest/getting_started.html#expor
 Master/Detail - https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6
 https://stackoverflow.com/questions/12224442/class-based-views-for-m2m-relationship-with-intermediate-model
 https://www.toptal.com/django/django-top-10-mistakes
+https://django-jazzmin.readthedocs.io/configuration/
+https://stackoverflow.com/questions/49905489/django-how-to-perform-arithmetic-operations-in-a-class-in-models-py
+https://www.agiliq.com/blog/2010/01/doing-things-with-django-models-aka-django-models/
+https://dmorgan.info/posts/django-views-bootstrap-modals/
+
+
 
 
 

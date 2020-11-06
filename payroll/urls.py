@@ -8,9 +8,9 @@ from .views import (
     EmployeeDeleteView, EmployeeDetailView, EmployeeListView,
     EmployeeUpdateView, DepartmentCreateView, DepartmentUpdateView, HelpView,
     JobTitleCreateView, JobTitleDeleteView, JobTitleListView,
-    JobTitleUpdateView, PayPeriodCreateView, PayPeriodUpdateView,
-    PaymentMethodCreateView, PaymentMethodUpdateView, SalaryCreateView,
-    SalaryListView, CompanyCreateView, SalaryUpdateView, TimeSheetView)
+    JobTitleUpdateView, PaymentMethodCreateView, PaymentMethodUpdateView,
+    ReportView, SalaryCreateView, SalaryListView, CompanyCreateView,
+    SalaryUpdateView, TimeSheetView)
 from . import views
 from django_filters.views import FilterView
 from .filters import EmployeeFilter
@@ -21,11 +21,8 @@ urlpatterns = [
     path('payroll/timesheet/', TimeSheetView.as_view(), name="timesheet"),
     path('payroll/about/', views.about, name="payroll-about"),
     path('payroll/help/', HelpView.as_view(), name="payroll-help"),
+    path('payroll/report/', ReportView.as_view(), name="payroll-report"),
     path('payroll/contact/', views.contact, name="payroll-contact"),
-    #     path(
-    #         'employee_benefit/',
-    #         EmployeeEarningCreateView.as_view(
-    #             template_name="payroll/employee_benefit.html")),
     #Company
     path('company/new', CompanyCreateView.as_view(), name='company-create'),
     path('company/<int:pk>/update',
@@ -114,15 +111,6 @@ urlpatterns = [
     path('duty-type/<int:pk>/update/',
          DutyTypeUpdateView.as_view(),
          name="dutytype-update"),
-    path('pay-period/new/',
-         PayPeriodCreateView.as_view(),
-         name="payperiod-create"),
-    path('pay-period/<int:pk>/update/',
-         PayPeriodUpdateView.as_view(),
-         name="payperiod-update"),
-    path('pay-period/new/',
-         PayPeriodCreateView.as_view(),
-         name="payperiod-create"),
     path('salary/new/', SalaryCreateView.as_view(), name="salary-create"),
 
     #Earnings Start

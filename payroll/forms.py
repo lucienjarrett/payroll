@@ -26,11 +26,15 @@ class SalaryCreateForm(forms.ModelForm):
         exclude = ['date_posted']
 
 
-class SalaryUpdateForm(SalaryCreateForm):
-    class Meta:
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
+class SalaryUpdateForm(forms.ModelForm):
+    employee = forms.Select(
+        attrs={
+            'disabled': 'disabled',
+            'placeholder': 'This is a test',
+            'class': 'this is a test'
+        })
 
+    class Meta:
         model = Salary
         fields = '__all__'
         exclude = ['date_posted']

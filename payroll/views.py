@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView
 from .models import (Company, Contact, Deduction, Employee, Department,
                      JobTitle, Bank, Allowance, PaymentMethod, DutyType,
-                     PayPeriod, Salary)
+                     Salary)
 from django.shortcuts import render, get_object_or_404
 from .forms import (SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm,
                     TimeSheetForm)
@@ -205,6 +205,14 @@ class SalaryListView(LoginRequiredMixin, ListView):
     model = Salary
     paginate_by = PAGINATE
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(SalaryListView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        context['form'] = SalaryUpdateForm()
+        return context
+
 
 class SalaryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Salary
@@ -218,23 +226,18 @@ class SalaryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return initial
 
 
-class SalaryUpdateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class SalaryUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Salary
     form_class = SalaryUpdateForm
     success_message = "Success!"
+    exclude = ['date_posted']
 
-    # def get_initial(self, *args, **kwargs):
-    #     initial = super(SalaryCreateView, self).get_initial(**kwargs)
-    #     initial['title'] = 'Post Salary'
-    #     initial['rate'] = 286.60
-    #     return initial
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(SalaryUpdateView, self).get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['button'] = 'Update'
-        return context
+    # def get_context_data(self, **kwargs):
+    #     # Call the base implementation first to get a context
+    #     context = super(SalaryUpdateView, self).get_context_data(**kwargs)
+    #     # Add in a QuerySet of all the books
+    #     context['button'] = 'Update'
+    #     return context
 
 
 class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -351,14 +354,13 @@ class DepartmentListView(LoginRequiredMixin, ListView):
         return context
 
 
-class PayPeriodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    model = PayPeriod
-    fields = ['name']
+# class PayPeriodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+#     model = PayPeriod
+#     fields = ['name']
 
-
-class PayPeriodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = PayPeriod
-    fields = ['name']
+# class PayPeriodUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+#     model = PayPeriod
+#     fields = ['name']
 
 
 class PaymentMethodCreateView(LoginRequiredMixin, SuccessMessageMixin,
@@ -586,3 +588,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 class HelpView(TemplateView):
     template_name = 'payroll/help.html'
+
+
+class ReportView(TemplateView):
+    template_name = 'payroll/reports.html'

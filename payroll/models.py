@@ -16,11 +16,11 @@ PAY_PERIOD = Period(12, 48, 26)
 
 PAY_THRESHOLD = 1500096 / PAY_PERIOD.Fortnightly
 MAX_NIS = 45000 / PAY_PERIOD.Fortnightly
-NHT_RATE = 0.02
-ED_TAX_RATE = 0.0225
-PAYE_RATE = 0.25
-NIS_RATE = 0.03
-SIX_MIL_PAYE = 0.30
+# NHT_RATE = 0.02
+# ED_TAX_RATE = 0.0225
+# PAYE_RATE = 0.25
+# NIS_RATE = 0.03
+# SIX_MIL_PAYE = 0.30
 
 
 class CommonInfo(models.Model):
@@ -45,9 +45,11 @@ class Company(CommonInfo):
 class Deduction(models.Model):
     name = models.CharField(max_length=100)
     status = models.BooleanField(default=False, verbose_name="Active?")
-
-    # taxable = models.BooleanField(default=False)
-    # comment = models.CharField(max_length=160)
+    taxable = models.BooleanField(default=False)
+    comment = models.CharField(max_length=160, default=None)
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
 
     class Meta:
         db_table = "deductions"
@@ -63,18 +65,18 @@ class StatutoryDeduction(models.Model):
     max_threshold = models.FloatField()
 
 
-class PayPeriod(models.Model):
-    name = models.CharField(verbose_name="Pay Period", max_length=30)
+# class PayPeriod(models.Model):
+#     name = models.CharField(verbose_name="Pay Period", max_length=30)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
-    class Meta:
-        db_table = "pay_period"
-        managed = True
+#     class Meta:
+#         db_table = "pay_period"
+#         managed = True
 
-    def get_absolute_url(self):
-        return reverse('employee-list')
+#     def get_absolute_url(self):
+#         return reverse('employee-list')
 
 
 class DutyType(models.Model):
@@ -164,6 +166,12 @@ class Employee(models.Model):
         ('Ms.', 'Ms.'),
         ('Mrs.', 'Mrs.'),
     ]
+
+    PAY_PRD = [
+        (1, 'Weekly'),
+        (2, 'Forthnightly'),
+        (3, 'Monthly'),
+    ]
     title = models.CharField(choices=GENDER,
                              blank=True,
                              null=True,
@@ -225,14 +233,17 @@ class Employee(models.Model):
                                     null=True,
                                     max_length=10)
 
-    payment_schedule = models.ForeignKey(
-        PayPeriod,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        verbose_name="Pay Cycle",
-        related_name="employees",
-    )
+    # payment_schedule = models.ForeignKey(
+    #     PayPeriod,
+    #     on_delete=models.CASCADE,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Pay Cycle",
+    #     related_name="employees",
+    # )
+    payment_schedule = models.PositiveIntegerField(choices=PAY_PRD,
+                                                   blank=True,
+                                                   null=True)
     basic_pay = models.FloatField(
         verbose_name="Basic Pay",
         default=0,
@@ -257,9 +268,9 @@ class Employee(models.Model):
         related_name="employees",
     )
 
-    allowances = models.ManyToManyField('Allowance',
-                                        related_name='employees',
-                                        through="EmployeeAllowance")
+    # allowances = models.ManyToManyField('Allowance',
+    #                                     related_name='employees',
+    #                                     through="EmployeeAllowance")
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -309,7 +320,7 @@ class Salary(models.Model):
         pass
 
     def get_absolute_url(self):
-        return reverse('employee-list')
+        return reverse('salary-list')
 
     def calculate_base_salary(self):
         return self.rate * self.hours_worked
@@ -329,7 +340,6 @@ class Salary(models.Model):
 
     def calculate_income_tax(self):
         if (self.calculate_base_salary() * 12) >= 6000000:
-            print('passed')
             income_tax = (self.calculate_base_salary() - self.calculate_nis() -
                           PAY_THRESHOLD)
             return income_tax
@@ -373,6 +383,10 @@ class Allowance(models.Model):
                             verbose_name='Allowances',
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
+    comment = models.CharField(max_length=160, default=None)
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
 
     # created_at = models.DateTimeField(editable=False, null=True, blank=True)
     # modified_at = models.DateTimeField(null=True, blank=True)
@@ -389,16 +403,31 @@ class Allowance(models.Model):
 
 
 class EmployeeAllowance(models.Model):
-    employee = models.ForeignKey(Employee,
-                                 on_delete=models.CASCADE,
-                                 related_name="employee_allowances")
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     allowance = models.ForeignKey(Allowance,
                                   on_delete=models.CASCADE,
-                                  null=True,
-                                  related_name="employee_allowances")
-    is_recurring = models.BooleanField(default=False)
-    date_from = models.DateField(null=True, blank=True)
-    date_to = models.DateField(null=True, blank=True)
+                                  null=True)
+    amount = models.FloatField(default=0)
+    pay_period = models.DateField(default=None)
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
+
+
+class EmployeeDeduction(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    allowance = models.ForeignKey(Allowance,
+                                  on_delete=models.CASCADE,
+                                  null=True)
+    amount = models.FloatField(default=0)
+    pay_period = models.DateField()
+    date_posted = models.DateTimeField(default=timezone.now,
+                                       blank=True,
+                                       null=True)
+
+    # is_recurring = models.BooleanField(default=False)
+    # date_from = models.DateField(null=True, blank=True)
+    # date_to = models.DateField(null=True, blank=True)
 
     # date_posted = models.DateTimeField(default=timezone.now,
     #                                    blank=True,
@@ -437,6 +466,65 @@ class EmployeeAllowance(models.Model):
 #     #                                    null=True)
 #     name = models.CharField(max_length=100, default=None)
 
+
 #     class Meta:
 #         db_table = 'time_sheet_detail'
 #         managed = True
+class LeaveType(models.Model):
+    #     CREATE TABLE `leave_types` (
+    #   `type_id` int(14) NOT NULL,
+    #   `name` varchar(64) NOT NULL,
+    #   `leave_day` varchar(255) NOT NULL,
+    #   `status` tinyint(1) NOT NULL DEFAULT '1'
+    # ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+    # --
+    # -- Dumping data for table `leave_types`
+    # --
+
+    # INSERT INTO `leave_types` (`type_id`, `name`, `leave_day`, `status`) VALUES
+    # (1, 'Casual Leave', '21', 1),
+    # (2, 'Sick Leave', '15', 1),
+    # (3, 'Maternity Leave', '90', 1),
+    # (4, 'Paternal Leave', '7', 1),
+    # (5, 'Earned leave', '', 1),
+    # (7, 'Public Holiday', '', 1),
+    # (8, 'Optional Leave', '', 1),
+    # (9, 'Leave without Pay', '', 1);
+    pass
+
+
+# --
+# -- Table structure for table `pay_salary`
+# --
+
+# CREATE TABLE `pay_salary` (
+#   `pay_id` int(14) NOT NULL,
+#   `emp_id` varchar(64) DEFAULT NULL,
+#   `type_id` int(14) NOT NULL,
+#   `month` varchar(64) DEFAULT NULL,
+#   `year` varchar(64) DEFAULT NULL,
+#   `paid_date` varchar(64) DEFAULT NULL,
+#   `total_days` varchar(64) DEFAULT NULL,
+#   `basic` varchar(64) DEFAULT NULL,
+#   `medical` varchar(64) DEFAULT NULL,
+#   `house_rent` varchar(64) DEFAULT NULL,
+#   `bonus` varchar(64) DEFAULT NULL,
+#   `bima` varchar(64) DEFAULT NULL,
+#   `tax` varchar(64) DEFAULT NULL,
+#   `provident_fund` varchar(64) DEFAULT NULL,
+#   `loan` varchar(64) DEFAULT NULL,
+#   `total_pay` varchar(128) DEFAULT NULL,
+#   `addition` int(128) NOT NULL,
+#   `diduction` int(128) NOT NULL,
+#   `status` enum('Paid','Process') DEFAULT 'Process',
+#   `paid_type` enum('Hand Cash','Bank') NOT NULL DEFAULT 'Bank'
+# ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+class Report(models.Model):
+    name = models.CharField(max_length=150)
+    url = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+    order = models.PositiveIntegerField()
+    description = models.TextField()
