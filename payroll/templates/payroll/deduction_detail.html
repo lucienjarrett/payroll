@@ -1,0 +1,27 @@
+{% extends "payroll/base_.html" %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <h4>{{object.name}} </h4>
+    </div>
+    <div class="card-body">
+        {{ object.name }} <br>
+        {{ object.short_code }} <br>
+        {{ object.short_description }} <br>
+        {{ object.employee_rate }} <br>
+        {{ object.employer_rate }} <br>
+        {{ object.max_for_year }} <br>
+        {{ object.is_statutory }} <br>
+        {{ object.status }} <br>
+        {{ object.ded_bef_or_after }}
+
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'deduction-list'  %}">&larr; Go back</a>
+        <a href="{% url 'deduction-update' object.id %}" role="button" class="btn btn-outline-info">Update</a>
+    </div>
+</div>
+
+{% endblock content %}

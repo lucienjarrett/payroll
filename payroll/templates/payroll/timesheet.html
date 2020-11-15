@@ -5,71 +5,242 @@
 
 
 
-<script>
-    function calculate() {
-        let date_now = new Date(document.getElementById("id_date_time_from").value);
-        let date_future = new Date(document.getElementById("id_date_time_to").value);
-
-
-        function timeDiffCalc(dateFuture, dateNow) {
-            let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
-
-            // calculate days
-            //const days = Math.floor(diffInMilliSeconds / 86400);
-            //diffInMilliSeconds -= days * 86400;
-            //console.log('calculated days', days);
-
-            // calculate hours
-            const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
-            diffInMilliSeconds -= hours * 3600;
-            console.log('calculated hours', hours);
-
-            // calculate minutes
-            //const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
-            //diffInMilliSeconds -= minutes * 60;
-            //console.log('minutes', minutes);
-
-            let difference = '';
-            if (days > 0) {
-                difference += (days === 1) ? `${days} day, ` : `${days} days, `;
-            }
-
-            difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours} hours, `;
-
-            //difference += (minutes === 0 || hours === 1) ? `${minutes} minutes` : `${minutes} minutes`;
-            //document.getElementById("div_id_hours_worked").value = difference;
-            return difference;
-
-            //div_id_hours_worked
-
-        }
-        //document.getElementById("div_id_hours_worked").value = timeDiffCalc(date_future, date_now);
-        console.log(timeDiffCalc(date_future, date_now));
-
-
-
-    }
-</script>
 <div class="card mt-1">
     <div class="card-header">
         <h5> Timesheet </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body" id="container">
         <form action="" method="POST">
             {% csrf_token %}
-            <!-- {{ form |crispy }} -->
+            {% crispy form  %}
 
-            {{ form.employee |as_crispy_field }}
-            {{ form.date_time_from |as_crispy_field }}
-            {{ form.date_time_to |as_crispy_field }}
-
-            <button class="btn btn-outline-info mr-auto" type="submit">Submit</button>
         </form>
+
+        <section>
+            <div class="space-between ucase-text">
+                <span>Income Tax</span>
+                <span id="incomeTax"></span>
+            </div>
+
+
+            <div class="space-between ucase-text">
+                <span>NIS</span>
+                <span id="nis"></span>
+            </div>
+
+            <div class="space-between ucase-text">
+                <span>ED TAX</span>
+                <span id="edtax"></span>
+            </div>
+
+            <div class="space-between ucase-text">
+                <span>NHT</span>
+                <span id="nht"></span>
+            </div>
+            <hr>
+
+            <div class="space-between ucase-text">
+                <span>Allowances </span>
+                <span id="allowances"></span>
+            </div>
+
+            <div class="space-between ucase-text">
+                <span>Deductions</span>
+                <span id="deductions"></span>
+            </div>
+            <hr>
+            <div class="space-between ucase-text">
+                <span>Net Salary</span>
+                <span id="net"></span>
+            </div>
+
+        </section>
     </div>
 
 </div>
 
+
+
+<script>
+    /*
+    PAYE
+    There is a tax-free amount of $557,232.00 annually or $46,436.00 monthly or $10,716.00 weekly. 
+    Depending on your pay cycle, subtract your NIS requirement and the tax-free amount from your gross salary, 
+    then calculate 25 per cent of the remainder to determine the amount you will pay for income tax.
+   
+    EDTAX
+    This tax does not have a ceiling. To calculate, subtract the NIS amount from your gross salary then find 2.25 per cent.
+   
+    NHT
+    This is payable on all taxable emoluments at a rate of 2 per cent.
+
+    NIS
+    This is 2.5 per cent of your salary, up to a maximum of $3,125 per month.
+    */
+
+    const PAYE = 0.25;
+    const NIS = 0.03;
+    const NHT = 0.02;
+    const EDTAX = 0.0225;
+    const THRESHOLD = 1500096;
+    const NIS_LIMIT = 45000
+    const MONTHS_IN_YEAR = 12;
+    const WEEKS_IN_YEAR = 48
+    const WEEKS_IN_FORTHNIGHT = 26
+    let PERIOD_THRESH = 0
+    let MAX_NIS = 0
+
+
+    //let sch = document.getElementById("id_pay_schedule").value;
+
+    // console.log(sch)
+    let options = ['Weekly', 'Monthly', 'Yearly'];
+
+    for (let i = 0; i < options.length; i++) {
+        let opt = options[i];
+        let el = document.createElement('options');
+        el.textContent = opt;
+        el.value = opt;
+
+    }
+
+    get_schedule = (schedule) => {
+        if (schedule == 1) {
+            PERIOD_THRESH = THRESHOLD / 48;
+            MAX_NIS = NIS_LIMIT / 48;
+        } else if (schedule == 2) {
+            PERIOD_THRESH = THRESHOLD / 26;
+            MAX_NIS = NIS_LIMIT / 26;
+
+        } else if (schedule == 3) {
+            PERIOD_THRESH = THRESHOLD / 12;
+            MAX_NIS = NIS_LIMIT / 12;
+        }
+    }
+
+    /*NIS Calculation*/
+    nisSal_2 = (salary, schedule) => {
+        get_schedule(schedule);
+        nis = 0;
+        if ((salary * NIS) < MAX_NIS) {
+
+            return nis = salary * NIS;
+
+        } else {
+            return nis = MAX_NIS;
+        }
+    }
+
+
+    /*Income tax calculation*/
+    incomeTax = (salary, schedule) => {
+        if (salary <= PERIOD_THRESH) return 0;
+        return (salary - (PERIOD_THRESH - NIS)) * PAYE;
+
+    }
+
+    /*NIS Calculation*/
+    nisSal = (salary) => {
+        nis = salary * NIS;
+        if (nis > NIS_LIMIT) return NIS_LIMIT;
+        return nis;
+
+    }
+
+    /*ed tax calculation*/
+    edTaxSal = (salary, schedule) => {
+        return (salary - nisSal_2(salary, schedule)) * EDTAX;
+    }
+
+    /*nht calclations*/
+    nhtSal = (salary) => {
+        if (salary > 0) return salary * NHT;
+        return 0;
+    }
+
+    /*het salary*/
+    netSalary = (salary, schedule) => {
+        netSal = salary - (incomeTax(salary, schedule) + nisSal_2(salary, schedule) + nhtSal(salary) + edTaxSal(
+            salary))
+        return netSal;
+    }
+
+    /*format with comma*/
+    add_currency_symbol = (value) => {
+        return value.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    }
+
+
+    /*udpate controls*/
+    update = () => {
+
+        let schedule = document.getElementById("id_pay_schedule").value;
+        let allowances = document.getElementById("id_allowances").value;
+        let deductions = document.getElementById("id_other_deductions").value;
+        let hours_worked = document.getElementById("id_hours_worked").value;
+        let pay_rate = document.getElementById("id_pay_rate").value;
+        let salary = Number(hours_worked) * Number(pay_rate)
+
+        document.getElementById("id_gross_pay").value = salary.toFixed(2);
+
+
+        let income_tax = 0;
+        let nis = 0;
+        let nht = 0;
+        let gross = 0;
+        let ed = 0;
+
+        switch (schedule) {
+            case "3":
+
+                nis = nisSal_2(salary, schedule).toFixed(2);
+                income_tax = incomeTax(salary, schedule).toFixed(2);
+                nht = nhtSal(salary).toFixed(2);
+                gross = netSalary(salary, schedule).toFixed(2);
+                ed = edTaxSal(salary, schedule).toFixed(2);
+
+                break
+
+            case "1":
+                nis = nisSal_2(salary, schedule).toFixed(2);
+                income_tax = incomeTax(salary, schedule).toFixed(2);
+                nht = nhtSal(salary).toFixed(2);
+                gross = netSalary(salary, schedule).toFixed(2);
+                ed = edTaxSal(salary, schedule).toFixed(2);
+                break
+
+            case "2":
+                nis = nisSal_2(salary, schedule).toFixed(2);
+                income_tax = incomeTax(salary, schedule).toFixed(2);
+                nht = nhtSal(salary).toFixed(2);
+                gross = netSalary(salary, schedule).toFixed(2);
+                ed = edTaxSal(salary, schedule).toFixed(2);
+                break
+
+            default:
+                income_tax = 0;
+                nis = 0;
+                nht = 0;
+                gross = 0;
+                ed = 0;
+        }
+
+
+
+        document.getElementById("incomeTax").innerHTML = add_currency_symbol(income_tax);
+        document.getElementById("nis").innerHTML = add_currency_symbol(nis);
+        document.getElementById("edtax").innerHTML = add_currency_symbol(ed);
+        document.getElementById("nht").innerHTML = add_currency_symbol(nht);
+        document.getElementById("net").innerHTML = Number(gross) + Number(allowances) - Number(
+            deductions); //add_currency_symbol(gross);
+        document.getElementById("allowances").innerHTML = Number(allowances);
+        document.getElementById("deductions").innerHTML = Number(deductions);
+        console.log(Number(gross) + Number(allowances))
+
+    }
+    let container = document.getElementById("container");
+    console.log(container)
+    container.addEventListener("input", update);
+</script>
+
 {% endblock content %}
-
-
-{

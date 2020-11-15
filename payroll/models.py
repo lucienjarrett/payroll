@@ -3,6 +3,7 @@ from django.db.models.fields import CharField
 from django.db.models.fields.related import ForeignKey
 # from django.db.models.manager import ManagerDescriptor
 from django.urls import reverse
+from django.urls.base import translate_url
 from django.utils import timezone
 from django.db import models
 from model_utils.fields import StatusField
@@ -11,20 +12,22 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from collections import namedtuple
 from django.utils.text import slugify
 
-Period = namedtuple('Period', 'Monthly Weekly Fortnightly')
-PAY_PERIOD = Period(12, 48, 26)
+# Period = namedtuple('Period', 'Monthly Weekly Fortnightly')
+# PAY_PERIOD = Period(12, 48, 26)
 
-PAY_THRESHOLD = 1500096 / PAY_PERIOD.Fortnightly
-MAX_NIS = 45000 / PAY_PERIOD.Fortnightly
-# NHT_RATE = 0.02
-# ED_TAX_RATE = 0.0225
-# PAYE_RATE = 0.25
-# NIS_RATE = 0.03
-# SIX_MIL_PAYE = 0.30
+# PAY_THRESHOLD = 1500096 / PAY_PERIOD.Fortnightly
+# MAX_NIS = 45000 / PAY_PERIOD.Fortnightly
+# # NHT_RATE = 0.02
+# # ED_TAX_RATE = 0.0225
+# # PAYE_RATE = 0.25
+# # NIS_RATE = 0.03
+# # SIX_MIL_PAYE = 0.30
 
 
 class CommonInfo(models.Model):
-    name = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    # name = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
@@ -33,6 +36,10 @@ class CommonInfo(models.Model):
 class Company(CommonInfo):
     name = models.CharField(max_length=80, verbose_name="Company Name")
     status = models.BooleanField(default=True, verbose_name="Status")
+    national_ins_num = models.CharField(max_length=8,
+                                        unique=True,
+                                        default=11111)
+    tax_reg_num = models.IntegerField()
 
     class Meta:
         db_table = 'companies'
@@ -42,14 +49,27 @@ class Company(CommonInfo):
         return reverse("company-list")
 
 
-class Deduction(models.Model):
+class Deduction(CommonInfo):
     name = models.CharField(max_length=100)
+    short_code = models.CharField(max_length=25, unique=True)
+    short_description = models.CharField(max_length=50)
+    is_statutory = models.BooleanField(default=False)
+    employee_rate = models.DecimalField(default=0,
+                                        max_digits=8,
+                                        decimal_places=3)
+    employer_rate = models.DecimalField(default=0,
+                                        max_digits=8,
+                                        decimal_places=3)
     status = models.BooleanField(default=False, verbose_name="Active?")
-    taxable = models.BooleanField(default=False)
-    comment = models.CharField(max_length=160, default=None)
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
+    max_for_year = models.DecimalField(default=0,
+                                       decimal_places=3,
+                                       max_digits=15,
+                                       null=True,
+                                       blank=True)
+    ded_bef_or_after = models.BooleanField(default=False,
+                                           verbose_name="Before Or After Ded?")
+
+    # is_active = models.BooleanField()
 
     class Meta:
         db_table = "deductions"
@@ -59,11 +79,10 @@ class Deduction(models.Model):
         return reverse('deduction-list')
 
 
-class StatutoryDeduction(models.Model):
-    name = models.CharField(max_length=100)
-    rate = models.FloatField()
-    max_threshold = models.FloatField()
-
+# class StatutoryDeduction(models.Model):
+#     name = models.CharField(max_length=100)
+#     rate = models.FloatField()
+#     max_threshold = models.FloatField()
 
 # class PayPeriod(models.Model):
 #     name = models.CharField(verbose_name="Pay Period", max_length=30)
@@ -93,7 +112,7 @@ class DutyType(models.Model):
         return reverse('employee-list')
 
 
-class PaymentMethod(models.Model):
+class PaymentMethod(CommonInfo):
     name = models.CharField(max_length=50, verbose_name='Payment Method')
 
     def __str__(self):
@@ -107,10 +126,12 @@ class PaymentMethod(models.Model):
         return reverse('employee-list')
 
 
-class Bank(models.Model):
+class Bank(CommonInfo):
     name = models.CharField(max_length=100, verbose_name='Bank name')
     short_code = models.CharField(max_length=10, verbose_name="Short code")
-    transit_no = models.PositiveIntegerField()
+    transit_no = models.PositiveIntegerField(default=None,
+                                             blank=True,
+                                             null=True)
 
     def __str__(self):
         return self.name
@@ -123,7 +144,7 @@ class Bank(models.Model):
         return reverse('bank-list')
 
 
-class Department(models.Model):
+class Department(CommonInfo):
     name = models.CharField(max_length=30, verbose_name="Department Name")
     code = models.CharField(max_length=5,
                             verbose_name="Department Code",
@@ -141,7 +162,7 @@ class Department(models.Model):
         return reverse('department-list')
 
 
-class JobTitle(models.Model):
+class JobTitle(CommonInfo):
     name = models.CharField(max_length=60, verbose_name="Job title")
 
     def __str__(self):
@@ -157,8 +178,7 @@ class JobTitle(models.Model):
 
 #add choice list for weekly, forthnightly and monthly here instead
 #  of pulling from a table
-class Employee(models.Model):
-
+class Employee(CommonInfo):
     image = models.ImageField(upload_to='images/', default='default.jpg')
     first_name = models.CharField(max_length=60, verbose_name="First Name")
     last_name = models.CharField(max_length=60, verbose_name="Last Name")
@@ -233,23 +253,12 @@ class Employee(models.Model):
                                     blank=True,
                                     null=True,
                                     max_length=10)
-
-    # payment_schedule = models.ForeignKey(
-    #     PayPeriod,
-    #     on_delete=models.CASCADE,
-    #     blank=True,
-    #     null=True,
-    #     verbose_name="Pay Cycle",
-    #     related_name="employees",
-    # )
     payment_schedule = models.PositiveIntegerField(choices=PAY_PRD,
                                                    blank=True,
                                                    null=True)
     basic_pay = models.FloatField(
         verbose_name="Basic Pay",
         default=0,
-        null=True,
-        blank=True,
     )
 
     employment_date = models.DateField(verbose_name="Employment Date",
@@ -281,12 +290,12 @@ class Employee(models.Model):
     class Meta:
         db_table = 'employees'
         managed = True
-        # ordering = ['employee_number']
+        ordering = ['employee_number']
 
 
-class Salary(models.Model):
-    PAY_THRESHOLD = 1500096 / PAY_PERIOD.Fortnightly
-    MAX_NIS = 45000 / PAY_PERIOD.Fortnightly
+class Salary(CommonInfo):
+    PAY_THRESHOLD = 1500096
+    MAX_NIS = 45000
     NHT_RATE = 0.02
     ED_TAX_RATE = 0.0225
     PAYE_RATE = 0.25
@@ -307,20 +316,39 @@ class Salary(models.Model):
         managed = True
         ordering = ['id']
 
+    def get_pay_schedule(self):
+        if self.employee.payment_schedule:
+            return self.employee.payment_schedule
+        else:
+            return 2  #Fortnightly for now.
+
     def __str__(self):
-        return self.employee
+        return "1"
+
+    def get_pay_schedule_vals(self):
+        if self.get_pay_schedule() == 1:
+            return 48
+        elif self.get_pay_schedule() == 2:
+            return 26
+        elif self.get_pay_schedule() == 3:
+            return 12
 
     def pay_thresold(self):
-        pass
+        threshold = self.PAY_THRESHOLD / self.get_pay_schedule_vals()
+        return threshold
 
     def max_nis(self):
-        pass
+        nis = self.MAX_NIS / self.get_pay_schedule_vals()
+        return nis
 
     def get_absolute_url(self):
         return reverse('salary-list')
 
     def calculate_base_salary(self):
-        return self.rate * self.hours_worked
+        if self.rate <= 0:
+            return self.employee.rate * self.hours_worked
+        else:
+            return self.rate * self.hours_worked
 
     def calculate_nht(self):
         return self.calculate_base_salary() * self.NHT_RATE
@@ -330,18 +358,18 @@ class Salary(models.Model):
                 self.calculate_nis()) * self.ED_TAX_RATE
 
     def calculate_nis(self):
-        if ((self.calculate_base_salary() * self.NIS_RATE) < MAX_NIS):
+        if ((self.calculate_base_salary() * self.NIS_RATE) < self.max_nis()):
             return self.calculate_base_salary() * self.NIS_RATE
         else:
-            return MAX_NIS
+            return self.max_nis()
 
     def calculate_income_tax(self):
         if (self.calculate_base_salary() * 12) >= 6000000:
             income_tax = (self.calculate_base_salary() - self.calculate_nis() -
-                          PAY_THRESHOLD)
+                          self.pay_thresold())
             return income_tax
         if ((self.calculate_base_salary() - self.calculate_nis() -
-             PAY_THRESHOLD) * self.PAYE_RATE) > 0:
+             self.pay_thresold()) * self.PAYE_RATE) > 0:
             income_tax = (self.calculate_base_salary() - self.calculate_nis())
             return income_tax
         else:
@@ -360,7 +388,7 @@ class Salary(models.Model):
         return net_pay
 
 
-class Contact(models.Model):
+class Contact(CommonInfo):
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=60)
     email = models.EmailField()
@@ -375,7 +403,7 @@ class Contact(models.Model):
         managed = True
 
 
-class Allowance(models.Model):
+class Allowance(CommonInfo):
     name = models.CharField(max_length=30,
                             verbose_name='Allowances',
                             unique=True)
@@ -399,28 +427,29 @@ class Allowance(models.Model):
         return reverse('allowance-list')
 
 
-class EmployeeAllowance(models.Model):
+class EmployeeAllowance(CommonInfo):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     allowance = models.ForeignKey(Allowance,
                                   on_delete=models.CASCADE,
                                   null=True)
     amount = models.FloatField(default=0)
     pay_period = models.DateField(default=None)
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
 
+    # date_posted = models.DateTimeField(default=timezone.now,
+    #                                    blank=True,
+    #                                    null=True)
 
-class EmployeeDeduction(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    allowance = models.ForeignKey(Allowance,
-                                  on_delete=models.CASCADE,
-                                  null=True)
-    amount = models.FloatField(default=0)
-    pay_period = models.DateField()
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
+    # class EmployeeDeduction(CommonInfo):
+    #     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    #     allowance = models.ForeignKey(Allowance,
+    #                                   on_delete=models.CASCADE,
+    #                                   null=True)
+    #     amount = models.FloatField(default=0)
+    #     pay_period = models.DateField()
+
+    # date_posted = models.DateTimeField(default=timezone.now,
+    #                                    blank=True,
+    #                                    null=True)
 
     # is_recurring = models.BooleanField(default=False)
     # date_from = models.DateField(null=True, blank=True)
@@ -467,7 +496,7 @@ class EmployeeDeduction(models.Model):
 #     class Meta:
 #         db_table = 'time_sheet_detail'
 #         managed = True
-class LeaveType(models.Model):
+class LeaveType(CommonInfo):
     #     CREATE TABLE `leave_types` (
     #   `type_id` int(14) NOT NULL,
     #   `name` varchar(64) NOT NULL,
@@ -519,9 +548,15 @@ class LeaveType(models.Model):
 # ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-class Report(models.Model):
+class Report(CommonInfo):
     name = models.CharField(max_length=150)
     url = models.CharField(max_length=100)
     active = models.BooleanField(default=True)
     order = models.PositiveIntegerField()
     description = models.TextField()
+
+    def get_absolute_url(self):
+        return reverse('employee-list')
+
+
+#payroll run date, check_date

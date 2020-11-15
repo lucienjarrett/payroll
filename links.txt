@@ -34,6 +34,8 @@ https://django-jazzmin.readthedocs.io/configuration/
 https://stackoverflow.com/questions/49905489/django-how-to-perform-arithmetic-operations-in-a-class-in-models-py
 https://www.agiliq.com/blog/2010/01/doing-things-with-django-models-aka-django-models/
 https://dmorgan.info/posts/django-views-bootstrap-modals/
+https://medium.com/swlh/build-your-first-rest-api-with-django-rest-framework-e394e39a482c
+regex - https://support.kobotoolbox.org/restrict_responses.html
 
 
 

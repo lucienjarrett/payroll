@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
         integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <!-- Our Custom CSS -->
-    <!-- <link rel="stylesheet" type="text/css" href="{% static 'payroll/main.css' %}"> -->
-    <link rel="stylesheet" type="text/css" href="{% static 'payroll/style.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'payroll/css/style.css' %}">
 
     <!-- Font Awesome JS -->
     <script defer="" src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
@@ -203,10 +203,10 @@
 
             <ul class="list-unstyled CTAs">
                 <li>
-                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+                    <a href="#" class="download">Download source</a>
                 </li>
                 <li>
-                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                    <a href="#" class="article">Back to article</a>
                 </li>
             </ul>
         </nav>
@@ -265,20 +265,24 @@
                 </div>
             </nav>
             <div id="main-content">
-                {% if messages %}
+                <!-- {% if messages %}
                 {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
                     {{ message }}
                 </div>
                 {% endfor %}
-                {% endif %}
+                {% endif %} -->
 
                 {% block content %}
+
 
                 {% endblock content %}
             </div>
         </div>
     </div>
+
+    {% load sweetify %}
+    {% sweetify %}
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
@@ -307,8 +311,6 @@
 
         });
     </script>
-
-
 </body>
 
 </html>

@@ -1,19 +1,18 @@
 from django import template
-from django.core.validators import ip_address_validator_map
+# from django.core.validators import ip_address_validator_map
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import (CreateView, ListView, UpdateView, FormView)
-
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, DeletionMixin
 from .models import (Company, Contact, Deduction, Employee, Department,
                      JobTitle, Bank, Allowance, PaymentMethod, DutyType,
-                     Salary)
+                     Salary, Report)
 from django.shortcuts import render, get_object_or_404
-from .forms import (SalaryCreateForm, EmployeeCreateForm, SalaryUpdateForm,
-                    TimeSheetForm)
+from .forms import (DeductionCreateForm, DeductionUpdateForm, SalaryCreateForm,
+                    EmployeeCreateForm, SalaryUpdateForm, TimeSheetForm)
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -21,11 +20,12 @@ from django.urls import reverse
 from .filters import EmployeeFilter
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-# from django.utils.text import slugify
-# from django_filters.views import FilterView
 from .resources import EmployeeResource  #import export csv
 from tablib import Dataset
+from sweetify.views import SweetifySuccessMixin
 
+
+#set the amount of records to paginate by
 PAGINATE = 10
 
 
@@ -271,10 +271,11 @@ class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return context
 
 
-class AllowanceCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class AllowanceCreateView(LoginRequiredMixin, SweetifySuccessMixin,
+                          CreateView):
     model = Allowance
     fields = '__all__'
-    success_message = "Success"
+    success_message = "Successfully created. "
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -302,10 +303,12 @@ class AllowanceListView(LoginRequiredMixin, ListView):
     paginate_by = PAGINATE
 
 
-class DeductionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class DeductionCreateView(LoginRequiredMixin, SweetifySuccessMixin,
+                          CreateView):
     model = Deduction
-    fields = '__all__'
+    form_class = DeductionCreateForm
     success_message = "Success"
+    exclude = ['created', 'updated']
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -316,10 +319,12 @@ class DeductionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return context
 
 
-class DeductionUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class DeductionUpdateView(LoginRequiredMixin, SweetifySuccessMixin,
+                          UpdateView):
     model = Deduction
-    fields = '__all__'
-    success_message = "Success"
+    exclude = ['created', 'updated']
+    success_message = "Successfully updated.."
+    form_class = DeductionUpdateForm
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -340,6 +345,16 @@ class DeductionListView(LoginRequiredMixin, ListView):
         context['title'] = 'Deductions'
 
         return context
+
+
+class DeductionDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Deduction
+    success_url = '/deduction'
+    success_message = "Deleted successfully.."
+
+
+class DeductionDetailView(LoginRequiredMixin, DetailView):
+    model = Deduction
 
 
 class DepartmentListView(LoginRequiredMixin, ListView):
@@ -505,8 +520,6 @@ class DepartmentUpdateView(LoginRequiredMixin, SuccessMessageMixin,
 class EmployeeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Employee
     form_class = EmployeeCreateForm
-    # fields = '__all__'
-    # # form_class = EmployeeForm
     exclude = ['departure_date']
     success_message = "Employee created successfully."
 
@@ -592,3 +605,49 @@ class HelpView(TemplateView):
 
 class ReportView(TemplateView):
     template_name = 'payroll/reports.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ReportView, self).get_context_data(**kwargs)
+        # here's the difference:
+        context['report'] = Report.objects.all()
+        return context
+
+
+class ReportCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Report
+    success_message = "Report created successfully."
+    fields = (
+        'name',
+        'url',
+        'active',
+        'order',
+        'description',
+    )
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(ReportCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Create'
+        context['title'] = 'Reports'
+        return context
+
+
+class ReportUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Report
+    success_message = "Report updated successfully."
+    fields = (
+        'name',
+        'url',
+        'active',
+        'order',
+        'description',
+    )
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(ReportUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['button'] = 'Update'
+        context['title'] = 'Reports'
+        return context

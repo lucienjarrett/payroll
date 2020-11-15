@@ -23,7 +23,7 @@
 <form action="" method="POST" id="container">
     {% csrf_token %}
     {{ form.errors }}
-
+    {{ form.employee.id }}
     <fieldset class="form-group">
         <legend class="border-bottom mb-4">Salary</legend>
         <div class="row">

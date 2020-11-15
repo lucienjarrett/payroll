@@ -11,7 +11,8 @@
 
             </div>
             <div class="col-md-4">
-                <a href="{% url 'deduction-create'  %}" role="button" class="btn btn-outline-primary">Add New Bank</a>
+                <a href="{% url 'deduction-create'  %}" role="button" class="btn btn-outline-info"><i
+                        class="fas fa-plus"></i> add new</a>
             </div>
         </div>
     </div>
@@ -30,14 +31,16 @@
                     {% for i in object_list %}
                     <tr>
                         <th scope="row">{{ i.id }}</th>
-                        <td>{{ i.name }}</td>
-
+                        <td class="list" style="text-decoration:underline; color: blue"><a
+                                href="{% url 'deduction-detail' i.id %}"> {{ i.name }} </a></td>
                         <td><a role="button" href="{% url 'deduction-update' i.id %}"
                                 class="btn btn-success btn-sm mt-1 mb-1">
                                 Edit
                             </a>
 
-
+                            <a class="btn btn-outline-danger btn-sm" href="{% url 'deduction-delete' i.id  %}"><i
+                                    class="fas fa-user-minus"></i>
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}

@@ -2,15 +2,16 @@ from django.urls import path
 from .views import (
     AllowanceCreateView, AllowanceListView, AllowanceUpdateView,
     BankCreateView, BankListView, BankUpdateView, CompanyListView,
-    CompanyUpdateView, DashboardView, DeductionCreateView, DeductionListView,
-    DeductionUpdateView, DepartmentDeleteView, DepartmentListView,
-    DutyTypeCreateView, DutyTypeUpdateView, EmployeeCreateView,
-    EmployeeDeleteView, EmployeeDetailView, EmployeeListView,
-    EmployeeUpdateView, DepartmentCreateView, DepartmentUpdateView, HelpView,
-    JobTitleCreateView, JobTitleDeleteView, JobTitleListView,
-    JobTitleUpdateView, PaymentMethodCreateView, PaymentMethodUpdateView,
-    ReportView, SalaryCreateView, SalaryListView, CompanyCreateView,
-    SalaryUpdateView, TimeSheetView)
+    CompanyUpdateView, DashboardView, DeductionCreateView, DeductionDeleteView,
+    DeductionDetailView, DeductionListView, DeductionUpdateView,
+    DepartmentDeleteView, DepartmentListView, DutyTypeCreateView,
+    DutyTypeUpdateView, EmployeeCreateView, EmployeeDeleteView,
+    EmployeeDetailView, EmployeeListView, EmployeeUpdateView,
+    DepartmentCreateView, DepartmentUpdateView, HelpView, JobTitleCreateView,
+    JobTitleDeleteView, JobTitleListView, JobTitleUpdateView,
+    PaymentMethodCreateView, PaymentMethodUpdateView, ReportCreateView,
+    ReportUpdateView, ReportView, SalaryCreateView, SalaryListView,
+    CompanyCreateView, SalaryUpdateView, TimeSheetView)
 from . import views
 from django_filters.views import FilterView
 from .filters import EmployeeFilter
@@ -91,13 +92,19 @@ urlpatterns = [
     #End Banks
 
     #Start Deductions
-    path('dedcution/new/',
+    path('deduction/new/',
          DeductionCreateView.as_view(),
          name="deduction-create"),
     path('deduction/<int:pk>/update/',
          DeductionUpdateView.as_view(),
          name="deduction-update"),
     path('deduction/', DeductionListView.as_view(), name="deduction-list"),
+    path('deduction/<int:pk>/delete',
+         DeductionDeleteView.as_view(),
+         name='deduction-delete'),
+    path('deduction/<int:pk>',
+         DeductionDetailView.as_view(),
+         name='deduction-detail'),
     #End Deductions
     path('payment-method/new/',
          PaymentMethodCreateView.as_view(),
@@ -123,4 +130,8 @@ urlpatterns = [
     path('allowance/', AllowanceListView.as_view(), name="allowance-list"),
     #Earnings End
     path('contact_upload/', views.contact_upload, name='upload-contacts'),
+    path('report/new', ReportCreateView.as_view(), name='report-create'),
+    #     path('report/<int:pk>/update',
+    #          ReportUpdateView.as_view(),
+    #          name='report-update'),
 ]

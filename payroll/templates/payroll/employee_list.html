@@ -40,7 +40,7 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Emp #</th>
-                    <th scope="col">Name</th>
+                    <th scope="col" style="width: 30%;">Name</th>
                     <th scope="col">Rate</th>
                     <th scope="col">Department</th>
                     <th scope="col">Job Title</th>
@@ -56,7 +56,7 @@
                     <td class="list" style="text-decoration:underline; color: blue"><a
                             href="{% url 'employee-detail' employee.id %}">{{ employee.full_name }}</a> </td>
                     <td>{{ employee.rate }}</td>
-                    <td>{{ employee.department.name }}</td>
+                    <td>{{ employee.department.code }}</td>
                     <td>{{ employee.job_title.name }}</td>
                     {% if employee.is_active %}
                     <td><span class="badge badge-pill badge-success">active</span></td>

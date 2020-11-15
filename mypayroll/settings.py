@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     'django_filters',
     'widget_tweaks',
     'import_export',
+    'sweetify',
 ]
+
+# AUTH_USER_MODEL = 'mypayroll.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,3 +144,4 @@ LOGIN_URL = 'login'
 TEMPUS_DOMINUS_LOCALIZE = True
 TEMPUS_DOMINUS_INCLUDE_ASSETS = True
 IMPORT_EXPORT_USE_TRANSACTIONS = True
+SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'

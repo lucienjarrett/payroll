@@ -3,10 +3,21 @@ from django.core import validators
 from django import forms
 from django.forms import TextInput, widgets
 from django.forms.widgets import DateInput
-from .models import (Salary, Employee, Allowance, EmployeeAllowance)
+from .models import (Deduction, Salary, Employee, Allowance, EmployeeAllowance)
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Layout, Row, Column
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
+
+nis_validator = validators.RegexValidator(r"[A-Z]{1}\d{6}$",
+                                          "Exmaple of C893312.")
+trn_validator = validators.RegexValidator(r"^[^0$]",
+                                          "You should have 10 characters.")
+# class MyForm(forms.Form):
+
+#     subject = forms.CharField(
+#         label="Test field",
+#         required=True,  # Note: validators are not run against empty fields
+#         validators=[my_validator])
 
 
 class SalaryCreateForm(forms.ModelForm):
@@ -54,9 +65,11 @@ class EmployeeCreateForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'type': 'number'}))
     nis = forms.CharField(label="National Insurance #",
                           required=True,
+                          validators=[nis_validator],
                           widget=forms.TextInput())
     trn = forms.CharField(label="Tax Registration #",
                           required=True,
+                          validators=[trn_validator],
                           widget=forms.TextInput(attrs={'type': 'number'}))
 
     job_title = forms.Select()
@@ -106,6 +119,179 @@ class EmployeeCreateForm(forms.ModelForm):
         )
 
 
+class DeductionCreateForm(forms.ModelForm):
+    name = forms.CharField(
+        label="Name",
+        widget=forms.TextInput(attrs={
+            'placeholder': "Eg. National Housing Trust.",
+            'type': 'text'
+        }))
+    short_code = forms.CharField(label="Short Code:",
+                                 widget=forms.TextInput(attrs={
+                                     'placeholder': 'Eg. NHT',
+                                     'type': 'text'
+                                 }))
+    short_description = forms.CharField(
+        label="Short Description",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. NHT PAYM',
+            'type': 'text'
+        }))
+    is_statutory = forms.BooleanField(label="Is Statutory?", )
+    employee_rate = forms.DecimalField(
+        label="Employee Rate",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 0.225',
+            'type': 'number'
+        }))
+    employer_rate = forms.DecimalField(
+        label="Employer Rate",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 0.03',
+            'type': 'number',
+            'step': '0.01'
+        }))
+    employer_rate = forms.CharField(
+        label="Employee Rate",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 0.03',
+            'type': 'number',
+            'step': '0.01'
+        }))
+    max_for_year = forms.DecimalField(
+        label="Max for Year.",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 20000',
+            'type': 'number',
+            'step': '0.01'
+        }))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(
+            Submit('submit', 'Create', css_class='btn btn-outline-info'))
+        # self.helper.add_input(
+        #     Submit('reset', 'Cancel', css_class='btn btn-outline-secondary'))
+        self.helper.layout = Layout(
+            Row(Column('name', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'),
+            Row(Column('short_description',
+                       css_class='form-group col-md-6 mb-0'),
+                Column('short_code', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'),
+            Row(Column('employee_rate', css_class='form-group col-md-4 mb-0'),
+                Column('employer_rate', css_class='form-group col-md-4 mb-0'),
+                Column('max_for_year', css_class='form-group col-md-4 mb-0'),
+                css_class='form-row'),
+            Row(Column('is_statutory', css_class='form-group col-md-4 mb-0'),
+                Column('status', css_class='form-group col-md-4 mb-0'),
+                Column('ded_bef_or_after',
+                       css_class='form-group col-md-4 mb-0'),
+                css_class='form-row'))
+
+    class Meta:
+        model = Deduction
+        fields = (
+            'name',
+            'short_code',
+            'short_description',
+            'employee_rate',
+            'employer_rate',
+            'max_for_year',
+            'is_statutory',
+            'status',
+            'ded_bef_or_after',
+        )
+
+
+class DeductionUpdateForm(forms.ModelForm):
+    name = forms.CharField(
+        label="Name",
+        widget=forms.TextInput(attrs={
+            'placeholder': "Eg. National Housing Trust.",
+            'type': 'text'
+        }))
+    short_code = forms.CharField(label="Short Code:",
+                                 widget=forms.TextInput(attrs={
+                                     'placeholder': 'Eg. NHT',
+                                     'type': 'text'
+                                 }))
+    short_description = forms.CharField(
+        label="Short Description",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. NHT PAYM',
+            'type': 'text'
+        }))
+    is_statutory = forms.BooleanField(label="Is Statutory?", )
+    employee_rate = forms.DecimalField(
+        label="Employee Rate",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 0.225',
+            'type': 'number'
+        }))
+    employer_rate = forms.DecimalField(
+        label="Employer Rate",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 0.03',
+            'type': 'number',
+            'step': '0.01'
+        }))
+    employer_rate = forms.CharField(
+        label="Employee Rate",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 0.03',
+            'type': 'number',
+            'step': '0.01'
+        }))
+    max_for_year = forms.DecimalField(
+        label="Max for Year.",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Eg. 20000',
+            'type': 'number',
+            'step': '0.01'
+        }))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(
+            Submit('submit', 'Update', css_class='btn btn-outline-info'))
+
+        self.helper.layout = Layout(
+            Row(Column('name', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'),
+            Row(Column('short_description',
+                       css_class='form-group col-md-6 mb-0'),
+                Column('short_code', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'),
+            Row(Column('employee_rate', css_class='form-group col-md-4 mb-0'),
+                Column('employer_rate', css_class='form-group col-md-4 mb-0'),
+                Column('max_for_year', css_class='form-group col-md-4 mb-0'),
+                css_class='form-row'),
+            Row(Column('is_statutory', css_class='form-group col-md-4 mb-0'),
+                Column('status', css_class='form-group col-md-4 mb-0'),
+                Column('ded_bef_or_after',
+                       css_class='form-group col-md-4 mb-0'),
+                css_class='form-row'))
+
+    class Meta:
+        model = Deduction
+        fields = (
+            'name',
+            'short_code',
+            'short_description',
+            'employee_rate',
+            'employer_rate',
+            'max_for_year',
+            'is_statutory',
+            'status',
+            'ded_bef_or_after',
+        )
+
+
 # class NewEmployeeForm(forms.ModelForm):
 #     class Meta:
 #         model = Employee
@@ -151,10 +337,44 @@ class EmployeeCreateForm(forms.ModelForm):
 
 #         return instance
 
+PAY_SCHEDULE = (
+    ('', '------'),
+    (1, 'Weekly'),
+    (2, 'Forthnightly'),
+    (3, 'Monthly'),
+    # (3, 'Yearly'),
+)
+
 
 class TimeSheetForm(forms.Form):
-    employee = forms.CharField()
-    date_time_from = forms.DateTimeField(widget=DateTimePicker(
-        attrs={'oninput': 'calculate()'}))
-    date_time_to = forms.DateTimeField(widget=DateTimePicker(
-        attrs={'oninput': 'calculate()'}))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        # self.helper.form_id = 'id-exampleForm'
+        # self.helper.form_class = 'blueForms'
+        self.helper.form_method = 'post'
+
+    pay_schedule = forms.ChoiceField(choices=PAY_SCHEDULE)
+    hours_worked = forms.DecimalField()
+    pay_rate = forms.DecimalField()
+    gross_pay = forms.DecimalField(widget=forms.TextInput(
+        attrs={'readonly': '(Optional) any allowances'}))
+    allowances = forms.DecimalField(widget=forms.TextInput(
+        attrs={
+            'type': 'number',
+            'min': 0,
+            'step': 1,
+            'placeholder': '(Optional) any allowances'
+        }))
+    other_deductions = forms.DecimalField(
+        label="Other Deductions",
+        widget=forms.TextInput(
+            attrs={
+                'type': 'number',
+                'min': 0,
+                'step': 1,
+                'placeholder': '(Optional) any deductions'
+            }))
+
+    #self.helper.form_action = 'submit_survey'
+    # self.helper.add_input(Submit('submit', 'Save Time Sheet'))
