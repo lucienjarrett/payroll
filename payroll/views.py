@@ -12,7 +12,8 @@ from .models import (Company, Contact, Deduction, Employee, Department,
                      Salary, Report)
 from django.shortcuts import render, get_object_or_404
 from .forms import (DeductionCreateForm, DeductionUpdateForm, SalaryCreateForm,
-                    EmployeeCreateForm, SalaryUpdateForm, TimeSheetForm)
+                    EmployeeCreateForm, EmployeeUpdateForm, SalaryUpdateForm,
+                    TimeSheetForm)
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -23,7 +24,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from .resources import EmployeeResource  #import export csv
 from tablib import Dataset
 from sweetify.views import SweetifySuccessMixin
-
 
 #set the amount of records to paginate by
 PAGINATE = 10
@@ -303,8 +303,7 @@ class AllowanceListView(LoginRequiredMixin, ListView):
     paginate_by = PAGINATE
 
 
-class DeductionCreateView(LoginRequiredMixin, SweetifySuccessMixin,
-                          CreateView):
+class DeductionCreateView(SweetifySuccessMixin, CreateView):
     model = Deduction
     form_class = DeductionCreateForm
     success_message = "Success"
@@ -319,8 +318,7 @@ class DeductionCreateView(LoginRequiredMixin, SweetifySuccessMixin,
         return context
 
 
-class DeductionUpdateView(LoginRequiredMixin, SweetifySuccessMixin,
-                          UpdateView):
+class DeductionUpdateView(SweetifySuccessMixin, UpdateView):
     model = Deduction
     exclude = ['created', 'updated']
     success_message = "Successfully updated.."
@@ -534,7 +532,7 @@ class EmployeeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class EmployeeUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Employee
-    form_class = EmployeeCreateForm
+    form_class = EmployeeUpdateForm
     # fields = '__all__'
     exclude = ['employment_date', 'departure_date']
     success_message = "Employee updated successfully."

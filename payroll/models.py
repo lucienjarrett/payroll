@@ -8,20 +8,10 @@ from django.utils import timezone
 from django.db import models
 from model_utils.fields import StatusField
 from model_utils import Choices
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxLengthValidator, MaxValueValidator, MinLengthValidator, MinValueValidator
 from collections import namedtuple
 from django.utils.text import slugify
-
-# Period = namedtuple('Period', 'Monthly Weekly Fortnightly')
-# PAY_PERIOD = Period(12, 48, 26)
-
-# PAY_THRESHOLD = 1500096 / PAY_PERIOD.Fortnightly
-# MAX_NIS = 45000 / PAY_PERIOD.Fortnightly
-# # NHT_RATE = 0.02
-# # ED_TAX_RATE = 0.0225
-# # PAYE_RATE = 0.25
-# # NIS_RATE = 0.03
-# # SIX_MIL_PAYE = 0.30
+from django.contrib.auth.models import User
 
 
 class CommonInfo(models.Model):
@@ -49,7 +39,22 @@ class Company(CommonInfo):
         return reverse("company-list")
 
 
+class Customer(CommonInfo):
+    PARISH = [(1, 'Clarendon'), (2, 'Manchester'), (3, 'St. Catherine'),
+              (4, 'Portland'), (5, 'St. Ann'), (6, 'Kingston'),
+              (7, 'St. Elizabeth'), (8, 'Westmoreland'), (9, 'St. James'),
+              (10, 'Hanover'), (11, 'Trelawny'), (12, 'St. Mary'),
+              (13, 'St. Andrew'), (14, 'St. Thomas')]
+
+    name = models.CharField(max_length=120)
+    address_1 = models.CharField(max_length=120)
+    address_2 = models.CharField(max_length=120)
+    parish = models.PositiveSmallIntegerField(choices=PARISH)
+    is_active = models.BooleanField(default=True)
+
+
 class Deduction(CommonInfo):
+    TAX_APPLIED = [(1, 'Before'), (2, 'After')]
     name = models.CharField(max_length=100)
     short_code = models.CharField(max_length=25, unique=True)
     short_description = models.CharField(max_length=50)
@@ -60,14 +65,17 @@ class Deduction(CommonInfo):
     employer_rate = models.DecimalField(default=0,
                                         max_digits=8,
                                         decimal_places=3)
-    status = models.BooleanField(default=False, verbose_name="Active?")
+    is_active = models.BooleanField(default=False, verbose_name="Active?")
     max_for_year = models.DecimalField(default=0,
                                        decimal_places=3,
                                        max_digits=15,
                                        null=True,
                                        blank=True)
-    ded_bef_or_after = models.BooleanField(default=False,
-                                           verbose_name="Before Or After Ded?")
+
+    # ded_bef_or_after = models.CharField(default=False,
+    #                                     max_length=5,
+    #                                     verbose_name="Before Or After Ded?",
+    #                                     choices=TAX_APPLIED)
 
     # is_active = models.BooleanField()
 
@@ -77,25 +85,6 @@ class Deduction(CommonInfo):
 
     def get_absolute_url(self):
         return reverse('deduction-list')
-
-
-# class StatutoryDeduction(models.Model):
-#     name = models.CharField(max_length=100)
-#     rate = models.FloatField()
-#     max_threshold = models.FloatField()
-
-# class PayPeriod(models.Model):
-#     name = models.CharField(verbose_name="Pay Period", max_length=30)
-
-#     def __str__(self):
-#         return self.name
-
-#     class Meta:
-#         db_table = "pay_period"
-#         managed = True
-
-#     def get_absolute_url(self):
-#         return reverse('employee-list')
 
 
 class DutyType(models.Model):
@@ -149,7 +138,7 @@ class Department(CommonInfo):
     code = models.CharField(max_length=5,
                             verbose_name="Department Code",
                             unique=True)
-    state = models.BooleanField(default=True, verbose_name="Is Active?")
+    is_active = models.BooleanField(default=True, verbose_name="Is Active?")
 
     def __str__(self):
         return self.name
@@ -176,8 +165,6 @@ class JobTitle(CommonInfo):
         return reverse('employee-list')
 
 
-#add choice list for weekly, forthnightly and monthly here instead
-#  of pulling from a table
 class Employee(CommonInfo):
     image = models.ImageField(upload_to='images/', default='default.jpg')
     first_name = models.CharField(max_length=60, verbose_name="First Name")
@@ -197,18 +184,19 @@ class Employee(CommonInfo):
                              blank=True,
                              null=True,
                              max_length=4)
-    nis = models.CharField(max_length=7,
+    nis = models.CharField(validators=[MinLengthValidator(7)],
+                           max_length=7,
                            unique=True,
                            verbose_name="National Insurance #")
     trn = models.PositiveIntegerField(unique=True,
                                       verbose_name="Tax Registration #",
-                                      null=True,
-                                      blank=True)
+                                      validators=[
+                                          MinValueValidator(100000000),
+                                          MaxValueValidator(999999999)
+                                      ])
+
     employee_number = models.PositiveIntegerField(verbose_name="Employee #",
                                                   unique=True)
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
     rate = models.FloatField(verbose_name="Rate Of Pay",
                              validators=[MinValueValidator(0.0)],
                              null=True,
@@ -256,10 +244,9 @@ class Employee(CommonInfo):
     payment_schedule = models.PositiveIntegerField(choices=PAY_PRD,
                                                    blank=True,
                                                    null=True)
-    basic_pay = models.FloatField(
-        verbose_name="Basic Pay",
-        default=0,
-    )
+    basic_pay = models.FloatField(verbose_name="Basic Pay",
+                                  default=0,
+                                  validators=[MinValueValidator(0.0)])
 
     employment_date = models.DateField(verbose_name="Employment Date",
                                        null=True,
@@ -290,7 +277,7 @@ class Employee(CommonInfo):
     class Meta:
         db_table = 'employees'
         managed = True
-        ordering = ['employee_number']
+        ordering = ['-employee_number']
 
 
 class Salary(CommonInfo):
@@ -307,9 +294,6 @@ class Salary(CommonInfo):
                                  on_delete=models.CASCADE)
     hours_worked = models.FloatField(default=0)
     rate = models.FloatField(default=0)
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
 
     class Meta:
         db_table = 'salaries'
@@ -409,12 +393,7 @@ class Allowance(CommonInfo):
                             unique=True)
     taxable = models.BooleanField(default=False, verbose_name="Is taxable?")
     comment = models.CharField(max_length=160, default=None)
-    date_posted = models.DateTimeField(default=timezone.now,
-                                       blank=True,
-                                       null=True)
-
-    # created_at = models.DateTimeField(editable=False, null=True, blank=True)
-    # modified_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -434,30 +413,6 @@ class EmployeeAllowance(CommonInfo):
                                   null=True)
     amount = models.FloatField(default=0)
     pay_period = models.DateField(default=None)
-
-    # date_posted = models.DateTimeField(default=timezone.now,
-    #                                    blank=True,
-    #                                    null=True)
-
-    # class EmployeeDeduction(CommonInfo):
-    #     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    #     allowance = models.ForeignKey(Allowance,
-    #                                   on_delete=models.CASCADE,
-    #                                   null=True)
-    #     amount = models.FloatField(default=0)
-    #     pay_period = models.DateField()
-
-    # date_posted = models.DateTimeField(default=timezone.now,
-    #                                    blank=True,
-    #                                    null=True)
-
-    # is_recurring = models.BooleanField(default=False)
-    # date_from = models.DateField(null=True, blank=True)
-    # date_to = models.DateField(null=True, blank=True)
-
-    # date_posted = models.DateTimeField(default=timezone.now,
-    #                                    blank=True,
-    #                                    null=True)
 
     def __str__(self):
         return f'{self.employee.first_name} {self.allowance.name}'
@@ -497,17 +452,9 @@ class EmployeeAllowance(CommonInfo):
 #         db_table = 'time_sheet_detail'
 #         managed = True
 class LeaveType(CommonInfo):
-    #     CREATE TABLE `leave_types` (
-    #   `type_id` int(14) NOT NULL,
-    #   `name` varchar(64) NOT NULL,
-    #   `leave_day` varchar(255) NOT NULL,
-    #   `status` tinyint(1) NOT NULL DEFAULT '1'
-    # ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-    # --
-    # -- Dumping data for table `leave_types`
-    # --
-
+    name = models.CharField(max_length=150)
+    leave_day = models.SmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
     # INSERT INTO `leave_types` (`type_id`, `name`, `leave_day`, `status`) VALUES
     # (1, 'Casual Leave', '21', 1),
     # (2, 'Sick Leave', '15', 1),
@@ -517,35 +464,6 @@ class LeaveType(CommonInfo):
     # (7, 'Public Holiday', '', 1),
     # (8, 'Optional Leave', '', 1),
     # (9, 'Leave without Pay', '', 1);
-    pass
-
-
-# --
-# -- Table structure for table `pay_salary`
-# --
-
-# CREATE TABLE `pay_salary` (
-#   `pay_id` int(14) NOT NULL,
-#   `emp_id` varchar(64) DEFAULT NULL,
-#   `type_id` int(14) NOT NULL,
-#   `month` varchar(64) DEFAULT NULL,
-#   `year` varchar(64) DEFAULT NULL,
-#   `paid_date` varchar(64) DEFAULT NULL,
-#   `total_days` varchar(64) DEFAULT NULL,
-#   `basic` varchar(64) DEFAULT NULL,
-#   `medical` varchar(64) DEFAULT NULL,
-#   `house_rent` varchar(64) DEFAULT NULL,
-#   `bonus` varchar(64) DEFAULT NULL,
-#   `bima` varchar(64) DEFAULT NULL,
-#   `tax` varchar(64) DEFAULT NULL,
-#   `provident_fund` varchar(64) DEFAULT NULL,
-#   `loan` varchar(64) DEFAULT NULL,
-#   `total_pay` varchar(128) DEFAULT NULL,
-#   `addition` int(128) NOT NULL,
-#   `diduction` int(128) NOT NULL,
-#   `status` enum('Paid','Process') DEFAULT 'Process',
-#   `paid_type` enum('Hand Cash','Bank') NOT NULL DEFAULT 'Bank'
-# ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 class Report(CommonInfo):

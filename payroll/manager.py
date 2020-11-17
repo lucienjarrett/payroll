@@ -1,5 +1,5 @@
 from django.db import models
 
 
-class PayManager(models.Model):
+class DeductionManager(models.Model):
     pass
