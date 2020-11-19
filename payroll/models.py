@@ -13,6 +13,12 @@ from collections import namedtuple
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
+PARISH = [(1, 'Clarendon'), (2, 'Manchester'), (3, 'St. Catherine'),
+          (4, 'Portland'), (5, 'St. Ann'), (6, 'Kingston'),
+          (7, 'St. Elizabeth'), (8, 'Westmoreland'), (9, 'St. James'),
+          (10, 'Hanover'), (11, 'Trelawny'), (12, 'St. Mary'),
+          (13, 'St. Andrew'), (14, 'St. Thomas')]
+
 
 class CommonInfo(models.Model):
     # name = models.DateTimeField(default=timezone.now, blank=True, null=True)
@@ -32,7 +38,7 @@ class Company(CommonInfo):
     tax_reg_num = models.IntegerField()
 
     class Meta:
-        db_table = 'companies'
+        #db_table = 'companies'
         managed = True
 
     def get_absolute_url(self):
@@ -40,11 +46,6 @@ class Company(CommonInfo):
 
 
 class Customer(CommonInfo):
-    PARISH = [(1, 'Clarendon'), (2, 'Manchester'), (3, 'St. Catherine'),
-              (4, 'Portland'), (5, 'St. Ann'), (6, 'Kingston'),
-              (7, 'St. Elizabeth'), (8, 'Westmoreland'), (9, 'St. James'),
-              (10, 'Hanover'), (11, 'Trelawny'), (12, 'St. Mary'),
-              (13, 'St. Andrew'), (14, 'St. Thomas')]
 
     name = models.CharField(max_length=120)
     address_1 = models.CharField(max_length=120)
@@ -80,7 +81,7 @@ class Deduction(CommonInfo):
     # is_active = models.BooleanField()
 
     class Meta:
-        db_table = "deductions"
+        #db_table = "deductions"
         managed = True
 
     def get_absolute_url(self):
@@ -94,7 +95,7 @@ class DutyType(models.Model):
         return self.name
 
     class Meta:
-        db_table = "duty_types"
+        #db_table = "duty_types"
         managed = True
 
     def get_absolute_url(self):
@@ -108,7 +109,7 @@ class PaymentMethod(CommonInfo):
         return self.name
 
     class Meta:
-        db_table = "payment_methods"
+        #db_table = "payment_methods"
         managed = True
 
     def get_absolute_url(self):
@@ -126,7 +127,7 @@ class Bank(CommonInfo):
         return self.name
 
     class Meta:
-        db_table = "banks"
+        #db_table = "banks"
         managed = True
 
     def get_absolute_url(self):
@@ -144,7 +145,7 @@ class Department(CommonInfo):
         return self.name
 
     class Meta:
-        db_table = 'departments'
+        #db_table = 'departments'
         managed = True
 
     def get_absolute_url(self):
@@ -158,7 +159,7 @@ class JobTitle(CommonInfo):
         return self.name
 
     class Meta:
-        db_table = 'job_titles'
+        #db_table = 'job_titles'
         managed = True
 
     def get_absolute_url(self):
@@ -169,6 +170,30 @@ class Employee(CommonInfo):
     image = models.ImageField(upload_to='images/', default='default.jpg')
     first_name = models.CharField(max_length=60, verbose_name="First Name")
     last_name = models.CharField(max_length=60, verbose_name="Last Name")
+    # 'Address', 'address1', 'address2', 'city', 'state',
+    #                 'country'
+
+    address1 = models.CharField(max_length=160,
+                                default=None,
+                                null=True,
+                                blank=True,
+                                verbose_name="Street Address 1")
+    address2 = models.CharField(max_length=160,
+                                default=None,
+                                null=True,
+                                blank=True,
+                                verbose_name="Street Address 2")
+    city_parish = models.PositiveSmallIntegerField(choices=PARISH,
+                                                   verbose_name='City/Parish',
+                                                   default=None,
+                                                   null=True,
+                                                   blank=True)
+
+    country = models.CharField(max_length=160,
+                               default="Jamaica",
+                               null=True,
+                               blank=True)
+    date_of_birth = models.DateField()
     GENDER = [
         ('Mr.', 'Mr.'),
         ('Ms.', 'Ms.'),
@@ -236,6 +261,30 @@ class Employee(CommonInfo):
         null=True,
         related_name="employees",
     )
+    GNDR = [
+        (1, 'Male'),
+        (2, 'Female'),
+    ]
+    gender = models.PositiveSmallIntegerField(choices=GNDR,
+                                              default=1,
+                                              blank=True,
+                                              null=True)
+    phone = models.CharField(max_length=10,
+                             blank=True,
+                             null=True,
+                             verbose_name="Home Phone:")
+    alternate_phone = models.CharField(max_length=10,
+                                       blank=True,
+                                       null=True,
+                                       verbose_name='Mobile')
+    work_phone = models.CharField(max_length=10,
+                                  blank=True,
+                                  null=True,
+                                  verbose_name='Work Phone')
+    email = models.EmailField(
+        blank=True,
+        null=True,
+    )
     bank_account = models.CharField(verbose_name="Bank Account Number",
                                     default=None,
                                     blank=True,
@@ -296,7 +345,7 @@ class Salary(CommonInfo):
     rate = models.FloatField(default=0)
 
     class Meta:
-        db_table = 'salaries'
+        #db_table = 'salaries'
         managed = True
         ordering = ['id']
 
@@ -383,7 +432,7 @@ class Contact(CommonInfo):
         return f'{self.first_name} {self.last_name}'
 
     class Meta:
-        db_table = "contacts"
+        # db_table = "contacts"
         managed = True
 
 
@@ -399,7 +448,7 @@ class Allowance(CommonInfo):
         return self.name
 
     class Meta:
-        db_table = "allowance"
+        # db_table = "allowance"
         managed = True
 
     def get_absolute_url(self):

@@ -36,8 +36,11 @@ https://www.agiliq.com/blog/2010/01/doing-things-with-django-models-aka-django-m
 https://dmorgan.info/posts/django-views-bootstrap-modals/
 https://medium.com/swlh/build-your-first-rest-api-with-django-rest-framework-e394e39a482c
 regex - https://support.kobotoolbox.org/restrict_responses.html
+https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
+https://micropyramid.com/blog/understanding-djangos-model-formsets-in-detail-and-their-advanced-usage/
 
-
+https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6
+https://www.smashingmagazine.com/2017/06/designing-efficient-web-forms/
 
 
 

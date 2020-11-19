@@ -1,11 +1,13 @@
 from django.db.models.fields import CharField, FloatField
 from django.core import validators
 from django import forms
-from django.forms import TextInput, widgets
+from django.forms import TextInput, widgets, modelformset_factory
 from django.forms.widgets import DateInput
-from .models import (Deduction, Salary, Employee, Allowance, EmployeeAllowance)
+from .models import (Deduction, Salary, Employee, Allowance, EmployeeAllowance,
+                     Contact)
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Row, Column, Fieldset
+from crispy_forms.layout import Submit, Layout, Row, Column, Fieldset, ButtonHolder, HTML
+from crispy_forms.bootstrap import TabHolder, Tab
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 
 nis_validator = validators.RegexValidator(r"[A-Z]{1}\d{6}$",
@@ -111,6 +113,87 @@ class SalaryUpdateForm(forms.ModelForm):
 #             'is_active',
 #             'rate',
 #         )
+
+
+class ExampleForm(forms.ModelForm):
+    # gender = forms.RadioSelect()
+
+    # gender = forms.TypedChoiceField(
+    #     label="Gender",
+    #     choices=((1, "Male"), (2, "Female")),
+    #     coerce=lambda x: bool(int(x)),
+    #     widget=forms.RadioSelect,
+    #     initial='1',
+    #     required=True,
+    # )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            TabHolder(
+                Tab(
+                    'Personal Details',
+                    Row(Column('gender', css_class='form-group col-md-2 mb-0'),
+                        Column('first_name',
+                               css_class='form-group col-md-5 mb-0'),
+                        Column('last_name',
+                               css_class='form-group col-md-5 mb-0'),
+                        css_class='form-row'),
+                    HTML("<hr>"),
+                    Row(Column('employee_number',
+                               css_class="form-group col-md-4 mb-0"),
+                        Column('nis', css_class="form-group col-md-4 mb-0"),
+                        Column('trn', css_class="form-group col-md-4 mb-0"),
+                        css_class='form-row'),
+                    HTML("<hr>"),
+                    Row(Column('address1',
+                               css_class="form-group col-md-12 mb-0"),
+                        css_class='form-row'),
+                    Row(Column('address2',
+                               css_class="form-group col-md-12 mb-0"),
+                        css_class='form-row'),
+                    Row(Column('city_parish',
+                               css_class="form-group col-md-6 mb-0"),
+                        Column('country',
+                               css_class="form-group col-md-6 mb-0"),
+                        css_class='form-row'),
+                    HTML('<hr>'),
+                    Row(Column('phone', css_class="form-group col-md-4 mb-0"),
+                        Column('alternate_phone',
+                               css_class="form-group col-md-4 mb-0"),
+                        Column('email', css_class="form-group col-md-4 mb-0"),
+                        css_class='form-row'),
+                ),
+                Tab(
+                    'Job Information',
+                    Row(Column('department',
+                               css_class='form-group col-md-6 mb-0'),
+                        Column('job_title',
+                               css_class='form-group col-md-6 mb-0'),
+                        css_class='form-row'),
+                    Row(Column('rate', css_class='form-group col-md-4 mb-0'),
+                        Column('basic_pay',
+                               css_class='form-group col-md-4 mb-0'),
+                        Column('payment_schedule',
+                               css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'),
+                    Row(Column('employment_date',
+                               css_class='form-group col-md-6 mb-0'),
+                        Column('departure_date',
+                               css_class='form-group col-md-6 mb-0'),
+                        css_class='form-row'),
+                ),
+            ), )
+
+    class Meta:
+        model = Employee
+        fields = ('title', 'first_name', 'last_name', 'trn', 'nis',
+                  'employee_number', 'job_title', 'department', 'payment',
+                  'bank', 'bank_account', 'payment_schedule', 'basic_pay',
+                  'employment_date', 'departure_date', 'is_active', 'rate',
+                  'address1', 'address2', 'city_parish', 'country', 'phone',
+                  'alternate_phone', 'gender', 'email')
 
 
 class EmployeeCreateForm(forms.ModelForm):
@@ -402,5 +485,12 @@ class TimeSheetForm(forms.Form):
                 'placeholder': '(Optional) any deductions'
             }))
 
-    #self.helper.form_action = 'submit_survey'
-    # self.helper.add_input(Submit('submit', 'Save Time Sheet'))
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        exclude = ('ip_address', 'message')
+        include = ('first_name', 'last_name', 'email')
+
+
+ContactFormSet = modelformset_factory(Contact, extra=2, form=ContactForm)

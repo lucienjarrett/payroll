@@ -7,11 +7,11 @@ from .views import (
     DepartmentDeleteView, DepartmentListView, DutyTypeCreateView,
     DutyTypeUpdateView, EmployeeCreateView, EmployeeDeleteView,
     EmployeeDetailView, EmployeeListView, EmployeeUpdateView,
-    DepartmentCreateView, DepartmentUpdateView, HelpView, JobTitleCreateView,
-    JobTitleDeleteView, JobTitleListView, JobTitleUpdateView,
-    PaymentMethodCreateView, PaymentMethodUpdateView, ReportCreateView,
-    ReportUpdateView, ReportView, SalaryCreateView, SalaryListView,
-    CompanyCreateView, SalaryUpdateView, TimeSheetView)
+    DepartmentCreateView, DepartmentUpdateView, ExampleView, HelpView,
+    JobTitleCreateView, JobTitleDeleteView, JobTitleListView,
+    JobTitleUpdateView, PaymentMethodCreateView, PaymentMethodUpdateView,
+    ReportCreateView, ReportUpdateView, ReportView, SalaryCreateView,
+    SalaryListView, CompanyCreateView, SalaryUpdateView, TimeSheetView)
 from . import views
 from django_filters.views import FilterView
 from .filters import EmployeeFilter
@@ -20,6 +20,7 @@ urlpatterns = [
     path('', DashboardView.as_view(), name="payroll-dashboard"),
     path('payroll/', DashboardView.as_view(), name="payroll-dashboard"),
     path('payroll/timesheet/', TimeSheetView.as_view(), name="timesheet"),
+    path('payroll/example/', ExampleView.as_view(), name="example"),
     path('payroll/about/', views.about, name="payroll-about"),
     path('payroll/help/', HelpView.as_view(), name="payroll-help"),
     path('payroll/report/', ReportView.as_view(), name="payroll-report"),
@@ -130,6 +131,9 @@ urlpatterns = [
     path('allowance/', AllowanceListView.as_view(), name="allowance-list"),
     #Earnings End
     path('contact_upload/', views.contact_upload, name='upload-contacts'),
+    path('contact_formset/',
+         views.create_contact_model_form,
+         name='contact-model-formset'),
     path('report/new', ReportCreateView.as_view(), name='report-create'),
     #     path('report/<int:pk>/update',
     #          ReportUpdateView.as_view(),

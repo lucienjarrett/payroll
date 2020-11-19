@@ -1,8 +1,11 @@
 from django import template
+from django.db.models.query import QuerySet
 # from django.core.validators import ip_address_validator_map
 from django.db.models.query_utils import Q
+from django.forms import formsets
+from django.forms.models import modelformset_factory
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import (CreateView, ListView, UpdateView, FormView)
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -11,9 +14,9 @@ from .models import (Company, Contact, Deduction, Employee, Department,
                      JobTitle, Bank, Allowance, PaymentMethod, DutyType,
                      Salary, Report)
 from django.shortcuts import render, get_object_or_404
-from .forms import (DeductionCreateForm, DeductionUpdateForm, SalaryCreateForm,
-                    EmployeeCreateForm, EmployeeUpdateForm, SalaryUpdateForm,
-                    TimeSheetForm)
+from .forms import (ContactFormSet, DeductionCreateForm, DeductionUpdateForm,
+                    SalaryCreateForm, EmployeeCreateForm, EmployeeUpdateForm,
+                    SalaryUpdateForm, TimeSheetForm, ExampleForm)
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -27,6 +30,11 @@ from sweetify.views import SweetifySuccessMixin
 
 #set the amount of records to paginate by
 PAGINATE = 10
+
+
+class ExampleView(FormView):
+    form_class = ExampleForm
+    template_name = 'payroll/example_form.html'
 
 
 class TimeSheetView(FormView):
@@ -649,3 +657,20 @@ class ReportUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         context['button'] = 'Update'
         context['title'] = 'Reports'
         return context
+
+
+def create_contact_model_form(request):
+    template_name = 'payroll/contact_formset.html'
+    if request.method == "GET":
+        form = ContactFormSet(queryset=Contact.objects.none())
+    elif request.method == 'POST':
+        form = ContactFormSet(request.POST)
+        instances = form.save()
+
+    return render(request, template_name, {'formset': form})
+
+    # ContactFormSet = modelformset_factory(ContactForm)
+    # formset = ContactFormSet()
+
+    # context['formset'] = formset
+    # return render(request, "payroll/contact_formset.html", context)
