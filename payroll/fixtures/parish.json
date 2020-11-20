@@ -1,0 +1,129 @@
+
+[
+{
+    "model":"payroll.Parish", 
+    "pk":1, 
+    "fields":{
+        "name":"Clarendon", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":2, 
+    "fields":{
+        "name":"Manchester", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":3, 
+    "fields":{
+        "name":"St. Catherine", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":14, 
+    "fields":{
+        "name":"Portland", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":4, 
+    "fields":{
+        "name":"St. Ann", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":5, 
+    "fields":{
+        "name":"Kingston", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":6, 
+    "fields":{
+        "name":"St. Elizabeth", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":7, 
+    "fields":{
+        "name":"Westmoreland", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":8, 
+    "fields":{
+        "name":"St. James", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":9, 
+    "fields":{
+        "name":"Hanover", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":10, 
+    "fields":{
+        "name":"Trelawny", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":11, 
+    "fields":{
+        "name":"St. Mary", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":12, 
+    "fields":{
+        "name":"St. Andrew", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}, 
+{
+    "model":"payroll.Parish", 
+    "pk":13, 
+    "fields":{
+        "name":"St. Thomas", 
+        "updated":"2020-12-01",
+        "created": "2020-12-01"
+    }
+}
+]

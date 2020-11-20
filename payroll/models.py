@@ -1,32 +1,38 @@
 from django.core.exceptions import ValidationError
 from django.db.models.fields import CharField
 from django.db.models.fields.related import ForeignKey
-# from django.db.models.manager import ManagerDescriptor
 from django.urls import reverse
 from django.urls.base import translate_url
 from django.utils import timezone
 from django.db import models
 from model_utils.fields import StatusField
 from model_utils import Choices
-from django.core.validators import MaxLengthValidator, MaxValueValidator, MinLengthValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from collections import namedtuple
 from django.utils.text import slugify
 from django.contrib.auth.models import User
-
-PARISH = [(1, 'Clarendon'), (2, 'Manchester'), (3, 'St. Catherine'),
-          (4, 'Portland'), (5, 'St. Ann'), (6, 'Kingston'),
-          (7, 'St. Elizabeth'), (8, 'Westmoreland'), (9, 'St. James'),
-          (10, 'Hanover'), (11, 'Trelawny'), (12, 'St. Mary'),
-          (13, 'St. Andrew'), (14, 'St. Thomas')]
+from .validators import nis_validator, trn_validator
+from django.core import validators
+from django.core.exceptions import ValidationError
 
 
 class CommonInfo(models.Model):
-    # name = models.DateTimeField(default=timezone.now, blank=True, null=True)
-    updated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    created_by = models.ForeignKey(User,
+                                   on_delete=models.SET_NULL,
+                                   blank=True,
+                                   null=True)
 
     class Meta:
         abstract = True
+
+
+class Parish(CommonInfo):
+    name = models.CharField(max_length=120, default=None, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Company(CommonInfo):
@@ -34,8 +40,9 @@ class Company(CommonInfo):
     status = models.BooleanField(default=True, verbose_name="Status")
     national_ins_num = models.CharField(max_length=8,
                                         unique=True,
-                                        default=11111)
-    tax_reg_num = models.IntegerField()
+                                        default=11111,
+                                        validators=[nis_validator])
+    tax_reg_num = models.IntegerField(validators=[trn_validator])
 
     class Meta:
         #db_table = 'companies'
@@ -46,16 +53,15 @@ class Company(CommonInfo):
 
 
 class Customer(CommonInfo):
-
     name = models.CharField(max_length=120)
     address_1 = models.CharField(max_length=120)
     address_2 = models.CharField(max_length=120)
-    parish = models.PositiveSmallIntegerField(choices=PARISH)
+    parish = models.ForeignKey(Parish, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
 
 
 class Deduction(CommonInfo):
-    TAX_APPLIED = [(1, 'Before'), (2, 'After')]
+    # TAX_APPLIED = [(1, 'Before'), (2, 'After')]
     name = models.CharField(max_length=100)
     short_code = models.CharField(max_length=25, unique=True)
     short_description = models.CharField(max_length=50)
@@ -72,13 +78,6 @@ class Deduction(CommonInfo):
                                        max_digits=15,
                                        null=True,
                                        blank=True)
-
-    # ded_bef_or_after = models.CharField(default=False,
-    #                                     max_length=5,
-    #                                     verbose_name="Before Or After Ded?",
-    #                                     choices=TAX_APPLIED)
-
-    # is_active = models.BooleanField()
 
     class Meta:
         #db_table = "deductions"
@@ -170,8 +169,11 @@ class Employee(CommonInfo):
     image = models.ImageField(upload_to='images/', default='default.jpg')
     first_name = models.CharField(max_length=60, verbose_name="First Name")
     last_name = models.CharField(max_length=60, verbose_name="Last Name")
-    # 'Address', 'address1', 'address2', 'city', 'state',
-    #                 'country'
+    middle_name = models.CharField(max_length=60,
+                                   verbose_name="Middle Name",
+                                   default="",
+                                   blank=True,
+                                   null=True)
 
     address1 = models.CharField(max_length=160,
                                 default=None,
@@ -183,17 +185,19 @@ class Employee(CommonInfo):
                                 null=True,
                                 blank=True,
                                 verbose_name="Street Address 2")
-    city_parish = models.PositiveSmallIntegerField(choices=PARISH,
-                                                   verbose_name='City/Parish',
-                                                   default=None,
-                                                   null=True,
-                                                   blank=True)
+
+    city_parish = models.ForeignKey(Parish,
+                                    on_delete=Parish,
+                                    verbose_name='City/Parish',
+                                    default=None,
+                                    null=True,
+                                    blank=True)
 
     country = models.CharField(max_length=160,
                                default="Jamaica",
                                null=True,
                                blank=True)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
     GENDER = [
         ('Mr.', 'Mr.'),
         ('Ms.', 'Ms.'),
@@ -209,7 +213,9 @@ class Employee(CommonInfo):
                              blank=True,
                              null=True,
                              max_length=4)
-    nis = models.CharField(validators=[MinLengthValidator(7)],
+    nis = models.CharField(validators=[
+        nis_validator,
+    ],
                            max_length=7,
                            unique=True,
                            verbose_name="National Insurance #")
@@ -217,7 +223,8 @@ class Employee(CommonInfo):
                                       verbose_name="Tax Registration #",
                                       validators=[
                                           MinValueValidator(100000000),
-                                          MaxValueValidator(999999999)
+                                          MaxValueValidator(999999999),
+                                          trn_validator
                                       ])
 
     employee_number = models.PositiveIntegerField(verbose_name="Employee #",
@@ -313,6 +320,11 @@ class Employee(CommonInfo):
         null=True,
         related_name="employees",
     )
+
+    created_by = models.ForeignKey(User,
+                                   on_delete=models.SET_NULL,
+                                   blank=True,
+                                   null=True)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -467,39 +479,37 @@ class EmployeeAllowance(CommonInfo):
         return f'{self.employee.first_name} {self.allowance.name}'
 
 
-# class TimesheetHeader(models.Model):
-#     customer = models.CharField(verbose_name='Customer',
-#                                 blank=True,
-#                                 null=True,
-#                                 max_length=100,
-#                                 default=None)
+class TimesheetHeader(models.Model):
+    customer = models.CharField(verbose_name='Customer',
+                                blank=True,
+                                null=True,
+                                max_length=100,
+                                default=None)
 
-#     class Meta:
-#         db_table = 'time_sheet_header'
-#         managed = True
-
-# class TimeSheetDetail(models.Model):
-#     # employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-#     time_sheet_header = models.ForeignKey(TimesheetHeader,
-#                                           related_name="time_sheet_header",
-#                                           on_delete=models.CASCADE,
-#                                           default=None)
-
-#     # date_time_in = models.DateTimeField(default=timezone.now,
-#     #                                     blank=True,
-#     #                                     null=True)
-#     # date_time_out = models.DateTimeField(default=timezone.now,
-#     #                                      blank=True,
-#     #                                      null=True)
-#     # date_posted = models.DateTimeField(default=timezone.now,
-#     #                                    blank=True,
-#     #                                    null=True)
-#     name = models.CharField(max_length=100, default=None)
+    class Meta:
+        # db_table = 'time_sheet_header'
+        managed = True
 
 
-#     class Meta:
-#         db_table = 'time_sheet_detail'
-#         managed = True
+class TimeSheetDetail(models.Model):
+    # employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    time_sheet_header = models.ForeignKey(TimesheetHeader,
+                                          related_name="time_sheet_header",
+                                          on_delete=models.CASCADE,
+                                          default=None)
+    employee = models.ForeignKey(Employee,
+                                 related_name="employees",
+                                 on_delete=models.CASCADE)
+
+    date_time_in = models.DateTimeField(default=None, blank=True, null=True)
+    date_time_out = models.DateTimeField(default=None, blank=True, null=True)
+    hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    class Meta:
+        # db_table = 'time_sheet_detail'
+        managed = True
+
+
 class LeaveType(CommonInfo):
     name = models.CharField(max_length=150)
     leave_day = models.SmallIntegerField(default=0)

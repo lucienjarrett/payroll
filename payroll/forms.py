@@ -4,11 +4,12 @@ from django import forms
 from django.forms import TextInput, widgets, modelformset_factory
 from django.forms.widgets import DateInput
 from .models import (Deduction, Salary, Employee, Allowance, EmployeeAllowance,
-                     Contact)
+                     Contact, TimeSheetDetail, TimesheetHeader)
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Row, Column, Fieldset, ButtonHolder, HTML
+from crispy_forms.layout import Submit, Layout, Row, Column, Fieldset, ButtonHolder, HTML, Field, Div
 from crispy_forms.bootstrap import TabHolder, Tab
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
+from django.forms.models import inlineformset_factory
 
 nis_validator = validators.RegexValidator(r"[A-Z]{1}\d{6}$",
                                           "Exmaple of C893312.")
@@ -24,6 +25,7 @@ class SalaryCreateForm(forms.ModelForm):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             helper = FormHelper()
+            self.helper.attrs = {'novalidate': ''}
             helper.add_input(Submit('submit', 'Save Salary'))
             helper.add_input(Submit('reset', 'Cancel'))
             helper.form_method = 'post'
@@ -116,29 +118,45 @@ class SalaryUpdateForm(forms.ModelForm):
 
 
 class ExampleForm(forms.ModelForm):
-    # gender = forms.RadioSelect()
-
-    # gender = forms.TypedChoiceField(
-    #     label="Gender",
-    #     choices=((1, "Male"), (2, "Female")),
-    #     coerce=lambda x: bool(int(x)),
-    #     widget=forms.RadioSelect,
-    #     initial='1',
-    #     required=True,
-    # )
+    nis = forms.CharField(label="National Insurance #",
+                          required=True,
+                          validators=[nis_validator],
+                          widget=forms.TextInput())
+    trn = forms.IntegerField(label="Tax Registration #",
+                             required=True,
+                             validators=[trn_validator],
+                             widget=forms.TextInput(
+                                 attrs={
+                                     'type': 'number',
+                                     'min_length': 9,
+                                     'max_length': 9,
+                                     'min': 0,
+                                     'step': 1
+                                 }))
+    employment_date = forms.DateField(required=False, widget=DatePicker())
+    departure_date = forms.DateField(required=False, widget=DatePicker())
+    date_of_birth = forms.DateField(required=False, widget=DatePicker())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Add Employee', css_class='btn btn-outline-info'))
         self.helper.layout = Layout(
             TabHolder(
                 Tab(
                     'Personal Details',
-                    Row(Column('gender', css_class='form-group col-md-2 mb-0'),
-                        Column('first_name',
-                               css_class='form-group col-md-5 mb-0'),
+                    Row(Column('first_name',
+                               css_class='form-group col-md-4 mb-0'),
+                        Column('middle_name',
+                               css_class='form-group col-md-4 mb-0'),
                         Column('last_name',
-                               css_class='form-group col-md-5 mb-0'),
+                               css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'),
+                    Row(Column('gender', css_class='form-group col-md-4 mb-0'),
+                        Column('date_of_birth',
+                               css_class='form-group col-md-4 mb-0'),
+                        Column('', css_class='form-group col-md-4 mb-0'),
                         css_class='form-row'),
                     HTML("<hr>"),
                     Row(Column('employee_number',
@@ -146,7 +164,9 @@ class ExampleForm(forms.ModelForm):
                         Column('nis', css_class="form-group col-md-4 mb-0"),
                         Column('trn', css_class="form-group col-md-4 mb-0"),
                         css_class='form-row'),
-                    HTML("<hr>"),
+                ),
+                Tab(
+                    'Contact Details',
                     Row(Column('address1',
                                css_class="form-group col-md-12 mb-0"),
                         css_class='form-row'),
@@ -159,14 +179,14 @@ class ExampleForm(forms.ModelForm):
                                css_class="form-group col-md-6 mb-0"),
                         css_class='form-row'),
                     HTML('<hr>'),
-                    Row(Column('phone', css_class="form-group col-md-4 mb-0"),
+                    Row(Column('phone', css_class="form-group col-md-3 mb-0"),
                         Column('alternate_phone',
-                               css_class="form-group col-md-4 mb-0"),
-                        Column('email', css_class="form-group col-md-4 mb-0"),
+                               css_class="form-group col-md-3 mb-0"),
+                        Column('email', css_class="form-group col-md-6 mb-0"),
                         css_class='form-row'),
                 ),
                 Tab(
-                    'Job Information',
+                    'Job Details',
                     Row(Column('department',
                                css_class='form-group col-md-6 mb-0'),
                         Column('job_title',
@@ -184,6 +204,16 @@ class ExampleForm(forms.ModelForm):
                                css_class='form-group col-md-6 mb-0'),
                         css_class='form-row'),
                 ),
+                Tab(
+                    'Payment Details',
+                    Row(Column('payment',
+                               css_class='form-group col-md-4 mb-0'),
+                        Column('bank', css_class='form-group col-md-8 mb-0'),
+                        css_class='form-row'),
+                    Row(Column('bank_account',
+                               css_class='form-group col-md-6 mb-0'),
+                        css_class='form-row'),
+                ),
             ), )
 
     class Meta:
@@ -193,7 +223,8 @@ class ExampleForm(forms.ModelForm):
                   'bank', 'bank_account', 'payment_schedule', 'basic_pay',
                   'employment_date', 'departure_date', 'is_active', 'rate',
                   'address1', 'address2', 'city_parish', 'country', 'phone',
-                  'alternate_phone', 'gender', 'email')
+                  'alternate_phone', 'gender', 'email', 'middle_name',
+                  'date_of_birth', 'created_by')
 
 
 class EmployeeCreateForm(forms.ModelForm):
@@ -208,10 +239,11 @@ class EmployeeCreateForm(forms.ModelForm):
         label="Employee #",
         required=True,
         widget=forms.TextInput(attrs={'type': 'number'}))
-    nis = forms.CharField(label="National Insurance #",
-                          required=True,
-                          validators=[nis_validator],
-                          widget=forms.TextInput())
+    nis = forms.CharField(
+        label="National Insurance #",
+        required=True,
+        #   validators=[nis_validator],
+        widget=forms.TextInput())
     trn = forms.IntegerField(label="Tax Registration #",
                              required=True,
                              validators=[trn_validator],
@@ -309,6 +341,7 @@ class EmployeeCreateForm(forms.ModelForm):
             'departure_date',
             'is_active',
             'rate',
+            'created_by',
         )
 
 
@@ -383,21 +416,14 @@ class DeductionCreateForm(forms.ModelForm):
             'step': '0.01'
         }))
 
-    # ded_bef_or_after = forms.TypedChoiceField(
-    #     label="Tax before or after?",
-    #     choices=((1, "Before"), (2, "After")),
-    #     coerce=lambda x: bool(int(x)),
-    #     widget=forms.RadioSelect,
-    #     initial='2',
-    #     required=True,
-    # )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(
-            Submit('submit', 'Submit', css_class='btn btn-outline-info'))
+            Submit('submit',
+                   'Create Deduction',
+                   css_class='btn btn-outline-info'))
         # self.helper.add_input(
         #     Submit('reset', 'Cancel', css_class='btn btn-outline-secondary'))
         self.helper.layout = Layout(

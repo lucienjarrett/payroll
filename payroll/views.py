@@ -6,6 +6,7 @@ from django.forms import formsets
 from django.forms.models import modelformset_factory
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
+from django.urls.base import reverse_lazy
 from django.views.generic import (CreateView, ListView, UpdateView, FormView)
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -26,7 +27,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from .resources import EmployeeResource  #import export csv
 from tablib import Dataset
-from sweetify.views import SweetifySuccessMixin
+# from django.db import transaction
 
 #set the amount of records to paginate by
 PAGINATE = 10
@@ -279,8 +280,7 @@ class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return context
 
 
-class AllowanceCreateView(LoginRequiredMixin, SweetifySuccessMixin,
-                          CreateView):
+class AllowanceCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Allowance
     fields = '__all__'
     success_message = "Successfully created. "
@@ -311,7 +311,7 @@ class AllowanceListView(LoginRequiredMixin, ListView):
     paginate_by = PAGINATE
 
 
-class DeductionCreateView(SweetifySuccessMixin, CreateView):
+class DeductionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Deduction
     form_class = DeductionCreateForm
     success_message = "Success"
@@ -326,7 +326,7 @@ class DeductionCreateView(SweetifySuccessMixin, CreateView):
         return context
 
 
-class DeductionUpdateView(SweetifySuccessMixin, UpdateView):
+class DeductionUpdateView(SuccessMessageMixin, UpdateView):
     model = Deduction
     exclude = ['created', 'updated']
     success_message = "Successfully updated.."
@@ -454,6 +454,8 @@ class JobTitleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         # Add in a QuerySet of all the books
         context['button'] = 'Create'
         return context
+    
+    
 
 
 class JobTitleUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -536,6 +538,10 @@ class EmployeeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context['button'] = 'Create'
         context['title'] = 'Employee'
         return context
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super(EmployeeCreateView, self).form_valid(form)
 
 
 class EmployeeUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

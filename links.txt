@@ -41,6 +41,7 @@ https://micropyramid.com/blog/understanding-djangos-model-formsets-in-detail-and
 
 https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6
 https://www.smashingmagazine.com/2017/06/designing-efficient-web-forms/
+python manage.py loaddata parish.json
 
 
 

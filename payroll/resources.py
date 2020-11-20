@@ -1,5 +1,4 @@
 #https://django-import-export.readthedocs.io/en/latest/getting_started.html#exporting-data
-
 from import_export import resources
 from .models import Employee, Salary
 

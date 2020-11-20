@@ -2,7 +2,19 @@
 {% block content %}
 
 {% load crispy_forms_tags %}
+<div class="card">
+    <div class="card-header">
+        Employee
+    </div>
+    <div class="card-body">
+        {% crispy form %}
+    </div>
+    <!-- <div class="card-footer">
 
-{% crispy form %}
+        <a href="{% url 'employee-list'  %}">&larr; Go back</a>
+
+
+    </div> -->
+</div>
 
 {% endblock content %}
