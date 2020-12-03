@@ -1,10 +1,12 @@
+from .custom_layout_object import Formset
 from django.db.models.fields import CharField, FloatField
 from django.core import validators
 from django import forms
 from django.forms import TextInput, widgets, modelformset_factory
 from django.forms.widgets import DateInput
-from .models import (Deduction, Salary, Employee, Allowance, EmployeeAllowance,
-                     Contact, TimeSheetDetail, TimesheetHeader)
+from .models import (Bank, Deduction, Department, PaymentMethod, Salary, Employee, Allowance,
+                     EmployeeAllowance, Contact, TimeSheetDetail,
+                     TimesheetHeader)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Row, Column, Fieldset, ButtonHolder, HTML, Field, Div
 from crispy_forms.bootstrap import TabHolder, Tab
@@ -17,18 +19,75 @@ trn_validator = validators.RegexValidator(r"^[^0$]",
                                           "You should have 10 characters.")
 
 
+class AllowanceCreateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(
+            Submit('submit', 'Create Allowance', css_class='btn btn-outline-info'))        
+    class Meta:
+        model = Allowance
+        include = "__all__"
+        exclude = ('updated', 'created', 'modified_by', 'created_by')
+class BankCreateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(
+            Submit('submit', 'Add Bank', css_class='btn btn-outline-info'))
+
+        self.helper.layout = Layout(
+            Row(Column('name', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'),
+            Row(Column('short_code', css_class='form-group col-md-6 mb-0'),
+                Column('transit_no', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'),
+        )
+
+    class Meta:
+        model = Bank
+        fields = '__all__'
+        exclude = ('updated', 'created')
+
+class BankUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(
+            Submit('submit', 'Update Bank', css_class='btn btn-outline-info'))
+
+        self.helper.layout = Layout(
+            Row(Column('name', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'),
+            Row(Column('short_code', css_class='form-group col-md-6 mb-0'),
+                Column('transit_no', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'),
+        )
+
+    class Meta:
+        model = Bank
+        fields = '__all__'
+        exclude = ('updated', 'created')
+
+
+
 class SalaryCreateForm(forms.ModelForm):
     # hours_worked = forms.FloatField(widget=forms.TextInput(
     #     attrs={'oninput': 'calculate()'}))
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        helper = FormHelper()
+        self.helper.attrs = {'novalidate': ''}
+        helper.add_input(Submit('submit', 'Save Salary'))
+        helper.add_input(Submit('reset', 'Cancel'))
+        helper.form_method = 'post'
+
     class Meta:
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            helper = FormHelper()
-            self.helper.attrs = {'novalidate': ''}
-            helper.add_input(Submit('submit', 'Save Salary'))
-            helper.add_input(Submit('reset', 'Cancel'))
-            helper.form_method = 'post'
 
         model = Salary
         fields = '__all__'
@@ -47,74 +106,6 @@ class SalaryUpdateForm(forms.ModelForm):
         model = Salary
         fields = '__all__'
         exclude = ['date_posted']
-
-
-# class EmployeeCreateForm(forms.ModelForm):
-#     title = forms.Select()
-#     first_name = forms.CharField(label="First Name",
-#                                  widget=forms.TextInput(),
-#                                  required=True)
-#     last_name = forms.CharField(label="Last Name",
-#                                 widget=forms.TextInput(),
-#                                 required=True)
-#     employee_number = forms.CharField(
-#         label="Employee #",
-#         required=True,
-#         widget=forms.TextInput(attrs={'type': 'number'}))
-#     nis = forms.CharField(label="National Insurance #",
-#                           required=True,
-#                           validators=[nis_validator],
-#                           widget=forms.TextInput())
-#     trn = forms.CharField(label="Tax Registration #",
-#                           required=True,
-#                           validators=[trn_validator],
-#                           widget=forms.TextInput(attrs={'type': 'number'}))
-
-#     job_title = forms.Select()
-#     department = forms.Select()
-#     payment = forms.Select(attrs={'onchange': 'check_for_bank()'})
-#     bank = forms.Select()
-#     bank_account = forms.CharField(
-#         required=False, widget=forms.TextInput(attrs={'type': 'text'}))
-#     payment_schedule = forms.Select()
-#     basic_pay = forms.CharField(required=False,
-#                                 label="Base Pay",
-#                                 widget=forms.TextInput(attrs={
-#                                     'type': 'number',
-#                                     'min': 0,
-#                                     'step': 0.01
-#                                 }))
-#     employment_date = forms.DateField(required=False, widget=DatePicker())
-#     departure_date = forms.DateField(required=False, widget=DatePicker())
-#     is_active = forms.BooleanField(required=False, label='Active?')
-#     rate = forms.FloatField(required=False,
-#                             widget=forms.TextInput(attrs={
-#                                 'type': 'number',
-#                                 'min': 0,
-#                                 'step': 0.01
-#                             }))
-
-#     class Meta:
-#         model = Employee
-#         fields = (
-#             'title',
-#             'first_name',
-#             'last_name',
-#             'trn',
-#             'nis',
-#             'employee_number',
-#             'job_title',
-#             'department',
-#             'payment',
-#             'bank',
-#             'bank_account',
-#             'payment_schedule',
-#             'basic_pay',
-#             'employment_date',
-#             'departure_date',
-#             'is_active',
-#             'rate',
-#         )
 
 
 class ExampleForm(forms.ModelForm):
@@ -387,7 +378,7 @@ class DeductionCreateForm(forms.ModelForm):
             'placeholder': 'Eg. NHT PAYM',
             'type': 'text'
         }))
-    is_statutory = forms.BooleanField(label="Is Statutory?", )
+    # is_statutory = forms.BooleanField(label="Is Statutory?" )
     employee_rate = forms.DecimalField(
         label="Employee Rate",
         widget=forms.TextInput(attrs={
@@ -440,8 +431,6 @@ class DeductionCreateForm(forms.ModelForm):
             Row(
                 Column('is_statutory', css_class='form-group col-md-4 mb-0'),
                 Column('is_active', css_class='form-group col-md-4 mb-0'),
-                # Column('ded_bef_or_after',
-                #        css_class='form-group col-md-4 mb-0'),
                 css_class='form-row'))
 
     class Meta:
@@ -512,6 +501,47 @@ class TimeSheetForm(forms.Form):
             }))
 
 
+class PaymentCreateForm(forms.ModelForm):
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(
+            Submit('submit',
+                    'Create Payment Method',
+                    css_class='btn btn-outline-info'))
+        # self.helper.add_input(
+        #     Submit('reset', 'Cancel', css_class='btn btn-outline-secondary'))
+        self.helper.layout = Layout(
+            Row(Column('name', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'))
+    class Meta:
+        model = PaymentMethod
+        fields = ('name',)
+
+
+class PaymentUpdateForm(forms.ModelForm):
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(
+            Submit('submit',
+                    'Update Payment Method',
+                    css_class='btn btn-outline-info'))
+        # self.helper.add_input(
+        #     Submit('reset', 'Cancel', css_class='btn btn-outline-secondary'))
+        self.helper.layout = Layout(
+            Row(Column('name', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'))
+    class Meta:
+        model = PaymentMethod
+        fields = ('name',)
+
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
@@ -520,3 +550,39 @@ class ContactForm(forms.ModelForm):
 
 
 ContactFormSet = modelformset_factory(Contact, extra=2, form=ContactForm)
+
+
+
+class TimeSheetDetailForm(forms.ModelForm):
+    class Meta:
+        model = TimeSheetDetail
+        exclude = ('created_by', 'modified_by',)
+
+    # def __init__(self, *args, **kwargs):
+    #     super(TimeSheetDetailForm, self).__init__(*args, **kwargs)
+    #     self.helper = FormHelper()
+    #     self.helper.form_tag = True
+    #     self.helper.form_class = 'form-horizontal'
+    #     self.helper.label_class = 'col-md-3 create-label'
+    #     self.helper.field_class = 'col-md-9'
+    #     self.helper.layout = Layout(
+    #         Div(
+    #             Field('location'),
+    #             Field('comment'),
+    #             # Fieldset('Add times',
+    #             #     Formset('times')),
+    #             # Field('employee'),
+    #             # # Field('date_time_in'),
+    #             # HTML("<br>"),
+    #             ButtonHolder(Submit('submit', 'save')),
+    #             )
+            # )
+
+
+TimeSheetDetailFormSet = inlineformset_factory(TimesheetHeader, TimeSheetDetail, form=TimeSheetDetailForm, extra=1)
+
+# class DepartmentForm(forms.ModelForm):
+#     class Meta:
+#         model = Department
+#         fields = ('name', 'is_active', 'code')
+#     pass

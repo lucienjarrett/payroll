@@ -23,15 +23,19 @@
                     <th scope="row">{{ e.id }}</th>
                     <td>{{ e.name }}</td>
                     <td>{{ e.status }}</td>
-
                     <td>
-
                     </td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center bg-warning">No records</td>
+                </tr>
+
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <div class="card-footer">{% include 'payroll/_partial.html' %} </div>
 </div>
-<div class="card-footer">{% include 'payroll/_partial.html' %} </div>
+
 {% endblock content %}

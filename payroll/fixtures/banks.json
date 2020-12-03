@@ -1,0 +1,63 @@
+[
+    {
+        "model": "payroll.Bank", 
+        "pk": 1, 
+        "fields":{
+            "name":"Bank Of Nova Scotia", 
+            "code": "BNS", 
+            "transit_no": 12345
+        }
+    },
+    {
+        "model": "payroll.Bank", 
+        "pk": 2, 
+        "fields":{
+            "name":"National Commercial Bank", 
+            "code": "NCB", 
+            "transit_no": 12345, 
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+        }
+    },
+    {
+        "model": "payroll.Bank", 
+        "pk": 3, 
+        "fields":{
+            "name":"First Caribbean International Bank", 
+            "code": "FCIB", 
+            "transit_no": 12345, 
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+        }
+    },
+    {
+        "model": "payroll.Bank", 
+        "pk": 4, 
+        "fields":{
+            "name":"Sagicor Bank", 
+            "code": "SAG", 
+            "transit_no": 12345, 
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+        }
+    },{
+        "model": "payroll.Bank", 
+        "pk": 4, 
+        "fields":{
+            "name":"Jamaica National", 
+            "code": "JNBS", 
+            "transit_no": 12345, 
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+        }
+    }
+
+]

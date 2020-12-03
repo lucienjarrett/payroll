@@ -7,17 +7,19 @@
     <div class="card-header">
         <h5> Earning </h5>
     </div>
-    <div class="card-body">
-        <form action="" method="POST">
-            {% csrf_token %}
-            {{ form |crispy }}
-            <button class="btn btn-outline-info mr-auto" type="submit">{{ button }}</button>
+<div class="card-body">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- {{ form.errors }} -->
+        {% crispy form %}
 
-
-        </form>
+    </form>
+ 
     </div>
     
+<div class="card-footer">
 
+</div>
 </div>
 
 {% endblock content %}

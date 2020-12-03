@@ -2,7 +2,7 @@ from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from .models import (Employee, Contact, Salary, Bank, Company, Customer,
                      Department, JobTitle, Allowance, Deduction, Parish,
-                     LeaveType, PaymentMethod)
+                     LeaveType, PaymentMethod, Location)
 # Register your models here.
 
 admin.site.register(Contact)
@@ -16,6 +16,7 @@ admin.site.register(Deduction)
 admin.site.register(Parish)
 admin.site.register(LeaveType)
 admin.site.register(PaymentMethod)
+admin.site.register(Location)
 
 
 @admin.register(Employee)

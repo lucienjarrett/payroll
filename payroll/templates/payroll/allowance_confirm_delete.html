@@ -1,0 +1,23 @@
+{% extends "payroll/base_.html" %}
+{% block content %}
+
+<div class="card mt-0">
+    <div class="card-header">
+        Delete Allowance
+    </div>
+    <div class="card-body">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <h5>Are you sure you want to delete this allowance? {{ object.name }}</h5>
+
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Delete Allowance</button>
+                <a class="btn btn-outline-secondary" href="{% url 'allowance-list' %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer">
+
+    </div>
+</div>
+{% endblock content %}

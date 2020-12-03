@@ -20,6 +20,12 @@ class CommonInfo(models.Model):
     updated = models.DateTimeField(auto_now=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     created_by = models.ForeignKey(User,
+                                   related_name='%(class)s_created_by',
+                                   on_delete=models.SET_NULL,
+                                   blank=True,
+                                   null=True)
+    modified_by = models.ForeignKey(User,
+                                   related_name='%(class)s_modified_by',
                                    on_delete=models.SET_NULL,
                                    blank=True,
                                    null=True)
@@ -31,8 +37,20 @@ class CommonInfo(models.Model):
 class Parish(CommonInfo):
     name = models.CharField(max_length=120, default=None, unique=True)
 
+    class Meta:
+        managed = True
+
     def __str__(self):
         return self.name
+
+    # def save(self, *args, **kwargs): 
+    #     self.slug = slugify(self.title) 
+    #     super(Parish, self).save(*args, **kwargs) 
+
+    def get_absolute_url(self):
+        return reverse('parish-list')
+
+    
 
 
 class Company(CommonInfo):
@@ -47,6 +65,10 @@ class Company(CommonInfo):
     class Meta:
         #db_table = 'companies'
         managed = True
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse("company-list")
@@ -58,6 +80,16 @@ class Customer(CommonInfo):
     address_2 = models.CharField(max_length=120)
     parish = models.ForeignKey(Parish, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
+    class Meta:
+        managed = True
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('customer-list')
+
 
 
 class Deduction(CommonInfo):
@@ -65,7 +97,7 @@ class Deduction(CommonInfo):
     name = models.CharField(max_length=100)
     short_code = models.CharField(max_length=25, unique=True)
     short_description = models.CharField(max_length=50)
-    is_statutory = models.BooleanField(default=False)
+    is_statutory = models.BooleanField(default=False, verbose_name="Is Statutory?")
     employee_rate = models.DecimalField(default=0,
                                         max_digits=8,
                                         decimal_places=3)
@@ -79,9 +111,13 @@ class Deduction(CommonInfo):
                                        null=True,
                                        blank=True)
 
+        
+
     class Meta:
-        #db_table = "deductions"
         managed = True
+    
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse('deduction-list')
@@ -90,12 +126,14 @@ class Deduction(CommonInfo):
 class DutyType(models.Model):
     name = models.CharField(max_length=100, verbose_name="Duty Type Name")
 
-    def __str__(self):
-        return self.name
-
+    
     class Meta:
         #db_table = "duty_types"
         managed = True
+    
+    def __str__(self):
+        return self.name
+
 
     def get_absolute_url(self):
         return reverse('employee-list')
@@ -103,16 +141,14 @@ class DutyType(models.Model):
 
 class PaymentMethod(CommonInfo):
     name = models.CharField(max_length=50, verbose_name='Payment Method')
-
-    def __str__(self):
-        return self.name
-
     class Meta:
-        #db_table = "payment_methods"
         managed = True
+    
+    def __str__(self):
+            return self.name
 
     def get_absolute_url(self):
-        return reverse('employee-list')
+        return reverse('paymentmethod-list')
 
 
 class Bank(CommonInfo):
@@ -121,13 +157,13 @@ class Bank(CommonInfo):
     transit_no = models.PositiveIntegerField(default=None,
                                              blank=True,
                                              null=True)
-
-    def __str__(self):
-        return self.name
-
     class Meta:
         #db_table = "banks"
         managed = True
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse('bank-list')
@@ -140,12 +176,11 @@ class Department(CommonInfo):
                             unique=True)
     is_active = models.BooleanField(default=True, verbose_name="Is Active?")
 
+    class Meta:
+        managed = True
+
     def __str__(self):
         return self.name
-
-    class Meta:
-        #db_table = 'departments'
-        managed = True
 
     def get_absolute_url(self):
         return reverse('department-list')
@@ -153,13 +188,11 @@ class Department(CommonInfo):
 
 class JobTitle(CommonInfo):
     name = models.CharField(max_length=60, verbose_name="Job title")
-
+    class Meta:
+        managed = True
+    
     def __str__(self):
         return self.name
-
-    class Meta:
-        #db_table = 'job_titles'
-        managed = True
 
     def get_absolute_url(self):
         return reverse('employee-list')
@@ -195,7 +228,6 @@ class Employee(CommonInfo):
 
     country = models.CharField(max_length=160,
                                default="Jamaica",
-                               null=True,
                                blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     GENDER = [
@@ -320,11 +352,11 @@ class Employee(CommonInfo):
         null=True,
         related_name="employees",
     )
+    class Meta:
+        db_table = 'employees'
+        managed = True
+        ordering = ['-employee_number']
 
-    created_by = models.ForeignKey(User,
-                                   on_delete=models.SET_NULL,
-                                   blank=True,
-                                   null=True)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -335,11 +367,7 @@ class Employee(CommonInfo):
     def full_name(self):
         return f'{self.first_name} { self.last_name}'
 
-    class Meta:
-        db_table = 'employees'
-        managed = True
-        ordering = ['-employee_number']
-
+    
 
 class Salary(CommonInfo):
     PAY_THRESHOLD = 1500096
@@ -360,15 +388,18 @@ class Salary(CommonInfo):
         #db_table = 'salaries'
         managed = True
         ordering = ['id']
+    
+    def __str__(self):
+        return "1"
+
+    def get_absolute_url(self):
+        return reverse('salary-list')
 
     def get_pay_schedule(self):
         if self.employee.payment_schedule:
             return self.employee.payment_schedule
         else:
             return 2  #Fortnightly for now.
-
-    def __str__(self):
-        return "1"
 
     def get_pay_schedule_vals(self):
         if self.get_pay_schedule() == 1:
@@ -385,9 +416,6 @@ class Salary(CommonInfo):
     def max_nis(self):
         nis = self.MAX_NIS / self.get_pay_schedule_vals()
         return nis
-
-    def get_absolute_url(self):
-        return reverse('salary-list')
 
     def calculate_base_salary(self):
         if self.rate <= 0:
@@ -440,12 +468,12 @@ class Contact(CommonInfo):
     ip_address = models.GenericIPAddressField(null=True)
     message = models.TextField()
 
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
     class Meta:
         # db_table = "contacts"
         managed = True
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
 
 
 class Allowance(CommonInfo):
@@ -456,12 +484,12 @@ class Allowance(CommonInfo):
     comment = models.CharField(max_length=160, default=None)
     is_active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         # db_table = "allowance"
         managed = True
+    
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse('allowance-list')
@@ -475,34 +503,47 @@ class EmployeeAllowance(CommonInfo):
     amount = models.FloatField(default=0)
     pay_period = models.DateField(default=None)
 
+    class Meta:
+        managed = True
+
     def __str__(self):
         return f'{self.employee.first_name} {self.allowance.name}'
 
 
-class TimesheetHeader(models.Model):
-    customer = models.CharField(verbose_name='Customer',
-                                blank=True,
-                                null=True,
-                                max_length=100,
-                                default=None)
+class Location(CommonInfo):
+    name = models.CharField(max_length=100, blank=True)
+    active = models.BooleanField(default=True)
 
     class Meta:
-        # db_table = 'time_sheet_header'
+        managed=True
+    
+    def __str__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        return reverse('location-list')
+
+class TimesheetHeader(models.Model):
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True)
+    comment = models.CharField(max_length=100, blank=True)
+    class Meta:
         managed = True
+
+    def __str__(self):
+        return self.location.name
 
 
 class TimeSheetDetail(models.Model):
-    # employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     time_sheet_header = models.ForeignKey(TimesheetHeader,
-                                          related_name="time_sheet_header",
+                                          related_name="has_times",
                                           on_delete=models.CASCADE,
                                           default=None)
     employee = models.ForeignKey(Employee,
-                                 related_name="employees",
+                                 related_name="employee",
                                  on_delete=models.CASCADE)
 
-    date_time_in = models.DateTimeField(default=None, blank=True, null=True)
-    date_time_out = models.DateTimeField(default=None, blank=True, null=True)
+    date_time_in = models.DateTimeField(default=None, blank=True)
+    date_time_out = models.DateTimeField(default=None, blank=True)
     hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
@@ -514,26 +555,40 @@ class LeaveType(CommonInfo):
     name = models.CharField(max_length=150)
     leave_day = models.SmallIntegerField(default=0)
     is_active = models.BooleanField(default=True)
-    # INSERT INTO `leave_types` (`type_id`, `name`, `leave_day`, `status`) VALUES
-    # (1, 'Casual Leave', '21', 1),
-    # (2, 'Sick Leave', '15', 1),
-    # (3, 'Maternity Leave', '90', 1),
-    # (4, 'Paternal Leave', '7', 1),
-    # (5, 'Earned leave', '', 1),
-    # (7, 'Public Holiday', '', 1),
-    # (8, 'Optional Leave', '', 1),
-    # (9, 'Leave without Pay', '', 1);
 
+    class Meta:
+        managed = True
+    
+    def __str__(self):
+        return self.name
 
+    def get_absolute_url(self):
+        return reverse("leavetype-list")
+
+class EmployeeLeave(CommonInfo):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="employees")
+    leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE,related_name="leaves_types")
+    date_from = models.DateField(default=None, blank=True, null=True)
+    date_to = models.DateField(default=None, blank=True, null=True)
+    comment = models.TextField()
+    class Meta:
+        managed = True
+    
+    def get_absolute_url(self):
+        return reverse('employee-leave-list')
+    
 class Report(CommonInfo):
     name = models.CharField(max_length=150)
     url = models.CharField(max_length=100)
     active = models.BooleanField(default=True)
     order = models.PositiveIntegerField()
     description = models.TextField()
+    class Meta:
+        managed = True
 
     def get_absolute_url(self):
         return reverse('employee-list')
 
+    
 
-#payroll run date, check_date
+

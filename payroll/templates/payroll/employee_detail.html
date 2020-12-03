@@ -13,7 +13,7 @@
             <img style="width:150px; height:150px" class="rounded-circle" src="{{ employee.image.url }}" alt="">
         </div>
         <div class="ml-auto ">
-            <a href="{% url 'employee-update' object.id %}" class="btn btn-info ">Update</a>
+            <a href="{% url 'employee-update' employee.id %}" class="btn btn-info ">Update</a>
         </div>
     </div>
 
@@ -22,27 +22,27 @@
             <form-control>Employee Name:</form-control>
 
 
-            <p>{% if object.title %}
-                {{ object.title }}
+            <p>{% if employee.title %}
+                {{ employee.title }}
                 {% endif %}
-                {{ object.full_name }}</p>
+                {{ employee.full_name }}</p>
             <hr>
             <form-label>Base Salary:</form-label>
             <p>0</p>
             <hr>
-            {{ object.salary }}
+            {{ employee.salary }}
             <form-label>Base Rate:</form-label>
 
-            <p>{{ object.rate }}</p>
+            <p>{{ employee.rate }}</p>
             <hr>
             <form-label>Tax Registration Number:</form-label>
-            <p>{{ object.trn }}</p>
+            <p>{{ employee.trn }}</p>
             <hr>
             <form-control>National Insurance:</form-control>
-            <p>{{ object.nis }}</p>
+            <p>{{ employee.nis }}</p>
             <hr>
             <form-control>Employee Number:</form-control>
-            <p>{{ object.employee_number }}</p>
+            <p>{{ employee.employee_number }}</p>
             <hr>
 
         </div>

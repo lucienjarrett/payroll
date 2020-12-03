@@ -16,13 +16,9 @@
                     <div class="col-md-2">
                         {{ form.title |as_crispy_field }}
                     </div>
-
                 </div>
-
-
             </fieldset>
             <div class="form-group">
-                <!-- <button class="btn btn-outline-info" type="reset"><i class="fas fa-user-edit"></i>Cancel</button> -->
                 <button class="btn btn-outline-info justify-content-right" type="submit">{{ button }}</button>
             </div>
 </form>
@@ -32,3 +28,7 @@
 </div>
 </div>
 {% endblock content %}
+
+{% block extrajs %}
+<script src="{% static 'payroll/js/datepicker.min.js' %}"></script>
+{% endblock %}

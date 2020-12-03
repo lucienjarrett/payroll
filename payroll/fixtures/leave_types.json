@@ -1,0 +1,116 @@
+[
+    {
+        "model":"payroll.LeaveType", 
+        "pk":1, 
+        "fields":{
+            "name":"Casual Leave", 
+            "leave_day": 21,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    } , 
+    {
+        "model":"payroll.LeaveType", 
+        "pk":2, 
+        "fields":{
+            "name":"Sick Leave", 
+            "leave_day": 15,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    }, 
+    {
+        "model":"payroll.LeaveType", 
+        "pk":3, 
+        "fields":{
+            "name":"Maternity Leave", 
+            "leave_day": 90,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    },
+    {
+        "model":"payroll.LeaveType", 
+        "pk":4, 
+        "fields":{
+            "name":"Paternal Leave", 
+            "leave_day": 7,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    },
+    {
+        "model":"payroll.LeaveType", 
+        "pk":5, 
+        "fields":{
+            "name":"Earned Leave", 
+            "leave_day": 0,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    }, {
+        "model":"payroll.LeaveType", 
+        "pk":6, 
+        "fields":{
+            "name":"Public Hoiliday", 
+            "leave_day": 0,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    }, 
+    {
+        "model":"payroll.LeaveType", 
+        "pk":7, 
+        "fields":{
+            "name":"Optional Leave", 
+            "leave_day": 0,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    }, 
+    {
+        "model":"payroll.LeaveType", 
+        "pk":8, 
+        "fields":{
+            "name":"Leave Without Pay", 
+            "leave_day": 0,
+            "active": 1,
+            "updated":"2020-12-01",
+            "created": "2020-12-01", 
+            "created_by": 9, 
+            "modified_by_id": 9
+
+        }
+    }
+
+
+
+]

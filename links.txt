@@ -43,6 +43,10 @@ https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-f
 https://www.smashingmagazine.com/2017/06/designing-efficient-web-forms/
 python manage.py loaddata parish.json
 
+https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=table-with-add-and-delete-row-feature
+
+https://www.pluralsight.com/guides/work-with-ajax-django
+https://www.codingforentrepreneurs.com/blog/ajaxify-django-forms
 
 
 
