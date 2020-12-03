@@ -2,7 +2,7 @@ from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from .models import (Employee, Contact, Salary, Bank, Company, Customer,
                      Department, JobTitle, Allowance, Deduction, Parish,
-                     LeaveType, PaymentMethod, Location)
+                     LeaveType, PaymentMethod, Location, TimesheetHeader, TimeSheetDetail)
 # Register your models here.
 
 admin.site.register(Contact)
@@ -17,6 +17,8 @@ admin.site.register(Parish)
 admin.site.register(LeaveType)
 admin.site.register(PaymentMethod)
 admin.site.register(Location)
+admin.site.register(TimesheetHeader)
+admin.site.register(TimeSheetDetail)
 
 
 @admin.register(Employee)
@@ -27,3 +29,10 @@ class EmployeeAdmin(ImportExportModelAdmin):
 @admin.register(Salary)
 class SalaryAdmin(ImportExportModelAdmin):
     pass
+
+
+class TimeSheetDetailInline(admin.TabularInline):
+    model = TimeSheetDetail
+
+class TimesheetHeader(admin.ModelAdmin):
+    inlines = [TimeSheetDetailInline]

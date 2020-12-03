@@ -17,8 +17,8 @@ from .models import (Company, Contact, Deduction, Employee, Department,
 from django.shortcuts import render, get_object_or_404
 from .forms import (AllowanceCreateForm, BankCreateForm, BankUpdateForm, ContactFormSet, DeductionCreateForm,
                     DeductionUpdateForm, PaymentCreateForm, PaymentUpdateForm, SalaryCreateForm, EmployeeCreateForm,
-                    EmployeeUpdateForm, SalaryUpdateForm, TimeSheetDetailForm, TimeSheetDetailFormSet, TimeSheetForm,
-                    ExampleForm)
+                    EmployeeUpdateForm, SalaryUpdateForm, TimeSheetForm,
+                    ExampleForm, TimeSheetFormSet)
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -54,28 +54,30 @@ class TimeSheetView(FormView):
     form_class = TimeSheetForm
     template_name = 'payroll/timesheet.html'
 
+class TimeSheetList(ListView):
+    model = TimesheetHeader
+    template_name = "payroll/timesheet_list.html"
 
 class TimeSheetCreateView(CreateView):
     model = TimesheetHeader
-    # form_class = TimeSheetDetailForm
     fields = ['location', 'comment']
     template_name = 'payroll/timesheet_create.html'
-    success_url = reverse_lazy('employee-list')
+    success_url = reverse_lazy('timesheet-list')
 
     def get_context_data(self, **kwargs):
         data = super(TimeSheetCreateView, self).get_context_data(**kwargs)
         if self.request.POST:
-            data["times"] = TimeSheetDetailFormSet(self.request.POST)
+            data["times"] = TimeSheetFormSet(self.request.POST)
         else:
-            data['times'] = TimeSheetDetailFormSet()
+            data['times'] = TimeSheetFormSet()
         return data
     
     def form_valid(self, form):
         context = self.get_context_data()
         times = context['times']
         with transaction.atomic():
-            form.instance.created_by = self.request.user
-            form.instance.modified_by = self.request.user
+            # form.instance.created_by = self.request.user
+            # form.instance.modified_by = self.request.user
             self.object = form.save()
             if times.is_valid():
                 times.instance = self.object

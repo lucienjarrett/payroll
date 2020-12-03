@@ -10,9 +10,9 @@
             {% csrf_token %}
             {{ form.as_p }}
                <table class="table">
-               {{ times.management_form }}
-               
-               {% for form in times.management_form %}
+               {{ times.label }}
+
+               {% for form in times %}
                {% if forloop.first %}
                <thead>
                    <tr>
@@ -23,7 +23,7 @@
                </thead>
 
                {% endif %}
-               <tr class="{% cycle row1 row2 %} formset_row">
+               <tr class="{% cycle 'row1' 'row2' 'row3' %} formset_row ">
                    {% for field in form.visible_fields %}
                    <td>
                        {% if forloop.first %}
@@ -44,14 +44,20 @@
           </div>
       </div>
   </div>
+ 
   {% block javascript %}
-  <script src="{% static 'payroll/js/jquery.formset.js' %}"></script>
+  
   <script type="text/javascript">
-      $('.formset_row').formset({
-          addText: 'add family member',
-          deleteText: 'remove',
-          prefix: 'familymember_set'
-      });
+    $(document).ready(function(){
+
+        $('.formset_row').formset({
+            addText: 'add record',
+            deleteText: 'remove',
+            prefix: 'timesheetdetail_set'
+        });
+
+    }); 
+      
   </script>
   {% endblock javascript %}
 {% endblock content %}

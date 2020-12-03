@@ -8,7 +8,8 @@ from .filters import EmployeeFilter
 urlpatterns = [
     path('', DashboardView.as_view(), name="payroll-dashboard"),
     path('payroll/', DashboardView.as_view(), name="payroll-dashboard"),
-    path('payroll/timesheet/', TimeSheetView.as_view(), name="timesheet"),
+#     path('payroll/timesheet/', TimeSheetView.as_view(), name="timesheet"),
+    path('payroll/timesheet/', TimeSheetList.as_view(), name="timesheet-list"), 
     path('payroll/timesheet_create/', TimeSheetCreateView.as_view(), name="timesheet_create"),
     path('payroll/example/', ExampleView.as_view(), name="example"),
     path('payroll/about/', views.about, name="payroll-about"),
