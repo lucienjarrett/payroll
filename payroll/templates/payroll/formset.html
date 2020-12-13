@@ -1,11 +1,30 @@
-{% load static %}
 {% load crispy_forms_tags %}
-<table>
+{% load static %}
+
+
+<style type="text/css">
+    .delete-row {
+      align-self: center;
+    }
+  </style>
+
+  
+<div class="card">
+<div class="card-body">
+<table class="table table-hover table-sm">
     {{ formset.management_form|crispy }}
-
-
-
     {% for form in formset.forms %}
+
+    {% if forloop.first %}
+    <thead>
+        <tr>
+            {% for field in form.visible_fields %}
+            <th> {{ field.label | capfirst}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    {% endif %}
+
     <tr class="{% cycle 'row1' 'row2' %} formset_row-{{ formset.prefix }}">
         {% for field in form.visible_fields %}
         <td>
@@ -23,18 +42,21 @@
     {% endfor %}
 
 </table>
+</div>
 <br>
-
+</div>
 {% block javascript %}
-<script src="{% static 'payroll/js/jquery.formset.js' %}"></script>
 
 <script type="text/javascript">
-    alert("Test"); 
+$(document).ready(function(){
     $('.formset_row-{{ formset.prefix }}').formset({
-        addText: 'add another',
-        deleteText: 'remove',
+        addText: '<i class="fa fa-plus" aria-hidden="true"></i>',
+            deleteText: 'remove',
         prefix: '{{ formset.prefix }}',
     });
-</script>
-{% endblock javascript %}
 
+}); 
+
+</script>
+
+{% endblock javascript %}

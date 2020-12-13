@@ -18,7 +18,7 @@ from django.shortcuts import render, get_object_or_404
 from .forms import (AllowanceCreateForm, BankCreateForm, BankUpdateForm, ContactFormSet, DeductionCreateForm,
                     DeductionUpdateForm, PaymentCreateForm, PaymentUpdateForm, SalaryCreateForm, EmployeeCreateForm,
                     EmployeeUpdateForm, SalaryUpdateForm, TimeSheetForm,
-                    ExampleForm, TimeSheetFormSet)
+                    ExampleForm, TimeSheetFormSet, TimesheetDetailForm, TimesheetDetailFormset)
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -60,6 +60,7 @@ class TimeSheetList(ListView):
 
 class TimeSheetCreateView(CreateView):
     model = TimesheetHeader
+    # form_class = TimeSheetForm
     fields = ['location', 'comment']
     template_name = 'payroll/timesheet_create.html'
     success_url = reverse_lazy('timesheet-list')
@@ -85,31 +86,58 @@ class TimeSheetCreateView(CreateView):
         return super(TimeSheetCreateView, self).form_valid(form)
 
 
-# class TimeSheetUpdateView(CreateView):
-#     model = TimesheetHeader
-#     form_class = TimeSheetDetailForm
-#     template_name = 'payroll/timesheet_create.html'
-#     success_url = None
+class TimeSheetUpdateView(UpdateView):
+    model = TimesheetHeader
+    # form_class = TimeSheetDetailForm
+    template_name = 'payroll/timesheet_create.html'
+    success_url = reverse_lazy('timesheet-list')
 
-#     def get_context_data(self, **kwargs):
-#         data = super(TimeSheetUpdateView, self).get_context_data(**kwargs)
-#         if self.request.POST:
-#             data["times"] = TimeSheetDetailFormSet(self.request.POST, instance=self.object)
-#         else:
-#             data['times'] = TimeSheetDetailFormSet(instance=self.object)
-#         return data
+    def get_context_data(self, **kwargs):
+        data = super(TimeSheetUpdateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data["times"] = TimeSheetFormSet(self.request.POST, instance=self.object)
+        else:
+            data['times'] = TimeSheetFormSet(instance=self.object)
+        return data
     
-#     def form_valid(self, form):
-#         context = self.get_context_data()
-#         times = context['times']
-#         with transaction.atomic():
-#             form.instance.created_by = self.request.user
-#             form.instance.modified_by = self.request.user
-#             self.object = form.save()
-#             if times.is_valid():
-#                 times.instance = self.object
-#                 times.save()
-#         return super(TimeSheetCreateView, self).form_valid(form)
+    def form_valid(self, form):
+        context = self.get_context_data()
+        times = context['times']
+        with transaction.atomic():
+            # form.instance.created_by = self.request.user
+            # form.instance.modified_by = self.request.user
+            self.object = form.save()
+            if times.is_valid():
+                times.instance = self.object
+                times.save()
+        return super(TimeSheetCreateView, self).form_valid(form)
+
+
+
+class TimeSheetDetailCreateView(CreateView):
+    model = TimesheetHeader
+    form_class = TimesheetDetailForm
+    template_name = 'payroll/timesheet_create_2.html'
+    success_url = reverse_lazy('timesheet-list')
+
+    def get_context_data(self, **kwargs):
+        data = super(TimeSheetDetailCreateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data["times"] = TimesheetDetailFormset(self.request.POST)
+        else:
+            data['times'] = TimesheetDetailFormset()
+        return data
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        times = context['times']
+        with transaction.atomic():
+            self.object = form.save()
+            if times.is_valid():
+                times.instance = self.object
+                times.save()
+        return super().form_valid(form)
+
 
 
 def export_csv(request):
@@ -403,7 +431,7 @@ class DeductionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Deduction
     form_class = DeductionCreateForm
     success_message = "Success"
-    exclude = ['created', 'updated']
+    # exclude = ['created', 'updated']
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -413,10 +441,11 @@ class DeductionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context['title'] = 'Deductions'
         return context
     
-    def form_valid(form, self):
+    def form_valid(self, form):
+        print(self.request.user)
         form.instance.created_by = self.request.user 
         form.instance.modified_by = self.request.user
-        return super(DeductionCreateView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class DeductionUpdateView(SuccessMessageMixin, UpdateView):
@@ -447,7 +476,6 @@ class DeductionListView(LoginRequiredMixin, ListView):
         context = super(DeductionListView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['title'] = 'Deductions'
-
         return context
 
 
@@ -554,7 +582,7 @@ class BankUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        form.instance.modified_hy = self.request.user
+        form.instance.modified_by = self.request.user
         return super(BankUpdateView, self).form_valid(form)
 
 class BankDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):

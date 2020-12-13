@@ -120,7 +120,7 @@ class Deduction(CommonInfo):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('deduction-list')
+        return reverse('deduction-detail', kwargs={'pk': self.pk})
 
 
 class DutyType(models.Model):
@@ -148,7 +148,7 @@ class PaymentMethod(CommonInfo):
             return self.name
 
     def get_absolute_url(self):
-        return reverse('paymentmethod-list')
+        return reverse('paymentmethod-detail', kwargs={'pk':self.pk})
 
 
 class Bank(CommonInfo):
@@ -166,7 +166,7 @@ class Bank(CommonInfo):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('bank-list')
+        return reverse('bank-detail', kwargs={'pk':self.pk})
 
 
 class Department(CommonInfo):
@@ -183,7 +183,7 @@ class Department(CommonInfo):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('department-list')
+        return reverse('department-detail', kwargs={'pk':self.pk})
 
 
 class JobTitle(CommonInfo):
@@ -362,8 +362,9 @@ class Employee(CommonInfo):
         return f'{self.first_name} {self.last_name}'
 
     def get_absolute_url(self):
-        return reverse('employee-list')
-
+        return reverse('employee-detail', kwargs={'pk':self.pk})
+    
+    @property
     def full_name(self):
         return f'{self.first_name} { self.last_name}'
 
@@ -395,6 +396,7 @@ class Salary(CommonInfo):
     def get_absolute_url(self):
         return reverse('salary-list')
 
+    
     def get_pay_schedule(self):
         if self.employee.payment_schedule:
             return self.employee.payment_schedule
@@ -408,7 +410,7 @@ class Salary(CommonInfo):
             return 26
         elif self.get_pay_schedule() == 3:
             return 12
-
+    
     def pay_thresold(self):
         threshold = self.PAY_THRESHOLD / self.get_pay_schedule_vals()
         return threshold
@@ -492,7 +494,7 @@ class Allowance(CommonInfo):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('allowance-list')
+        return reverse('allowance-detail', kwargs={'pk':self.pk})
 
 
 class EmployeeAllowance(CommonInfo):
@@ -524,8 +526,8 @@ class Location(CommonInfo):
         return reverse('location-list')
 
 class TimesheetHeader(models.Model):
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True)
-    comment = models.CharField(max_length=100, blank=True)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=100)
     class Meta:
         managed = True
 
@@ -535,20 +537,26 @@ class TimesheetHeader(models.Model):
 
 class TimeSheetDetail(models.Model):
     time_sheet_header = models.ForeignKey(TimesheetHeader,
-                                          related_name="has_times",
+                                          related_name="timesheetdetail",
                                           on_delete=models.CASCADE,
                                           default=None)
     employee = models.ForeignKey(Employee,
                                  related_name="employee",
                                  on_delete=models.CASCADE)
 
-    date_time_in = models.DateTimeField(default=None, blank=True)
-    date_time_out = models.DateTimeField(default=None, blank=True)
+    date_time_in = models.DateTimeField(default=None)
+    date_time_out = models.DateTimeField(default=None)
     hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
-        # db_table = 'time_sheet_detail'
         managed = True
+
+    def __str__(self):
+        info = f"{self.employee.full_name} - {self.time_sheet_header.location.name} "
+        return str(info)
+
+    def get_absolute_url(self):
+        return reverse('employee-list')
 
 
 class LeaveType(CommonInfo):
@@ -563,7 +571,7 @@ class LeaveType(CommonInfo):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("leavetype-list")
+        return reverse("leavetype-detail", args=[str(self.id)])
 
 class EmployeeLeave(CommonInfo):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="employees")

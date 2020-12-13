@@ -48,6 +48,13 @@ https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=table
 https://www.pluralsight.com/guides/work-with-ajax-django
 https://www.codingforentrepreneurs.com/blog/ajaxify-django-forms
 
+https://www.blogger.com/blog/post/edit/5452730013302707501/4533315709107130889
+https://github.com/nomadcoders/airbnb-clone/blob/27634c65fb603d60f75df6d08e072bca0db84b2e/core/managers.py#L5
+
+https://speakerdeck.com/maraujop/django-crispy-forms?slide=42
+https://github.com/django-crispy-forms/django-crispy-forms/issues/248
+
+https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6/comments
 
 
 

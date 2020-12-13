@@ -1,0 +1,37 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+<style type="text/css">
+    .delete-row {
+      align-self: center;
+    }
+  </style>
+  
+  {{ formset.management_form|crispy }}
+  
+  {% for form in formset.forms %}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden|as_crispy_field }}
+    {% endfor %}
+    {% crispy form %}
+  {% endfor %}
+  
+{% block javascript %}
+<!-- <script src="{% static 'payroll/js/jquery.min.js' %}"></script>
+<script src="{% static 'payroll/js/jquery.formset_v2.js' %}"></script> -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+    console.log("Test"); 
+    $('.formset_row-{{ formset.prefix }}').formset({
+        addText: 'add another',
+        deleteText: 'remove',
+        prefix: '{{ formset.prefix }}',
+    });
+
+}); 
+
+</script>
+
+{% endblock javascript %}

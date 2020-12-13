@@ -32,12 +32,11 @@
                     <tr>
                         <th scope="row">{{ i.id }}</th>
                         <td class="list" style="text-decoration:underline; color: blue"><a
-                                href="{% url 'deduction-detail' i.id %}"> {{ i.name }} </a></td>
+                                href="{{ i.get_absolute_url }}"> {{ i.name }} </a></td>
                         <td><a role="button" href="{% url 'deduction-update' i.id %}"
                                 class="btn btn-success btn-sm mt-1 mb-1">
                                 Edit
                             </a>
-
                             <a class="btn btn-outline-danger btn-sm" href="{% url 'deduction-delete' i.id  %}"><i
                                     class="fas fa-user-minus"></i>
                             </a>

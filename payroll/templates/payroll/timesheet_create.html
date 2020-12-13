@@ -3,16 +3,23 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<style type="text/css">
+    .delete-row {
+      align-self: center;
+    }
+  </style>
+
   <div class="card">
       <div class="card-header">
           <div class="card-body">
            <form action="" method="post">
             {% csrf_token %}
             {{ form.as_p }}
+            
                <table class="table">
-               {{ times.label }}
+                {{ times.management_form }}
 
-               {% for form in times %}
+               {% for form in times.forms %}
                {% if forloop.first %}
                <thead>
                    <tr>
@@ -23,7 +30,7 @@
                </thead>
 
                {% endif %}
-               <tr class="{% cycle 'row1' 'row2' 'row3' %} formset_row ">
+               <tr class="{% cycle 'row1' 'row2' %} formset_row ">
                    {% for field in form.visible_fields %}
                    <td>
                        {% if forloop.first %}
@@ -50,11 +57,16 @@
   <script type="text/javascript">
     $(document).ready(function(){
 
-        $('.formset_row').formset({
-            addText: 'add record',
-            deleteText: 'remove',
-            prefix: 'timesheetdetail_set'
+        $('.formset_row').formset({   
+            addText: '<i class="fa fa-plus" aria-hidden="true"></i>',
+            deleteText: '<i class="fa fa-trash" aria-hidden="true"></i>',
+            prefix:'timesheetdetail'
         });
+
+
+        $("input[name^='timesheetdetail']").addClass('form-control-sm').css('width', '8rem', 'border-color', 'gray'); 
+        $("select[name^='timesheetdetail']").addClass('form-control-sm'); 
+        $("button, input[type='submit']").addClass("btn btn-primary btn btn-outline-info"); 
 
     }); 
       

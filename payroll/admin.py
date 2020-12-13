@@ -20,6 +20,9 @@ admin.site.register(Location)
 admin.site.register(TimesheetHeader)
 admin.site.register(TimeSheetDetail)
 
+#Change the admin site title 
+admin.site.site_header = "Employee Payroll Admin"
+
 
 @admin.register(Employee)
 class EmployeeAdmin(ImportExportModelAdmin):
