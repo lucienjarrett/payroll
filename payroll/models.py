@@ -71,7 +71,7 @@ class Company(CommonInfo):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("company-list")
+        return reverse("company-detail", kwargs={'pk': self.pk})
 
 
 class Customer(CommonInfo):
@@ -148,7 +148,7 @@ class PaymentMethod(CommonInfo):
             return self.name
 
     def get_absolute_url(self):
-        return reverse('paymentmethod-detail', kwargs={'pk':self.pk})
+        return reverse('payment-method-detail', kwargs={'pk':self.pk})
 
 
 class Bank(CommonInfo):
@@ -190,12 +190,13 @@ class JobTitle(CommonInfo):
     name = models.CharField(max_length=60, verbose_name="Job title")
     class Meta:
         managed = True
+        ordering = ['name']
     
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('employee-list')
+        return reverse('jobtitle-detail', kwargs={'pk':self.pk})
 
 
 class Employee(CommonInfo):
@@ -527,6 +528,7 @@ class Location(CommonInfo):
 
 class TimesheetHeader(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    work_date = models.DateField(default=None, null=True)
     comment = models.CharField(max_length=100)
     class Meta:
         managed = True

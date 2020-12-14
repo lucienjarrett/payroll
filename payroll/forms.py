@@ -4,7 +4,7 @@ from django.core import validators
 from django import forms
 from django.forms import TextInput, widgets, modelformset_factory
 from django.forms.widgets import DateInput
-from .models import (Bank, Deduction, Department, PaymentMethod, Salary, Employee, Allowance,
+from .models import (Bank, Company, Deduction, Department, PaymentMethod, Salary, Employee, Allowance,
                      EmployeeAllowance, Contact, TimeSheetDetail,
                      TimesheetHeader)
 from crispy_forms.helper import FormHelper
@@ -20,8 +20,13 @@ trn_validator = validators.RegexValidator(r"^[^0$]",
                                           "You should have 10 characters.")
 
 
-class AllowanceCreateForm(forms.ModelForm):
+class CompanyForm(forms.ModelForm):
+    
+     class Meta:
+        model = Company
+        fields = ['name', 'national_ins_num', 'tax_reg_num', 'status']
 
+class AllowanceCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -567,7 +572,6 @@ class TimesheetDetailForm(forms.ModelForm):
         
         model = TimesheetHeader
         fields ='__all__'
-        # unlabelled_fields = ('employee', 'date_time_in', 'date_time_out')
 
     def __init__(self, *args, **kwargs):
         super(TimesheetDetailForm, self).__init__(*args, **kwargs)

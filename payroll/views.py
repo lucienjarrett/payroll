@@ -2,7 +2,7 @@ from django import template
 from django.db.models.query import QuerySet
 # from django.core.validators import ip_address_validator_map
 from django.db.models.query_utils import Q
-from django.forms import formsets
+from django.forms import forms, formsets
 from django.forms.models import modelformset_factory
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -15,7 +15,7 @@ from .models import (Company, Contact, Deduction, Employee, Department,
                      JobTitle, Bank, Allowance, PaymentMethod, DutyType,
                      Salary, Report, TimesheetHeader)
 from django.shortcuts import render, get_object_or_404
-from .forms import (AllowanceCreateForm, BankCreateForm, BankUpdateForm, ContactFormSet, DeductionCreateForm,
+from .forms import (AllowanceCreateForm, BankCreateForm, BankUpdateForm, CompanyForm, ContactFormSet, DeductionCreateForm,
                     DeductionUpdateForm, PaymentCreateForm, PaymentUpdateForm, SalaryCreateForm, EmployeeCreateForm,
                     EmployeeUpdateForm, SalaryUpdateForm, TimeSheetForm,
                     ExampleForm, TimeSheetFormSet, TimesheetDetailForm, TimesheetDetailFormset)
@@ -344,7 +344,8 @@ class SalaryUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Company
-    fields = '__all__'
+    form_class = CompanyForm
+    # fields = '__all__'
     success_message = "Company added successfully.."
     
 
@@ -355,20 +356,24 @@ class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context['button'] = 'Create Company'
         return context
 
-    # def form_valid(form, self):
-    #     form.instance.created_by = self.request.user
-    #     form.instance.modified_by = self.request.user
-    #     return super(CompanyCreateView,self).form_valid(form)
-
+    def form_valid(form, self):
+        form.instance.created_by = self.request.user
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
 
 class CompanyListView(LoginRequiredMixin, ListView):
     model = Company
     paginate_by = PAGINATE
+    context_object_name = "company"
 
-
+class CompanyDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Company
+    success_url = '/company'
+    success_message = "Deleted successfully.."
 class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Company
-    fields = '__all__'
+    form_class = CompanyForm
+    # fields = '__all__'
     success_message = "Company updated successfully.."
 
     def get_context_data(self, **kwargs):
@@ -378,9 +383,13 @@ class CompanyUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         context['button'] = 'Update'
         return context
 
-    def form_valid(form, self):
+    def form_valid( self, form):
         form.instance.modified_by = self.request.user
         return super(CompanyUpdateView, self).form_valid(form)
+
+class CompanyDetailView(LoginRequiredMixin, DetailView):
+    model = Company
+    context_object_name = "company"
 
 class AllowanceDeleteView(LoginRequiredMixin, DeleteView):
     model = Allowance
@@ -402,7 +411,9 @@ class AllowanceCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.instance.modified_by = self.request.user
         return super(AllowanceCreateView, self).form_valid(form)
         
-
+class AllowanceDetailView(LoginRequiredMixin, DetailView):
+    model = Allowance
+    context_object_name = "allowance"
 
 class AllowanceUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Allowance
@@ -510,6 +521,11 @@ class DepartmentListView(LoginRequiredMixin, ListView):
 #     fields = ['name']
 
 
+class PaymentMethodDetailView(LoginRequiredMixin, DetailView):
+    model=PaymentMethod
+    context_object_name = "payment"
+
+
 class PaymentMethodCreateView(LoginRequiredMixin, SuccessMessageMixin,
                               CreateView):
     model = PaymentMethod
@@ -600,6 +616,10 @@ class BankListView(LoginRequiredMixin, ListView):
         context['title'] = 'Banks'
         return context
 
+class BankDetailView(LoginRequiredMixin, DetailView):
+    model = Bank
+    context_object_name = "bank"
+
 
 class JobTitleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = JobTitle
@@ -609,12 +629,16 @@ class JobTitleCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         # Call the base implementation first to get a context
         context = super(JobTitleCreateView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        context['button'] = 'Create Bank'
+        context['button'] = 'Create Job Title'
         return context
     
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super(JobTitleCreateView,self).form_valid(form)
+
+class JobtitleDetailView(LoginRequiredMixin, DetailView):
+    model = JobTitle
+    context_object_name = "jobtitle"
 
 
 class JobTitleUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

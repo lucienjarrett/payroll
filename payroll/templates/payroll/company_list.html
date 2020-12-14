@@ -18,12 +18,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for e in object_list %}
+                {% for e in company %}
                 <tr>
                     <th scope="row">{{ e.id }}</th>
                     <td>{{ e.name }}</td>
                     <td>{{ e.status }}</td>
                     <td>
+                        <a tooltip="Delete" role="button" href="{% url 'company-update' e.id %}"
+                            class="btn btn-outline-secondary btn-sm"> <i class="fas fa-user-edit"></i>
+                        </a>
+                        <a class="btn btn-outline-danger btn-sm" href="{% url 'company-delete' e.id  %}"><i
+                                class="fas fa-user-minus"></i>
+                        </a>
                     </td>
                 </tr>
                 {% empty %}

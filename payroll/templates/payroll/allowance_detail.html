@@ -1,0 +1,23 @@
+{% extends "payroll/base_.html" %}
+{% block content %}
+  <div class="card">
+      <div class="card-header">
+          <div class="card-body">
+            <h5>{{ allowance.name }}</h5>
+            <hr>
+            {% if allowance.comment %}
+            <p> {{ allowance.comment }}</p>
+            {% endif %}
+            {% if not allowance.comment  %}
+            <p> Not comments </p>
+            {% endif %}
+           <p> {{ allowance.is_active }}</p>
+           <p> {{ allowance.taxable }}</p>
+            
+          </div>
+      </div>
+      <div class="card-footer">
+        <a href="{% url 'allowance-list' %}">&larr; Go to list</a>
+      </div>
+  </div>
+{% endblock content %}

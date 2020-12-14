@@ -1,3 +1,4 @@
+from collections import namedtuple
 from django.urls import path
 from django.views.generic.edit import BaseDeleteView
 from .views import *
@@ -23,6 +24,8 @@ urlpatterns = [
          CompanyUpdateView.as_view(),
          name='company-update'),
     path('company', CompanyListView.as_view(), name="company-list"),
+    path('company/<int:pk>', CompanyDetailView.as_view(), name="company-detail"), 
+    path('company/<int:pk>/delete/', CompanyDeleteView.as_view(), name="company-delete"),
     #End Company
 
     #Start Employee Routes
@@ -76,6 +79,7 @@ urlpatterns = [
     path('jobtitle/<int:pk>/delete',
          JobTitleDeleteView.as_view(),
          name="jobtitle-delete"),
+    path('jobtitle/<int:pk>', JobtitleDetailView.as_view(), name="jobtitle-detail"), 
     #end Jobtitle
     #Start Banks
     path('bank/new/', BankCreateView.as_view(), name="bank-create"),
@@ -83,6 +87,7 @@ urlpatterns = [
          name="bank-update"),
     path('bank/', BankListView.as_view(), name="bank-list"),
     path('bank/<int:pk>/delete', BankDeleteView.as_view(), name="bank-delete"),
+    path('bank/<int:pk>', BankDetailView.as_view(), name='bank-detail'), 
     #End Banks
 
     #Start Deductions
@@ -106,8 +111,9 @@ urlpatterns = [
     path('payment-method/<int:pk>/update/',
          PaymentMethodUpdateView.as_view(),
          name="payment-method-update"),
-     path('payment-method/', PaymentMethodListView.as_view(), name="paymentmethod-list"),
+     path('payment-method/', PaymentMethodListView.as_view(), name="payment-method-list"),
      path('payment-method/<int:pk>/delete/', PaymentMethodDeleteView.as_view(), name="payment-method-delete"), 
+     path('payment-method/<int:pk>', PaymentMethodDetailView.as_view(), name="payment-method-detail"), 
 
     path('duty-type/new/',
          DutyTypeCreateView.as_view(),
@@ -124,6 +130,7 @@ urlpatterns = [
     path('allowance/<int:pk>/update/',
          AllowanceUpdateView.as_view(),
          name="allowance-update"),
+    path('allowance/<int:pk>', AllowanceDetailView.as_view(), name="allowance-detail"), 
     path('allowance/', AllowanceListView.as_view(), name="allowance-list"),
     path('allowance/<int:pk>', AllowanceDeleteView.as_view(), name="allowance-delete"),
     #Earnings End

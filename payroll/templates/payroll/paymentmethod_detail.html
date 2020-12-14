@@ -1,0 +1,15 @@
+{% extends "payroll/base_.html" %}
+
+{% block content %}
+  <div class="card">
+      <div class="card-header">
+        <h5>{{ payment.name }}</h5>
+      </div>
+      <div class="card-body">
+        <p>{{ payment.name }}</p>
+      </div>
+      <div class="card-footer">
+        <a href="{% url 'payment-method-list' %}">&larr; Go to list</a>
+      </div>
+  </div>
+{% endblock content %}

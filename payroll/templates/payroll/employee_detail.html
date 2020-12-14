@@ -1,53 +1,31 @@
 {% extends "payroll/base_.html" %}
-{% load crispy_forms_tags %}
+
 
 {% block content %}
-
-
-
-<div class="row pt-1 mr-2">
-
-    <div class="card" style="width: 40%;">
-        <div class="card-body">
-
-            <img style="width:150px; height:150px" class="rounded-circle" src="{{ employee.image.url }}" alt="">
-        </div>
-        <div class="ml-auto ">
-            <a href="{% url 'employee-update' employee.id %}" class="btn btn-info ">Update</a>
-        </div>
-    </div>
-
-    <div class="card" style="width: 55%;">
-        <div class="card-body">
-            <form-control>Employee Name:</form-control>
-
-
-            <p>{% if employee.title %}
-                {{ employee.title }}
-                {% endif %}
-                {{ employee.full_name }}</p>
-            <hr>
-            <form-label>Base Salary:</form-label>
-            <p>0</p>
-            <hr>
-            {{ employee.salary }}
-            <form-label>Base Rate:</form-label>
-
-            <p>{{ employee.rate }}</p>
-            <hr>
-            <form-label>Tax Registration Number:</form-label>
-            <p>{{ employee.trn }}</p>
-            <hr>
-            <form-control>National Insurance:</form-control>
-            <p>{{ employee.nis }}</p>
-            <hr>
-            <form-control>Employee Number:</form-control>
-            <p>{{ employee.employee_number }}</p>
-            <hr>
-
-        </div>
+<div class="card">
+    <div class="card-header">
 
     </div>
+    <div class="card-body">
+<div class="media">
+    <img class="align-self-center mr-3" src="{{ employee.image.url }}" alt="Generic placeholder image">
+    <div class="media-body">
+      <h5 class="mt-0"> {% if employee.title %}
+        {{ employee.title }}
+        {% endif %}
+        {{ employee.full_name }}</h5>
+      <p>{{ employee.salary }}</p>
+      <p class="mb-0">{{ employee.employee_number }}</p>
+      <p class="mb-0">{{ employee.nis }}</p>
+      <p class="mb-0">{{ employee.rate }}</p>
+      <p class="mb-0">{{ employee.trn }}</p>
+      <p class="mb-0">{{ employee.department.name }}</p>
+    </div>
+
 </div>
-
+  </div>
+<div class="card-footer">
+<a href="{% url 'employee-list' %}">&larr;Go to list</a>
+</div>
+</div>
 {% endblock content %}
