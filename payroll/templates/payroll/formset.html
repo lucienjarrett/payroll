@@ -5,16 +5,21 @@
 <style type="text/css">
     .delete-row {
       align-self: center;
+      top:-100px; 
+
     }
   </style>
+
+
+
 
   
 <div class="card">
 <div class="card-body">
 <table class="table table-hover table-sm">
-    {{ formset.management_form|crispy }}
+    {{ formset.management_form |crispy }}
+    
     {% for form in formset.forms %}
-
     {% if forloop.first %}
     <thead>
         <tr>
@@ -28,6 +33,7 @@
     <tr class="{% cycle 'row1' 'row2' %} formset_row-{{ formset.prefix }}">
         {% for field in form.visible_fields %}
         <td>
+    
             {# Include the hidden fields in the form #}
             {% if forloop.first %}
             {% for hidden in form.hidden_fields %}

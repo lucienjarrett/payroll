@@ -56,6 +56,7 @@ https://github.com/django-crispy-forms/django-crispy-forms/issues/248
 
 https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6/comments
 
+https://medium.com/@alfarhanzahedi/customizing-modelmultiplechoicefield-in-a-django-form-96e3ae7e1a07
 
 
 
