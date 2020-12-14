@@ -591,7 +591,7 @@ class TimesheetDetailForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Column('location'),
-                Column('comment'),
+                Column('work_date'),
                 Fieldset('Timesheet Details',
                     Formset('times')),
                 HTML("<br>"),

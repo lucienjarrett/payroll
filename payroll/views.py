@@ -61,7 +61,7 @@ class TimeSheetList(ListView):
 class TimeSheetCreateView(CreateView):
     model = TimesheetHeader
     # form_class = TimeSheetForm
-    fields = ['location', 'comment']
+    fields = ['location', 'work_date']
     template_name = 'payroll/timesheet_create.html'
     success_url = reverse_lazy('timesheet-list')
 
@@ -71,9 +71,11 @@ class TimeSheetCreateView(CreateView):
             data["times"] = TimeSheetFormSet(self.request.POST)
         else:
             data['times'] = TimeSheetFormSet()
+        print(data)
         return data
     
     def form_valid(self, form):
+        
         context = self.get_context_data()
         times = context['times']
         with transaction.atomic():

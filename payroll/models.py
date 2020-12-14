@@ -529,7 +529,7 @@ class Location(CommonInfo):
 class TimesheetHeader(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     work_date = models.DateField(default=None, null=True)
-    comment = models.CharField(max_length=100)
+    # comment = models.CharField(max_length=100)
     class Meta:
         managed = True
 
