@@ -178,6 +178,7 @@ class Department(CommonInfo):
 
     class Meta:
         managed = True
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -536,6 +537,9 @@ class TimesheetHeader(models.Model):
     def __str__(self):
         return self.location.name
 
+    # def get_absolute_url(self):
+    #     return reverse('employee-list')
+
 
 class TimeSheetDetail(models.Model):
     time_sheet_header = models.ForeignKey(TimesheetHeader,
@@ -544,10 +548,10 @@ class TimeSheetDetail(models.Model):
                                           default=None)
     employee = models.ForeignKey(Employee,
                                  related_name="employee",
-                                 on_delete=models.CASCADE)
+                                 on_delete=models.CASCADE, null=False)
 
-    date_time_in = models.DateTimeField(default=None)
-    date_time_out = models.DateTimeField(default=None)
+    date_time_in = models.DateTimeField(default=None, null=False)
+    date_time_out = models.DateTimeField(default=None, null=False)
     hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
@@ -557,8 +561,9 @@ class TimeSheetDetail(models.Model):
         info = f"{self.employee.full_name} - {self.time_sheet_header.location.name} "
         return str(info)
 
-    def get_absolute_url(self):
-        return reverse('employee-list')
+    # def get_absolute_url(self):
+    #     return reverse('timesheet-list')
+
 
 
 class LeaveType(CommonInfo):

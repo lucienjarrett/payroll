@@ -1,0 +1,20 @@
+{% extends "payroll/base_.html" %}
+
+{% block content %}
+  
+<div class="card">
+    <div class="card-header">
+        {{ department.name }}
+    </div>
+    <div class="card-body">
+        {{ department.name }}
+        <br>
+        {{ department.code }}
+        <br>
+        {{ department.is_active }}
+    </div>
+    <div class="card-footer">
+    <a href="{% url 'department-list'  %}">&larr; Go to list</a>    
+    </div>
+</div>
+{% endblock content %}

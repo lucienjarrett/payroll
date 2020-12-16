@@ -508,8 +508,6 @@ class TimeSheetForm(forms.Form):
 
 
 class PaymentCreateForm(forms.ModelForm):
-
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -557,62 +555,14 @@ class ContactForm(forms.ModelForm):
 ContactFormSet = modelformset_factory(Contact, extra=1, form=ContactForm)
 
 
-
-class TimeSheetForm(forms.ModelForm):
-    class Meta:
-        model = TimeSheetDetail
-        exclude = ('modified_by',)
-
-
-TimeSheetFormSet = inlineformset_factory(TimesheetHeader, TimeSheetDetail, form=TimeSheetForm, extra=1)
-
-
-# class TimesheetDetailForm(forms.ModelForm):
-#     class Meta:
-        
-#         model = TimesheetHeader
-#         fields ='__all__'
-
-#     def __init__(self, *args, **kwargs):
-#         super(TimesheetDetailForm, self).__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.form_tag = True
-#         self.helper.form_class = 'form-horizontal'
-#         self.helper.label_class = 'col-md-3 create-label'
-#         self.helper.field_class = 'col-md-9'
-#         self.help_text_as_placeholder = True
-#         self.helper.form_show_labels = False
-#         #remove label from fields
-#         # for field in TimesheetDetailForm.Meta.unlabelled_fields:
-#         #     self.fields[field].label = False
-
-        
-        
-#         self.helper.layout = Layout(
-#             Div(
-#                 Column('location'),
-#                 Column('work_date'),
-#                 Fieldset('Timesheet Details',
-#                     Formset('times')),
-#                 HTML("<br>"),
-                
-#                 ButtonHolder(Submit('submit', 'Save Timesheet', css_class='btn btn-outline-info')),
-#                 )
-#             )
-        
-# TimesheetDetailFormset = inlineformset_factory(
-#     parent_model = TimesheetHeader, model=TimeSheetDetail, form=TimesheetDetailForm, 
-#     fields=['employee', 'date_time_in', 'date_time_out'], extra=0, can_delete=True, 
-#     min_num=1, validate_min=True)
-
-
-
-
 class TimesheetDetailForm(forms.ModelForm):
-    class Meta:  
-        model = TimeSheetDetail
-        fields ='__all__'
-        
+    employee = forms.Select()
+    date_time_in = forms.DateField(
+        required=False, widget=DatePicker(attrs={'autocomplete': 'false'}))   
+    date_time_out = forms.DateField(
+        required=False, widget=DatePicker(attrs={'autocomplete': 'false'}))
+    hours = forms.CharField(required=True)
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         formtag_prefix = re.sub('-[0-9]+$', '', str(kwargs.get('prefix', '')))
@@ -625,17 +575,25 @@ class TimesheetDetailForm(forms.ModelForm):
                 Field('date_time_in'),
                 Field('date_time_out'),
                 Field('hours'),
-                # Field('DELETE'),
+                Field('DELETE'),
                 css_class='formset_row-{}'.format(formtag_prefix)
             )
         )
+    class Meta:  
+        model = TimeSheetDetail
+        fields ='__all__'
+
+  
         
 TimesheetDetailFormset = inlineformset_factory(
     parent_model = TimesheetHeader, model=TimeSheetDetail, form=TimesheetDetailForm, 
-    fields=['employee', 'date_time_in', 'date_time_out'], extra=1, can_delete=True, )
+    fields=['employee', 'date_time_in', 'date_time_out'], extra=0, can_delete=True, validate_min=True, min_num=1)
 
 
 class TimesheetHeaderForm(forms.ModelForm):
+
+    work_date = forms.DateField(
+        required=False, widget=DatePicker(attrs={'autocomplete': 'false'}))
     class Meta:
         model = TimesheetHeader
         fields = ['location', 'work_date']

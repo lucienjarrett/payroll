@@ -11,14 +11,9 @@ from django.views.generic import (CreateView, ListView, UpdateView, FormView,
                                   DeleteView, TemplateView, DetailView)
 
 from django.views.generic.edit import DeleteView, DeletionMixin
-from .models import (Company, Contact, Deduction, Employee, Department,
-                     JobTitle, Bank, Allowance, PaymentMethod, DutyType,
-                     Salary, Report, TimesheetHeader)
+from .models import *
 from django.shortcuts import render, get_object_or_404
-from .forms import (AllowanceCreateForm, BankCreateForm, BankUpdateForm, CompanyForm, ContactFormSet, DeductionCreateForm,
-                    DeductionUpdateForm, PaymentCreateForm, PaymentUpdateForm, SalaryCreateForm, EmployeeCreateForm,
-                    EmployeeUpdateForm, SalaryUpdateForm, TimeSheetForm,
-                    ExampleForm, TimeSheetFormSet, TimesheetDetailForm, TimesheetDetailFormset, TimesheetHeaderForm)
+from .forms import *
 import csv, io
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
@@ -114,10 +109,10 @@ class TimeSheetList(ListView):
 
 
 class TimeSheetDetailCreateView(CreateView):
-    model = TimesheetHeader
+    # model = TimesheetHeader
     form_class = TimesheetHeaderForm
-    template_name = 'payroll/timesheet_create_2.html'
-    success_url = 'payroll/timesheet-list'
+    template_name = 'payroll/timesheet_form.html'
+    success_url = None
 
     def get_context_data(self, **kwargs):
         data = super(TimeSheetDetailCreateView, self).get_context_data(**kwargs)
@@ -131,11 +126,20 @@ class TimeSheetDetailCreateView(CreateView):
         context = self.get_context_data()
         times = context['times']
         with transaction.atomic():
+            print(times)
             self.object = form.save()
-            if times.is_valid():
+            if times.is_valid():     
                 times.instance = self.object
                 times.save()
-        return super().form_valid(form)
+            else:
+                context.update({'times': times})
+                return self.render_to_response(context)
+        return super(TimeSheetDetailCreateView, self).form_valid(form)
+        
+    def get_success_url(self):
+        return reverse('timesheet-list')
+
+
 
 
 
@@ -510,6 +514,9 @@ class DepartmentListView(LoginRequiredMixin, ListView):
         context['title'] = 'Departments'
         return context
 
+class DepartmentDetailView(LoginRequiredMixin, DetailView):
+    model = Department
+    context_object_name = 'department'
 
 # class PayPeriodCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 #     model = PayPeriod
