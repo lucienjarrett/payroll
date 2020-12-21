@@ -2,22 +2,24 @@
 {% block content %}
 
 
-
-
 <div class="card mt-0">
-    <!-- <div class="card-header">
-
-        <div class="btn-group" role="group" aria-label="First_group">
-
-            <a href=" {% url 'employee-upload'  %}" role="button" class="btn btn-outline-secondary btn-sm"><i
-                    class="fas fa-upload"></i></a>
-
-            <a href=" {% url 'employee-create'  %}" role="button" class="btn btn-outline-info btn-sm"><i
-                    class="fas fa-plus"></i></a>
-
-
-        </div>
-    </div> -->
+<form method="GET" class="form-inline" id="frm">
+<div class="form-group mb-2 ml-2 mt-2">
+    <!-- <label>{{ filter.form.first_name.label_tag }}</label> -->
+    {{ filter.form.first_name }}
+  </div>
+  <div class="form-group mb-2 ml-2 mt-2">
+    <!-- <label>{{ filter.form.last_name.label_tag }}</label> -->
+    {{ filter.form.last_name }}
+  </div>
+  <div class="form-group mb-2 ml-2 mt-2">
+    <!-- <label>{{ filter.form.last_name.label_tag }}</label> -->
+    {{ filter.form.employee_number }}
+  </div>
+ 
+    <button type="submit" class="btn btn-outline-info btn-sm mb-2 ml-2 mt-2">Search</button>
+    <button type="submit" onclick="frm_reset()" class="btn btn-outline-secondary btn-sm mb-2 ml-2 mt-2">Clear</button>
+</form> 
 
     <div class="card-header container-fluid">
         <div class="row">
@@ -86,5 +88,25 @@
     </div>
     <div class="card-footer">{% include 'payroll/_partial.html' %} </div>
 </div>
+
+{% block javascript %}
+<script>
+    function frm_reset()
+    {
+        const first_name = document.getElementById("id_first_name"); 
+        const last_name = document.getElementById("id_last_name"); 
+        const employee_number = document.getElementById("id_employee_number");
+        first_name.value = ''; 
+        last_name.value = ''; 
+        employee_number.value = ''; 
+        
+      
+    }
+
+    
+
+</script>
+  
+{% endblock javascript %}
 
 {% endblock content %}

@@ -550,8 +550,8 @@ class TimeSheetDetail(models.Model):
                                  related_name="employee",
                                  on_delete=models.CASCADE, null=False)
 
-    date_time_in = models.DateTimeField(default=None, null=False)
-    date_time_out = models.DateTimeField(default=None, null=False)
+    date_time_in = models.CharField(default=None, null=False, max_length=15)
+    date_time_out = models.CharField(default=None, null=False, max_length=15)
     hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
@@ -583,8 +583,8 @@ class LeaveType(CommonInfo):
 class EmployeeLeave(CommonInfo):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="employees")
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE,related_name="leaves_types")
-    date_from = models.DateField(default=None, blank=True, null=True)
-    date_to = models.DateField(default=None, blank=True, null=True)
+    date_from = models.TimeField(default=None, blank=True, null=True)
+    date_to = models.TimeField(default=None, blank=True, null=True)
     comment = models.TextField()
     class Meta:
         managed = True

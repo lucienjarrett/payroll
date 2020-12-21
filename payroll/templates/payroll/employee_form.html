@@ -1,23 +1,20 @@
-{% extends 'payroll/base_.html' %}
-
-<!-- {% load crispy_forms_tags %} -->
-
+{% extends "payroll/base_.html" %}
 {% block content %}
+
+{% load crispy_forms_tags %}
 <div class="card">
     <div class="card-header">
         <h5> {{ title }}</h5>
-
     </div>
     <div class="card-body">
-        <form action="" method="POST" id="container">
-            {% csrf_token %}
-            {% crispy form %}
-        </form>
+        {% crispy form %}
+    </div>
+    <div class="card-footer">
+
+        <a href="{% url 'employee-list'  %}">&larr; Go back</a>
+
+
     </div>
 </div>
-<div class="card-footer">
-    <a href="{% url 'employee-list'  %}">&larr; Go back</a>
-</div>
-
 
 {% endblock content %}

@@ -57,7 +57,13 @@ https://github.com/django-crispy-forms/django-crispy-forms/issues/248
 https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6/comments
 
 https://medium.com/@alfarhanzahedi/customizing-modelmultiplechoicefield-in-a-django-form-96e3ae7e1a07
+https://stackoverflow.com/questions/6719063/when-adding-a-new-inline-to-my-formset-my-datepickers-stop-working
 
+https://aalvarez.me/posts/django-dynamic-queryset-filtering-with-pagination/
+https://dev.to/harveyhalwin/building-your-own-template-tags-in-django-21la
+https://github.com/monim67/django-flatpickr
+
+https://dev.to/djangotricks/working-with-dates-and-times-in-the-forms-4hha
 
 
 

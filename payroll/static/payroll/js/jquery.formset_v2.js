@@ -31,7 +31,7 @@
                 var idRegex = new RegExp(prefix + '-(\\d+|__prefix__)-'),
                     replacement = prefix + '-' + ndx + '-';
                 if (elem.attr("for")) elem.attr("for", elem.attr("for").replace(idRegex, replacement));
-                if (elem.attr('id')) elem.attr('id', elem.attr('id').replace(idRegex, replacement));
+                // if (elem.attr('id')) elem.attr('id', elem.attr('id').replace(idRegex, replacement));
                 if (elem.attr('name')) elem.attr('name', elem.attr('name').replace(idRegex, replacement));
             },
 

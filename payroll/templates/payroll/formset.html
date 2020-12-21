@@ -1,19 +1,15 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
-
+<!-- 
 <style type="text/css">
     .delete-row {
       align-self: center;
       top:-100px; 
 
     }
-  </style>
+  </style> -->
 
-
-
-
-  
 <div class="card">
 <div class="card-body">
 <table class="table table-hover table-sm">
@@ -40,7 +36,7 @@
             {{ hidden }}
             {% endfor %}
             {% endif %}
-            <!-- {{ field.errors.as_ul }} -->
+            {{ field.errors.as_ul }}
             {{ field|as_crispy_field }}
         </td>
         {% endfor %}
@@ -52,13 +48,16 @@
 <br>
 </div>
 {% block javascript %}
-
+<script src="{% static 'payroll/js/jquery.formset_v2.js' %}"></script>
 <script type="text/javascript">
-$(document).ready(function(){
+
+$(function(){
+
     $('.formset_row-{{ formset.prefix }}').formset({
-        addText: '<i class="fa fa-plus" aria-hidden="true"></i>',
-            deleteText: 'remove',
-        prefix: '{{ formset.prefix }}',
+        addText: "add another", //'<i class="fa fa-plus" aria-hidden="true"></i>',
+        deleteText: 'remove',
+        prefix: '{{ formset.prefix }}',  
+        
     });
 
 }); 

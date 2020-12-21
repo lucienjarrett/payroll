@@ -26,19 +26,15 @@ from tablib import Dataset
 from django.forms.utils import ErrorList
 from django.db import transaction
 
+#filtering records
+from django_filters.views import FilterView
+
 #set the amount of records to paginate by
 PAGINATE = 10
 
 
 class PayslipView(TemplateView):
     template_name = 'payroll/payslip.html'
-
-    # def get_context_data(self, *args, **kwargs):
-    #     context = super(ReportView, self).get_context_data(**kwargs)
-    #     # here's the difference:
-    #     context['report'] = Report.objects.all()
-    #     return context
-
 
 class ExampleView(FormView):
     form_class = ExampleForm
@@ -344,6 +340,10 @@ class SalaryUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     #     context['button'] = 'Update'
     #     return context
 
+# def employee_search(request):
+#     employee_list = Employee.objects.all()
+#     employee_filter = EmployeeFilter(request.GET, queryset=employee_list)
+#     return render(request, )
 
 class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Company
@@ -466,7 +466,7 @@ class DeductionUpdateView(SuccessMessageMixin, UpdateView):
     model = Deduction
     exclude = ['created', 'updated']
     success_message = "Successfully updated.."
-    form_class = DeductionUpdateForm
+    form_class = DeductionCreateForm
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -476,9 +476,9 @@ class DeductionUpdateView(SuccessMessageMixin, UpdateView):
         context['title'] = 'Deductions'
         return context
 
-    def form_valid(form, self):
+    def form_valid(self, form):
         form.instance.modified_by = self.request.user
-        return super(DeductionCreateView, self).form_valid(form)
+        return super(DeductionUpdateView, self).form_valid(form)
 
 
 
@@ -729,7 +729,7 @@ class DepartmentUpdateView(LoginRequiredMixin, SuccessMessageMixin,
 
 class EmployeeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Employee
-    form_class = EmployeeCreateForm
+    form_class = ExampleForm #EmployeeCreateForm
     exclude = ['departure_date']
     success_message = "Employee created successfully."
 
@@ -750,7 +750,7 @@ class EmployeeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class EmployeeUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Employee
-    form_class = EmployeeUpdateForm
+    form_class = ExampleForm #EmployeeUpdateForm
     # fields = '__all__'
     exclude = ['employment_date', 'departure_date']
     success_message = "Employee updated successfully."
@@ -769,22 +769,24 @@ class EmployeeUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super(EmployeeUpdateView, self).form_valid(form)
 
 
-class EmployeeListView(LoginRequiredMixin, ListView):
-    model = Employee
+class EmployeeListView(LoginRequiredMixin, FilterView):
+    # model = Employee
     paginate_by = PAGINATE
+    filterset_class = EmployeeFilter
     context_object_name = 'employee_list'
+    template_name = 'payroll/employee_list.html'
 
     # def get_context_data(self, **kwargs):
     #     # Call the base implementation first to get a context
-    #     context = super(EmployeeListView, self).get_context_data(**kwargs)
+    #     context = super().get_context_data(**kwargs)
     #     # Add in a QuerySet of all the books
-    #     employee_list = Employee.objects.all()
+    #     # employee_list = Employee.objects.all()
     #     context['filter'] = EmployeeFilter(self.request.GET,
-    #                                        queryset=employee_list)
+    #                                        queryset=self.get_queryset())
     #     return context
 
     # def get_queryset(self):
-    #     employee_list = self.Employee.objects.all()
+    #     employee_list = Employee.objects.all()
     #     employee_list_filtered = EmployeeFilter(self.request.GET,
     #                                             queryset=employee_list)
     #     return employee_list_filtered

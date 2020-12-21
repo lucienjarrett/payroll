@@ -20,6 +20,28 @@ trn_validator = validators.RegexValidator(r"^[^0$]",
                                           "You should have 10 characters.")
 
 
+
+class DateInput(forms.DateInput):
+    input_type = "date"
+
+    def __init__(self, **kwargs):
+        kwargs["format"] = "%Y-%m-%d"
+        super().__init__(**kwargs)
+
+
+class TimeInput(forms.TimeInput):
+    input_type = "time"
+
+
+class DateTimeInput(forms.DateTimeInput):
+    input_type = "datetime-local"
+
+    def __init__(self, **kwargs):
+        kwargs["format"] = "%Y-%m-%dT%H:%M"
+        super().__init__(**kwargs)
+
+
+
 class CompanyForm(forms.ModelForm):
     
      class Meta:
@@ -130,9 +152,9 @@ class ExampleForm(forms.ModelForm):
                                      'min': 0,
                                      'step': 1
                                  }))
-    employment_date = forms.DateField(required=False, widget=DatePicker())
-    departure_date = forms.DateField(required=False, widget=DatePicker())
-    date_of_birth = forms.DateField(required=False, widget=DatePicker())
+    employment_date = forms.DateField(required=False, widget=DateInput())
+    departure_date = forms.DateField(required=False, widget=DateInput())
+    date_of_birth = forms.DateField(required=False, widget=DateInput())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -190,15 +212,17 @@ class ExampleForm(forms.ModelForm):
                                css_class='form-group col-md-6 mb-0'),
                         css_class='form-row'),
                     Row(Column('rate', css_class='form-group col-md-4 mb-0'),
-                        Column('basic_pay',
+                       Column('basic_pay',
                                css_class='form-group col-md-4 mb-0'),
                         Column('payment_schedule',
                                css_class='form-group col-md-4 mb-0'),
-                        css_class='form-row'),
+                        css_class='form-row'), 
                     Row(Column('employment_date',
-                               css_class='form-group col-md-6 mb-0'),
+                               css_class='form-group col-md-4 mb-0'),
                         Column('departure_date',
-                               css_class='form-group col-md-6 mb-0'),
+                               css_class='form-group col-md-4 mb-0'),
+                        Column('is_active',
+                               css_class='form-group col-md-4 mb-0'),
                         css_class='form-row'),
                 ),
                 Tab(
@@ -211,7 +235,7 @@ class ExampleForm(forms.ModelForm):
                                css_class='form-group col-md-6 mb-0'),
                         css_class='form-row'),
                 ),
-            ), )
+            ))
 
     class Meta:
         model = Employee
@@ -453,19 +477,19 @@ class DeductionCreateForm(forms.ModelForm):
         )
 
 
-class DeductionUpdateForm(DeductionCreateForm):
-    class Meta:
-        model = Deduction
-        fields = (
-            'name',
-            'short_code',
-            'short_description',
-            'employee_rate',
-            'employer_rate',
-            'max_for_year',
-            'is_statutory',
-            'is_active',
-        )
+# class DeductionUpdateForm(DeductionCreateForm):
+#     class Meta:
+#         model = Deduction
+#         fields = (
+#             'name',
+#             'short_code',
+#             'short_description',
+#             'employee_rate',
+#             'employer_rate',
+#             'max_for_year',
+#             'is_statutory',
+#             'is_active',
+#         )
 
 
 PAY_SCHEDULE = (
@@ -557,10 +581,14 @@ ContactFormSet = modelformset_factory(Contact, extra=1, form=ContactForm)
 
 class TimesheetDetailForm(forms.ModelForm):
     employee = forms.Select()
-    date_time_in = forms.DateField(
-        required=False, widget=DatePicker(attrs={'autocomplete': 'false'}))   
-    date_time_out = forms.DateField(
-        required=False, widget=DatePicker(attrs={'autocomplete': 'false'}))
+    date_time_in = forms.CharField(
+        required=False, widget=TimeInput())   
+    date_time_out = forms.CharField(
+        required=False, widget=TimeInput())
+    # date_time_in = forms.CharField(
+    #     required=False, widget=TimePicker(attrs={'autocomplete': 'false'}))   
+    # date_time_out = forms.CharField(
+    #     required=False, widget=TimePicker(attrs={'autocomplete': 'false'}))
     hours = forms.CharField(required=True)
     
     def __init__(self, *args, **kwargs):
@@ -569,6 +597,9 @@ class TimesheetDetailForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.form_show_labels = False
+
+        
+
         self.helper.layout = Layout(
             Row(
                 Field('employee'),
@@ -591,9 +622,8 @@ TimesheetDetailFormset = inlineformset_factory(
 
 
 class TimesheetHeaderForm(forms.ModelForm):
-
     work_date = forms.DateField(
-        required=False, widget=DatePicker(attrs={'autocomplete': 'false'}))
+        required=False, widget=DateInput())
     class Meta:
         model = TimesheetHeader
         fields = ['location', 'work_date']
