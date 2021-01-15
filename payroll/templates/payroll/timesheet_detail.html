@@ -1,0 +1,54 @@
+{% extends "payroll/base_.html" %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+<h5>Timesheet Detail </h5>
+    </div>
+    <div class="card-body">
+
+        {{ timesheet.id }} <br>
+        {{ timesheet.location.name }} <br>
+        {{ timesheet.work_date| date:'Y-m-d' }}
+
+        <h5>Details </h5>   
+        <table class="table table-hover table-sm">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Employee</th>
+                <th scope="col">Time In</th>
+                <th scope="col">Time Out</th>
+                <th scope="col">Hours</th>
+                
+            </tr>
+        </thead>
+    
+    <tbody>
+        {% for d in details %}
+        {% if timesheet.id ==  d.time_sheet_header_id %}
+        <tr>
+            <td>{{ d.time_sheet_header_id }} </td>
+            <td> {{ d.employee.full_name }}</td>
+            <td> {{ d.date_time_in }} </td>
+            <td> {{ d.date_time_out }} </td>
+            <td>{{ d.hours }} </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+
+</table>
+
+
+    </div>
+    <div class="card-footer">
+        
+        <a href="{% url 'timesheet-list' %}">
+           &larr; Go to list
+        </a>   
+    
+</div>
+  
+{% endblock content %}

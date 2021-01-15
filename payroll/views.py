@@ -45,66 +45,16 @@ class TimeSheetView(FormView):
     form_class = TimeSheetForm
     template_name = 'payroll/timesheet.html'
 
+   
+
 class TimeSheetList(ListView):
     model = TimesheetHeader
+    # context_object_name = 'timesheet_list'
     template_name = "payroll/timesheet_list.html"
 
-# class TimeSheetCreateView(CreateView):
-#     model = TimesheetHeader
-#     # form_class = TimeSheetForm
-#     fields = ['location', 'work_date']
-#     template_name = 'payroll/timesheet_create.html'
-#     success_url = reverse_lazy('timesheet-list')
-
-#     def get_context_data(self, **kwargs):
-#         data = super(TimeSheetCreateView, self).get_context_data(**kwargs)
-#         if self.request.POST:
-#             data["times"] = TimeSheetFormSet(self.request.POST)
-#         else:
-#             data['times'] = TimeSheetFormSet()
-        
-#         return data
-    
-#     def form_valid(self, form):
-#         context = self.get_context_data()
-#         times = context['times']
-#         with transaction.atomic():
-#             self.object = form.save()
-#             if times.is_valid():
-#                 times.instance = self.object
-#                 times.save()
-#         return super().form_valid(form)
 
 
-# class TimeSheetUpdateView(UpdateView):
-#     model = TimesheetHeader
-#     # form_class = TimeSheetDetailForm
-#     template_name = 'payroll/timesheet_create.html'
-#     success_url = reverse_lazy('timesheet-list')
-
-#     def get_context_data(self, **kwargs):
-#         data = super(TimeSheetUpdateView, self).get_context_data(**kwargs)
-#         if self.request.POST:
-#             data["times"] = TimeSheetFormSet(self.request.POST, instance=self.object)
-#         else:
-#             data['times'] = TimeSheetFormSet(instance=self.object)
-#         return data
-    
-#     def form_valid(self, form):
-#         context = self.get_context_data()
-#         times = context['times']
-#         with transaction.atomic():
-#             # form.instance.created_by = self.request.user
-#             # form.instance.modified_by = self.request.user
-#             self.object = form.save()
-#             if times.is_valid():
-#                 times.instance = self.object
-#                 times.save()
-#         return super(TimeSheetCreateView, self).form_valid(form)
-
-
-
-class TimeSheetDetailCreateView(CreateView):
+class TimeSheetDetailCreateView(LoginRequiredMixin,CreateView):
     # model = TimesheetHeader
     form_class = TimesheetHeaderForm
     template_name = 'payroll/timesheet_form.html'
@@ -122,7 +72,6 @@ class TimeSheetDetailCreateView(CreateView):
         context = self.get_context_data()
         times = context['times']
         with transaction.atomic():
-            print(times)
             self.object = form.save()
             if times.is_valid():     
                 times.instance = self.object
@@ -132,12 +81,49 @@ class TimeSheetDetailCreateView(CreateView):
                 return self.render_to_response(context)
         return super(TimeSheetDetailCreateView, self).form_valid(form)
         
+    # def get_success_url(self):
+    #     return reverse('timesheet-list')
+
+class TimeSheetDetailUpdateView(LoginRequiredMixin, UpdateView):
+    model = TimesheetHeader
+    form_class = TimesheetHeaderForm
+    template_name = 'payroll/timesheet_form.html'
+    success_url = None
+
+    def get_context_data(self, **kwargs):
+        data = super(TimeSheetDetailUpdateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data["times"] = TimesheetDetailFormset(self.request.POST, instance=self.object)
+        else:
+            data['times'] = TimesheetDetailFormset(instance=self.object)
+        return data
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        times = context['times']
+        print(context)
+        with transaction.atomic():
+            self.object = form.save()
+            if times.is_valid():     
+                times.instance = self.object
+                times.save()
+            else:
+                context.update({'times': times})
+                return self.render_to_response(context)
+        return super(TimeSheetDetailUpdateView, self).form_valid(form)
+        
     def get_success_url(self):
         return reverse('timesheet-list')
 
+class TimeSheetDetailView(LoginRequiredMixin, DetailView):
+    model = TimesheetHeader
+    template_name = "payroll/timesheet_detail.html"
+    context_object_name = "timesheet"
 
-
-
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['details'] = TimeSheetDetail.objects.all()
+        return context 
 
 def export_csv(request):
     employee_resource = EmployeeResource()

@@ -529,7 +529,7 @@ class Location(CommonInfo):
 
 class TimesheetHeader(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    work_date = models.DateField(default=None, null=True)
+    work_date = models.DateField(default=None, null=False, verbose_name="Work Date")
     # comment = models.CharField(max_length=100)
     class Meta:
         managed = True
@@ -537,8 +537,8 @@ class TimesheetHeader(models.Model):
     def __str__(self):
         return self.location.name
 
-    # def get_absolute_url(self):
-    #     return reverse('employee-list')
+    def get_absolute_url(self):
+        return reverse('timesheet-detail', kwargs={'pk':self.pk})
 
 
 class TimeSheetDetail(models.Model):
@@ -550,9 +550,9 @@ class TimeSheetDetail(models.Model):
                                  related_name="employee",
                                  on_delete=models.CASCADE, null=False)
 
-    date_time_in = models.CharField(default=None, null=False, max_length=15)
-    date_time_out = models.CharField(default=None, null=False, max_length=15)
-    hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    date_time_in = models.TimeField(null=False, max_length=15)
+    date_time_out = models.TimeField( null=False, max_length=15)
+    hours = models.DecimalField(verbose_name="Work hours.", blank=True, null=False, decimal_places=2, max_digits=5)
 
     class Meta:
         managed = True

@@ -1,5 +1,5 @@
 from .custom_layout_object import Formset
-from django.db.models.fields import CharField, FloatField
+from django.db.models.fields import CharField, FloatField, IntegerField
 from django.core import validators
 from django import forms
 from django.forms import TextInput, widgets, modelformset_factory
@@ -21,6 +21,7 @@ trn_validator = validators.RegexValidator(r"^[^0$]",
 
 
 
+#Custom date and time formats. 
 class DateInput(forms.DateInput):
     input_type = "date"
 
@@ -581,28 +582,27 @@ ContactFormSet = modelformset_factory(Contact, extra=1, form=ContactForm)
 
 class TimesheetDetailForm(forms.ModelForm):
     employee = forms.Select()
-    date_time_in = forms.CharField(
-        required=False, widget=TimeInput())   
-    date_time_out = forms.CharField(
-        required=False, widget=TimeInput())
-    # date_time_in = forms.CharField(
-    #     required=False, widget=TimePicker(attrs={'autocomplete': 'false'}))   
-    # date_time_out = forms.CharField(
-    #     required=False, widget=TimePicker(attrs={'autocomplete': 'false'}))
-    hours = forms.CharField(required=True)
+    # date_time_in = forms.TimeField(
+    #     required=True, widget=TimeInput())   
+    # date_time_out = forms.TimeField(
+    #     required=True, widget=TimeInput())
+
+    date_time_in = forms.TimeField(
+        required=True, widget=TimeInput(attrs={'onchange': 'get_time_in(this)', }))   
+    date_time_out = forms.TimeField(
+        required=True, widget=TimeInput(attrs={'onchange': 'get_time_out(this)'}))
+    hours = forms.DecimalField(required=True, widget=TextInput())
+    
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         formtag_prefix = re.sub('-[0-9]+$', '', str(kwargs.get('prefix', '')))
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.form_show_labels = False
-
-        
-
+        self.helper.form_show_labels = False    
         self.helper.layout = Layout(
             Row(
-                Field('employee'),
+                Field('employee' ),
                 Field('date_time_in'),
                 Field('date_time_out'),
                 Field('hours'),
@@ -618,12 +618,12 @@ class TimesheetDetailForm(forms.ModelForm):
         
 TimesheetDetailFormset = inlineformset_factory(
     parent_model = TimesheetHeader, model=TimeSheetDetail, form=TimesheetDetailForm, 
-    fields=['employee', 'date_time_in', 'date_time_out'], extra=0, can_delete=True, validate_min=True, min_num=1)
+    fields=['employee', 'date_time_in', 'date_time_out', 'hours'], extra=0, can_delete=True, validate_min=True, min_num=1)
 
 
 class TimesheetHeaderForm(forms.ModelForm):
     work_date = forms.DateField(
-        required=False, widget=DateInput())
+        required=True, widget=DateInput())
     class Meta:
         model = TimesheetHeader
         fields = ['location', 'work_date']
@@ -637,13 +637,14 @@ class TimesheetHeaderForm(forms.ModelForm):
         self.helper.field_class = 'col-md-9'
         self.helper.layout = Layout(
             Div(
-                Field('location'),
-                Field('work_date'),
+                
+                Field('location',  css_class='form-group col-md-8 mb-0'),
+                Field('work_date',  css_class='form-group col-md-8 mb-0'),
                 Fieldset('Timesheet Details',
                          Formset('times')),
                
                 HTML("<br>"),
-                ButtonHolder(Submit('submit', 'Save')),
+                ButtonHolder(Submit('submit', 'Save', css_class="btn btn-outline-info")),
             )
         )
 

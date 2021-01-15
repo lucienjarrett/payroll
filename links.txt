@@ -64,6 +64,9 @@ https://dev.to/harveyhalwin/building-your-own-template-tags-in-django-21la
 https://github.com/monim67/django-flatpickr
 
 https://dev.to/djangotricks/working-with-dates-and-times-in-the-forms-4hha
+https://dev.to/djangotricks/guest-post-sending-emails-with-django-7d3
+https://stackoverflow.com/questions/19967214/how-to-work-out-time-difference-between-two-times-on-a-24-hour-clock
+
 
 
 

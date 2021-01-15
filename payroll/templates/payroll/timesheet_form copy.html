@@ -1,0 +1,140 @@
+{% extends "payroll/base_.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style type="text/css">
+    .delete-row {
+      align-self: center;
+    }
+
+    .custom-control {
+      position: relative;
+      display: block;
+      min-height: 0rem;
+      padding-left: 0rem
+  }
+  td {
+    padding: 0px; 
+    border:0px; 
+  }
+  .row1{
+    padding:0px; 
+    border: 1px solid red ;
+  }
+  </style>
+
+
+  <div class="card">
+      <div class="card-header">
+          <div class="card-body">
+              {% crispy form %}
+          </div>
+      </div>
+  </div>
+
+{% block javascript %}
+
+<script type="text/javascript">
+
+
+  document.querySelector("tbody").addEventListener('change', function(e){
+    if (e.target.nodeName === 'INPUT'){
+  
+      var time_in = document.getElementsByName(e.target.name); 
+      console.log(time_in)
+  
+  
+  
+    } 
+  
+  
+    }); 
+  var dict = {}
+
+
+
+  function get_time_in(x){
+
+    var regex = /\d+/g;
+    timeIn = x.value
+    idNum = x.name.match(regex)[0]
+    
+    dict.id = idNum; 
+    dict.timeIn = timeIn
+    timeOut = document.getElementsByName("timesheetdetail-"+idNum+"-date_time_out")[0]
+    
+    console.log(timeIn)
+
+    update(timeIn, timeOut.value, idNum);
+    console.log(timeOut.value)
+ 
+  }
+
+
+  function get_time_out(x){
+
+    var regex = /\d+/g;
+    timeOut = x.value
+    dict.timeOut = timeOut; 
+    idObject = Object.values(dict)[0]
+    timeIn = Object.values(dict)[1]
+   
+
+    update(timeIn, timeOut, idObject);
+  
+    
+  }
+
+  function update(tin, tout, id){
+
+    var hours_id = document.getElementsByName("timesheetdetail-" + id + "-hours")[0];
+
+    
+    var startTimeArray = tin.split(":"); 
+      var startTimeInputHours = parseInt(startTimeArray[0]); 
+      var startTimeInputMinutes = parseInt(startTimeArray[1]); 
+  
+      var endTimeArray = tout.split(":"); 
+      var endTimeInputHours = parseInt(endTimeArray[0]); 
+      var endTimeInputMinutes = parseInt(endTimeArray[1]); 
+  
+      var startMin = startTimeInputHours*60 + startTimeInputMinutes; 
+      var endMin = endTimeInputHours * 60 + endTimeInputMinutes; 
+  
+      var result; 
+  
+      if(endMin<  startMin){
+  
+        var minutesPerDay = 24*60; 
+        result = minutesPerDay - startMin;
+        result += endMin; 
+  
+  
+      }
+      else {
+        result = endMin - startMin; 
+      }
+      
+     
+
+      var minutesElapsed = result % 60; 
+      var hoursElapsed = (result - minutesElapsed) / 60;
+
+      if(startTimeArray.length>1 && endTimeArray.length >1){
+        hours_id.value = hoursElapsed.toString()+"."+minutesElapsed.toString();
+        
+      }
+      else {
+        hours_id.value = 0;
+      }
+  
+      
+  }
+
+
+
+</script>
+  
+{% endblock javascript %}
+
+{% endblock content %}
