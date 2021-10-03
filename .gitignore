@@ -2,3 +2,4 @@
 links.txt
 /venv
 /django-dynamic-formset
+/htmlcov

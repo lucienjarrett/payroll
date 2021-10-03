@@ -32,7 +32,33 @@ from django_filters.views import FilterView
 #set the amount of records to paginate by
 PAGINATE = 10
 
+class EmployeeDeductionCreateView(CreateView):
+    form_class = EmployeeDeductionCreateForm
+    success_url = None
+    template_name = 'payroll/employeededuction_form.html'
 
+
+class EmployeeDeductionList(ListView):
+    model = EmployeeDeduction
+    paginate_by = PAGINATE
+    context_object_name = "deduction_list"
+
+class EmployeeDeductionUpdateView(LoginRequiredMixin, UpdateView, SuccessMessageMixin):
+    model = EmployeeDeduction
+    form_class = EmployeeDeductionCreateForm
+    success_message = "Success!"
+    template_name = 'payroll/employeededuction_form.html'
+
+class EmployeeDeductionDeleteView(LoginRequiredMixin, DeleteView):
+    model = EmployeeDeduction
+    #success_url = '/employee_deduction'
+    success_message = "Deleted successfully.."
+
+    def get_success_url(self):
+        return reverse('employee-deduction-list')
+
+
+  
 class PayslipView(TemplateView):
     template_name = 'payroll/payslip.html'
 
@@ -83,6 +109,14 @@ class TimeSheetDetailCreateView(LoginRequiredMixin,CreateView):
         
     # def get_success_url(self):
     #     return reverse('timesheet-list')
+class TimeSheetDeleteView(LoginRequiredMixin, DeleteView):
+    model = TimesheetHeader
+    #success_url = '/company'
+    success_message = "Deleted successfully.."
+    template_name = "payroll/timesheet_confirm_delete.html"
+
+    def get_success_url(self):
+        return reverse('timesheet-list')
 
 class TimeSheetDetailUpdateView(LoginRequiredMixin, UpdateView):
     model = TimesheetHeader
@@ -101,11 +135,15 @@ class TimeSheetDetailUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         context = self.get_context_data()
         times = context['times']
-        print(context)
+       
         with transaction.atomic():
+            
+
             self.object = form.save()
             if times.is_valid():     
                 times.instance = self.object
+
+                print(times)
                 times.save()
             else:
                 context.update({'times': times})
@@ -334,7 +372,6 @@ class SalaryUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Company
     form_class = CompanyForm
-    # fields = '__all__'
     success_message = "Company added successfully.."
     
 
@@ -343,6 +380,7 @@ class CompanyCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context = super(CompanyCreateView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['button'] = 'Create Company'
+        print (self.request.user)
         return context
 
     def form_valid(form, self):
@@ -806,6 +844,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # here's the difference:
         context['employees'] = Employee.objects.all().count()
         context['departments'] = Department.objects.all().count()
+        context['companies'] = Company.objects.all().count()
 
         return context
 

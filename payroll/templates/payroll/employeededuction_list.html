@@ -1,0 +1,57 @@
+{% extends 'payroll/base_.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        {{ title }}
+
+        <div class="row">
+            <div class="col-md-8">
+                <a href="{% url 'employee-deduction-create'%}" role="button" class='btn btn-primary'>Create Deduction</a>
+            </div>
+         
+        </div>
+    </div>
+    <div class="card-body">
+
+
+        <div class="table-responsive-sm">
+
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Employee</th>
+                        <th scope="col">Deduction</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Recurring</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in deduction_list %}
+                    <tr>
+                       <th scope="row">{{ i.id }}</a></th> 
+                       <td>{{i.employee.full_name}}</td>
+                       <td>{{ i.deduction.name }}</td>
+                       <td>{{ i.ded_date|date:"Y-m-d" }}</td>
+                       <td> {{i.recurring }}</td>
+                       <td><a href="{% url 'employee-deduction-update' i.id %}">edit</a>
+                        <a href="{% url 'employee-deduction-delete' i.id %}"> delete</a> 
+                         
+                    </td>
+                    </tr>
+                    
+                    {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center bg-warning">No records</td>
+                </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">{% include 'payroll/_partial.html' %} </div>
+</div>
+{% endblock content %}

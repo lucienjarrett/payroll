@@ -66,7 +66,8 @@ https://github.com/monim67/django-flatpickr
 https://dev.to/djangotricks/working-with-dates-and-times-in-the-forms-4hha
 https://dev.to/djangotricks/guest-post-sending-emails-with-django-7d3
 https://stackoverflow.com/questions/19967214/how-to-work-out-time-difference-between-two-times-on-a-24-hour-clock
-
+https://github.com/Devnawjesh/hr-payroll/tree/master/application/views/backend
+https://www.youtube.com/watch?v=41ek3VNx_6Q&t=513s
 
 
 

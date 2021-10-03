@@ -1,10 +1,6 @@
-from collections import namedtuple
 from django.urls import path
-from django.views.generic.edit import BaseDeleteView
-from .views import *
 from . import views
-from django_filters.views import FilterView
-from .filters import EmployeeFilter
+from .views import *
 
 urlpatterns = [
     path('', DashboardView.as_view(), name="payroll-dashboard"),
@@ -12,6 +8,7 @@ urlpatterns = [
     path('timesheet', TimeSheetList.as_view(), name="timesheet-list"),      
     path('payroll/timesheet/new', TimeSheetDetailCreateView.as_view(), name="timesheet-create"),
     path('payroll/timesheet/<int:pk>/update', TimeSheetDetailUpdateView.as_view(), name="timesheet-update"),
+    path('payroll/timesheet/<int:pk>/delete', TimeSheetDeleteView.as_view(), name="timesheet-delete"), 
     path('payroll/timsheet/<int:pk>', TimeSheetDetailView.as_view(), name="timesheet-detail"),
     path('payroll/example/', ExampleView.as_view(), name="example"),
     path('payroll/about/', views.about, name="payroll-about"),
@@ -141,7 +138,10 @@ urlpatterns = [
          name='contact-model-formset'),
     path('payroll/payslip', PayslipView.as_view(), name='payslip'),
     path('report/new', ReportCreateView.as_view(), name='report-create'),
-    #     path('report/<int:pk>/update',
-    #          ReportUpdateView.as_view(),
-    #          name='report-update'),
+    
+     #Employee Deductions 
+     path('payroll/employee-deduction/new', EmployeeDeductionCreateView.as_view(), name='employee-deduction-create'),
+     path('payroll/employee_deduction_list', EmployeeDeductionList.as_view(), name='employee-deduction-list'),
+     path('payroll/employee-deduction/<int:pk>/update/', EmployeeDeductionUpdateView.as_view(), name='employee-deduction-update'), 
+     path('payroll/employee-deduction/<int:pk>', EmployeeDeductionDeleteView.as_view(), name='employee-deduction-delete'),
 ]

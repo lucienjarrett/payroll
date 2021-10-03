@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'i5*66*fqf$9c6zqva8k-u0w+$kyff4v2g%mbnff7&ix#kcz7=n'
+# SECRET_KEY = 'i5*66*fqf$9c6zqva8k-u0w+$kyff4v2g%mbnff7&ix#kcz7=n'
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -144,4 +144,3 @@ LOGIN_URL = 'login'
 TEMPUS_DOMINUS_LOCALIZE = True
 TEMPUS_DOMINUS_INCLUDE_ASSETS = True
 IMPORT_EXPORT_USE_TRANSACTIONS = True
-SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'
